@@ -100,7 +100,7 @@ LINEチャットbotへの相談機能
 | 使用技術  |   |
 | ------------- | ------------- |
 | バックエンド   | Ruby on Rails（APIモード） |
-| フロントエンド   |  React,Next.js |
+| フロントエンド   |  React,Node.js |
 | CSS  | TailwindCSS |
 | データベース  | PostgreSQL |
 | インフラ  | Render.com |
