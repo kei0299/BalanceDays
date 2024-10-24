@@ -14,7 +14,7 @@ services:
     build:
       context: ./back
       dockerfile: Dockerfile
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -b '0.0.0.0'"
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -b '0.0.0.0' && bundle exec rake db:migrate && bundle exec rake db:seed && bundle exec puma -C config/puma.rb"
     volumes:
       - ./back:/app
     ports:
