@@ -13,7 +13,7 @@ export default function Home() {
   const fetchPosts = async () => {
     try {
       // const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`);
-      const response = await fetch(`http://localhost:3000/posts`);
+      const response = await fetch(`https://myapp-7eck.onrender.com/posts`);
       if (!response.ok) {
         throw new Error("データの取得に失敗しました");
       }

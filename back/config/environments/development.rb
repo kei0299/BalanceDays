@@ -13,7 +13,7 @@ Rails.application.configure do
   config.hosts << "api"
   # Show full error reports.
   config.consider_all_requests_local = true
-    config.hosts << "myapp-7eck.onrender.com"
+  config.hosts << "myapp-7eck.onrender.com"
 
   # Enable server timing.
   config.server_timing = true
