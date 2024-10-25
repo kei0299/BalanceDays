@@ -17,4 +17,4 @@ ENTRYPOINT ["entrypoint.sh"]
 
 EXPOSE 3002
 
-CMD ["rails", "server", "-b", "0.0.0.0","bundle exec rake db:migrate && bundle exec rake db:seed && bundle exec puma -C config/puma.rb"]
+CMD ["rails", "server", "-b", "0.0.0.0"]
