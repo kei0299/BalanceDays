@@ -1,12 +1,26 @@
+import * as React from "react";
+import { AppBar, Toolbar, Box, CssBaseline } from "@mui/material";
 import Link from "next/link";
 
-const FooterTop = () => {
+export default function BottomAppBar() {
   return (
-    <footer className="test">
-      <div><Link href="/">利用規約</Link></div>
-      <div><Link href="/">プライバシーポリシー</Link></div>
-    </footer>
+    <React.Fragment>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        style={{ color: "#ffffff", backgroundColor: "#9bc0ff" }}
+        sx={{ top: "auto", bottom: 0 }}
+      >
+        <Toolbar>
+          <Box sx={{ flexGrow: 1 }} />
+          <Link href="/" style={{ color: "#ffffff", marginRight: "20px" }}>
+            利用規約
+          </Link>
+          <Link href="/" style={{ color: "#ffffff" }}>
+            プライバシーポリシー
+          </Link>
+        </Toolbar>
+      </AppBar>
+    </React.Fragment>
   );
-};
-
-export default FooterTop;
+}

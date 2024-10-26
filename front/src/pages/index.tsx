@@ -1,7 +1,6 @@
-import Header from "@/components/header";
+import Header from "@/components/headerTop";
 import Footer from "@/components/footerTop";
-// import styles from "@/styles/Home.module.css";
-import { Button } from "@mui/material";
+import { Button, Stack,Box } from "@mui/material";
 
 export default function Home() {
   return (
@@ -11,9 +10,22 @@ export default function Home() {
       <link rel="icon" href="/favicon.ico" />
       <div>
         <main>
+        <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center', // 垂直方向の中央揃え
+        alignItems: 'center', // 水平方向の中央揃え
+        minHeight: '100vh', // 画面全体の高さ
+        textAlign: 'center' // テキストを中央揃え
+      }}
+    >
           <h1>サービス説明</h1>
-          <Button variant="contained" color="info">新規作成</Button>
-          <Button variant="outlined">ログイン</Button>
+          <Stack spacing={2} direction="row">
+            <Button variant="outlined">新規作成</Button>
+            <Button variant="outlined">ログイン</Button>
+          </Stack>
+          </Box>
         </main>
         <Footer />
       </div>
