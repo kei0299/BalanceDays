@@ -1,6 +1,6 @@
 import Header from "@/components/header";
 import Footer from "@/components/footerTop";
-import styles from "@/styles/Home.module.css";
+// import styles from "@/styles/Home.module.css";
 import { Button } from "@mui/material";
 
 export default function Home() {
