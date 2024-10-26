@@ -1,5 +1,5 @@
 import * as React from "react";
-import { AppBar, Toolbar, Box, CssBaseline } from "@mui/material";
+import { AppBar, Toolbar, Box, CssBaseline, Typography } from "@mui/material";
 import Link from "next/link";
 
 export default function BottomAppBar() {
@@ -13,11 +13,21 @@ export default function BottomAppBar() {
       >
         <Toolbar>
           <Box sx={{ flexGrow: 1 }} />
-          <Link href="/" style={{ color: "#ffffff", marginRight: "20px" }}>
-            利用規約
+          <Link href="/" style={{ marginRight: "20px" }}>
+            <Typography 
+              variant="body2" 
+              sx={{ color: "#ffffff", fontSize: { xs: '0.8rem', sm: '1rem' } }}
+            >
+              利用規約
+            </Typography>
           </Link>
-          <Link href="/" style={{ color: "#ffffff" }}>
-            プライバシーポリシー
+          <Link href="/">
+            <Typography 
+              variant="body2" 
+              sx={{ color: "#ffffff", fontSize: { xs: '0.8rem', sm: '1rem' } }}
+            >
+              プライバシーポリシー
+            </Typography>
           </Link>
         </Toolbar>
       </AppBar>

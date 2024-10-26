@@ -9,7 +9,7 @@ export default function MenuAppBar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" elevation={0} style={{ color: "#ffffff", backgroundColor: "#9bc0ff" }}>
         <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
             BalanceDays
           </Typography>
         </Toolbar>
