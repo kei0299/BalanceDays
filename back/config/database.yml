@@ -20,7 +20,8 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: user
   password: password
-  host: dpg-csd3875umphs739cs1n0-a
+  # host: dpg-csd3875umphs739cs1n0-a
+  host: db
 
 development:
   <<: *default
