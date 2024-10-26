@@ -1,18 +1,20 @@
-import { ButtonHTMLAttributes, FC, ReactNode } from 'react';
+import { styled } from '@mui/material/styles';
+import Button from '@mui/material/Button';
 
-type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  children: ReactNode;
-};
+const CustomButton = styled(Button)(({ theme }) => ({
+  backgroundColor: 'purple',
+  color: 'white',
+  '&:hover': {
+    backgroundColor: 'darkviolet',
+  },
+}));
 
-const Button = ({ children, ...props }: Props) => {
+const MyComponent = () => {
   return (
-    <button
-      className="px-4 py-2 rounded bg-blue-500 text-white disabled:cursor-default disabled:opacity-50"
-      {...props}
-    >
-      {children}
-    </button>
+    <CustomButton variant="contained">
+      カスタムボタン
+    </CustomButton>
   );
 };
 
-export default Button;
+export default MyComponent;
