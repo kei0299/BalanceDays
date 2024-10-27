@@ -23,9 +23,11 @@ services:
       - db
     tty: true
     stdin_open: true
+    env_file: 
+      - .env
     environment:
-      - RAILS_ENV=development
-      - DATABASE_URL=postgres://<render_database_user>:<render_database_password>@<render_database_host>:5432/<render_database_name>
+      # - RAILS_ENV=development
+      - DATABASE_URL
   front:
     build:
       context: ./front/
