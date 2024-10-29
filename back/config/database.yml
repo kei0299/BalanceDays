@@ -5,12 +5,11 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:
-  # <<: *default
-  # database: app_development
-  # username: user
-  # password: password
-  # host: localhost
-    url: <%= ENV["RENDER_DATABASE_URL"] %>
+  <<: *default
+  database: app_development
+  username: user
+  password: password
+  host: db
 
 test:
   <<: *default
