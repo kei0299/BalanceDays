@@ -2,7 +2,7 @@ import Header from "@/components/headerTop";
 import Footer from "@/components/footerTop";
 import { Button, Stack,Box } from "@mui/material";
 
-export default function Home() {
+export default function Signup() {
   return (
     <>
       <Header />
@@ -20,10 +20,9 @@ export default function Home() {
         textAlign: 'center' // テキストを中央揃え
       }}
     >
-          <h1>サービス説明</h1>
+          <h1>新規作成</h1>
           <Stack spacing={2} direction="row">
-            <Button href="/signup" variant="outlined">新規作成</Button>
-            <Button href="/" variant="outlined">ログイン</Button>
+            <Button variant="outlined">新規作成</Button>
           </Stack>
           </Box>
         </main>
