@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 export default function MenuAppBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed" elevation={0} style={{ color: "#ffffff", backgroundColor: "#9bc0ff" }}>
+      <AppBar position="fixed" elevation={0} style={{ color: "#ffffff", backgroundColor: "BFD4F8" }}>
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             BalanceDays

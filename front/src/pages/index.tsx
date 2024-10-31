@@ -1,5 +1,5 @@
-import Header from "@/components/headerTop";
-import Footer from "@/components/footerTop";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { Button, Stack,Box } from "@mui/material";
 
 export default function Home() {
@@ -22,8 +22,8 @@ export default function Home() {
     >
           <h1>サービス説明</h1>
           <Stack spacing={2} direction="row">
-            <Button variant="outlined">新規作成</Button>
-            <Button variant="outlined">ログイン</Button>
+            <Button href="/signup" variant="outlined">新規作成</Button>
+            <Button href="/" variant="outlined">ログイン</Button>
           </Stack>
           </Box>
         </main>

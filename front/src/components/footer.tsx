@@ -8,7 +8,7 @@ export default function BottomAppBar() {
       <CssBaseline />
       <AppBar
         position="fixed"
-        style={{ color: "#ffffff", backgroundColor: "#9bc0ff" }}
+        style={{ color: "#ffffff", backgroundColor: "BFD4F8" }}
         sx={{ top: "auto", bottom: 0 }}
       >
         <Toolbar>
