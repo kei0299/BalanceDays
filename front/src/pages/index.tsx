@@ -1,5 +1,5 @@
-import Header from "@/components/headerTop";
-import Footer from "@/components/footerTop";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { Button, Stack,Box } from "@mui/material";
 
 export default function Home() {
