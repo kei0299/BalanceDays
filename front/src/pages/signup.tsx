@@ -39,7 +39,7 @@ export default function InputAdornments() {
     event.preventDefault();
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth`,
+        `https://myapp-7eck.onrender.com/v1/auth`,
         {
           method: "POST",
           headers: {
