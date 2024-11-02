@@ -14,11 +14,6 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LockIcon from "@mui/icons-material/Lock";
 import CheckIcon from "@mui/icons-material/Check";
 
-type User = {
-  email: string;
-  password: string;
-};
-
 export default function InputAdornments() {
   // 目のアイコンクリックイベント（パスワードの表示、非表示）
   const [showPassword, setShowPassword] = React.useState(false);
