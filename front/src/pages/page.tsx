@@ -56,7 +56,6 @@ export default function Home() {
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           placeholder="新しい投稿のタイトル"
-          className="mr-2 p-2 border"
         />
         <button type="submit" className="p-2 bg-blue-500 text-white">
           投稿する
