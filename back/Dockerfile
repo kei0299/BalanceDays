@@ -15,7 +15,7 @@ COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 
-RUN rails db:migrate
+RUN bin/rails db:migrate
 
 EXPOSE 3002
 
