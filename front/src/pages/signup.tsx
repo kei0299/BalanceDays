@@ -61,7 +61,7 @@ export default function InputAdornments() {
     // API
     try {
       const response = await fetch(
-        `https://myapp-three-rho.vercel.app//v1/auth`,
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth`,
         {
           method: "POST",
           headers: {
