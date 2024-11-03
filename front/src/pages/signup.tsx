@@ -37,9 +37,31 @@ export default function InputAdornments() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    // 必須フィールドチェック
+    if (!email || !password || !passwordConfirmation) {
+      alert("すべてのフィールドを入力してください");
+      return;
+    }
+
+    // パスワード一致チェック
+    if (password !== passwordConfirmation) {
+      alert("パスワードが一致しません");
+      console.log("入力されたパスワード:", password);
+      console.log("確認用パスワード:", passwordConfirmation);
+      return;
+    }
+
+    // パスワードの長さチェック
+    if (password.length < 6) {
+      alert("パスワードは6文字以上で入力してください。");
+      return;
+    }
+
+    // API
     try {
       const response = await fetch(
-        `https://myapp-7eck.onrender.com/v1/auth`,
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth`,
         {
           method: "POST",
           headers: {
@@ -53,6 +75,13 @@ export default function InputAdornments() {
         }
       );
       if (!response.ok) {
+        const errorData = await response.json();
+
+        if (errorData.errors && errorData.errors.email) {
+          alert("そのメールアドレスは既に使われています。");
+          return;
+        }
+        console.log(errorData);
         throw new Error("登録に失敗しました");
       }
       alert("登録が成功しました");
