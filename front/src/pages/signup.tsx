@@ -58,7 +58,7 @@ export default function InputAdornments() {
       return;
     }
 
-    // API
+    // railsAPI
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/v1/auth`,
