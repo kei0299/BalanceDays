@@ -64,6 +64,7 @@ export default function InputAdornments() {
         `${process.env.NEXT_PUBLIC_API_URL}/v1/auth`,
         {
           method: "POST",
+          mode: "no-cors",
           headers: {
             "Content-Type": "application/json",
           },
