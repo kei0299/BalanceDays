@@ -70,7 +70,7 @@ export default function InputAdornments() {
           body: JSON.stringify({
             email: email,
             password: password,
-            passwordConfirmation: passwordConfirmation,
+            password_confirmation: passwordConfirmation,
           }),
         }
       );
