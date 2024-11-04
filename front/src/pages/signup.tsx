@@ -55,7 +55,7 @@ export default function InputAdornments() {
     // パスワードの長さチェック
     if (password.length < 6) {
       alert("パスワードは6文字以上で入力してください。");
-      return;
+      return; 
     }
 
     // railsAPI
@@ -78,18 +78,57 @@ export default function InputAdornments() {
         const errorData = await response.json();
 
         if (errorData.errors && errorData.errors.email) {
-          alert("そのメールアドレスは既に使われています。");
+          
           return;
         }
         console.log(errorData);
         throw new Error("登録に失敗しました");
       }
       alert("登録が成功しました");
-      setEmail("");
-      setPassword("");
-      setPasswordConfirmation("");
+      
+      //　登録後の自動ログイン
+      try {
+        const loginResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_in`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: email,
+              password: password,
+            }),
+          }
+        );
+
+        if (!loginResponse.ok) {
+          throw new Error("ログインに失敗しました");
+        }
+
+        // トークンを取得して localStorage に保存
+        const accessToken = response.headers.get("access-token");
+        const client = response.headers.get("client");
+        const uid = response.headers.get("uid");
+  
+        if (accessToken && client && uid) {
+          localStorage.setItem("access-token", accessToken);
+          localStorage.setItem("client", client);
+          localStorage.setItem("uid", uid);
+        }
+  
+        alert("ログインしました");
+        setEmail("");
+        setPassword("");
+        setPasswordConfirmation("");
+      } catch (error) {
+        console.error(error);
+        alert("自動ログイン処理でエラーが発生しました");
+      }
+  
     } catch (error) {
       console.error(error);
+      alert("登録処理でエラーが発生しました");
     }
   };
 

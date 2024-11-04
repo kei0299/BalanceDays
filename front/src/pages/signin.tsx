@@ -29,7 +29,7 @@ export default function InputAdornments() {
     event.preventDefault();
   };
 
-  // ログイン
+  // ログイン機能
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
