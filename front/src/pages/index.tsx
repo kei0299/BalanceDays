@@ -23,7 +23,7 @@ export default function Home() {
           <h1>サービス説明</h1>
           <Stack spacing={2} direction="row">
             <Button href="/signup" variant="outlined">新規作成</Button>
-            <Button href="/" variant="outlined">ログイン</Button>
+            <Button href="/signin" variant="outlined">ログイン</Button>
           </Stack>
           </Box>
         </main>
