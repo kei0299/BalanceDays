@@ -29,16 +29,16 @@ export default function InputAdornments() {
     event.preventDefault();
   };
 
-  // 新規登録
+  // ログイン
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  // ログインボタン
+  const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
 
     // 必須フィールドチェック
-    if (!email || !password ) {
+    if (!email || !password) {
       alert("すべてのフィールドを入力してください");
       return;
     }
@@ -60,16 +60,68 @@ export default function InputAdornments() {
           },
           body: JSON.stringify({
             email: email,
-            password: password
+            password: password,
           }),
         }
       );
+
       if (!response.ok) {
         throw new Error("ログインに失敗しました");
       }
+      // トークンを取得して localStorage に保存
+      const accessToken = response.headers.get("access-token");
+      const client = response.headers.get("client");
+      const uid = response.headers.get("uid");
+
+      if (accessToken && client && uid) {
+        localStorage.setItem("access-token", accessToken);
+        localStorage.setItem("client", client);
+        localStorage.setItem("uid", uid);
+      }
+
       alert("ログインに成功しました");
       setEmail("");
       setPassword("");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // ログアウトボタン
+  const handleLogout = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+
+  // localStorage からトークンを取得
+  const accessToken = localStorage.getItem("access-token");
+  const client = localStorage.getItem("client");
+  const uid = localStorage.getItem("uid");
+
+    // railsAPI
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_out`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            "access-token": accessToken,
+            "client": client,
+            "uid": uid  
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("ログアウトに失敗しました");
+      }
+      localStorage.removeItem("access-token");
+      localStorage.removeItem("client");
+      localStorage.removeItem("uid");
+
+      alert("ログアウトしました");
     } catch (error) {
       console.error(error);
     }
@@ -115,9 +167,9 @@ export default function InputAdornments() {
                     パスワード
                   </InputLabel>
                   <Input
-                    id="confirm-password"
+                    id="password"
                     type={showPassword ? "text" : "password"}
-                    onChange={(e) => setPasswordConfirmation(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                     endAdornment={
                       <InputAdornment position="end">
                         <IconButton
@@ -138,8 +190,12 @@ export default function InputAdornments() {
                 </FormControl>
               </Box>
 
-              <Button type="submit" variant="outlined" onClick={handleSubmit}>
+              <Button type="submit" variant="outlined" onClick={handleLogin}>
                 ログインする
+              </Button>
+
+              <Button type="submit" variant="outlined" onClick={handleLogout}>
+                ログアウト
               </Button>
             </Box>
           </Box>
