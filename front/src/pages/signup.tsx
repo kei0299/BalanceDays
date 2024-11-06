@@ -121,6 +121,7 @@ export default function InputAdornments() {
         setEmail("");
         setPassword("");
         setPasswordConfirmation("");
+        window.location.href = "/home";
       } catch (error) {
         console.error(error);
         alert("自動ログイン処理でエラーが発生しました");
@@ -144,10 +145,10 @@ export default function InputAdornments() {
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center", // 垂直方向の中央揃え
-              alignItems: "center", // 水平方向の中央揃え
-              minHeight: "100vh", // 画面全体の高さ
-              textAlign: "center", // テキストを中央揃え
+              justifyContent: "center", 
+              alignItems: "center", 
+              minHeight: "100vh", 
+              textAlign: "center", 
             }}
           >
             <h1>新規作成</h1>
