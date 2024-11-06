@@ -1,8 +1,8 @@
 import Header from "@/components/header";
-import Footer from "@/components/footer";
-import { Button, Stack,Box } from "@mui/material";
+import FooterLogin from "@/components/footerLogin";
+import { Box } from "@mui/material";
 
-export default function Index() {
+export default function Home() {
   return (
     <>
       <Header />
@@ -15,19 +15,16 @@ export default function Index() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center', 
+        alignItems: 'center',
         minHeight: '100vh',
         textAlign: 'center'
       }}
     >
-          <h1>サービス説明</h1>
-          <Stack spacing={2} direction="row">
-            <Button href="/signup" variant="outlined">新規作成</Button>
-            <Button href="/signin" variant="outlined">ログイン</Button>
-          </Stack>
+          <h1>Home画面</h1>
+
           </Box>
         </main>
-        <Footer />
+        <FooterLogin />
       </div>
     </>
   );

@@ -82,6 +82,7 @@ export default function InputAdornments() {
       alert("ログインに成功しました");
       setEmail("");
       setPassword("");
+      window.location.href = "/home";
     } catch (error) {
       console.error(error);
     }
@@ -92,7 +93,7 @@ export default function InputAdornments() {
     event.preventDefault();
 
 
-  // localStorage からトークンを取得
+  // localStorageからトークンを取得
   const accessToken = localStorage.getItem("access-token");
   const client = localStorage.getItem("client");
   const uid = localStorage.getItem("uid");
