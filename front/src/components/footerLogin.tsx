@@ -7,7 +7,7 @@ import ListIcon from '@mui/icons-material/List';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Toolbar, CssBaseline } from "@mui/material";
+import { CssBaseline } from "@mui/material";
 
 export default function FooterLogin() {
   const [value, setValue] = React.useState(0);
