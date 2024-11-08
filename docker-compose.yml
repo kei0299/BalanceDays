@@ -26,8 +26,8 @@ services:
     env_file: 
       - .env
     environment:
-      # - RAILS_ENV=development
-      - DATABASE_URL
+      - RAILS_ENV=development
+      # - DATABASE_URL
   front:
     build:
       context: ./front/

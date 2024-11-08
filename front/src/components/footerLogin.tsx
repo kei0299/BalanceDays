@@ -13,7 +13,7 @@ export default function FooterLogin() {
   const [value, setValue] = React.useState(0);
 
   return (
-    <React.Fragment>
+    <>
       <CssBaseline />
         <Box
           position="fixed"
@@ -36,32 +36,32 @@ export default function FooterLogin() {
             <BottomNavigationAction
               label="Home"
               icon={<HomeIcon />}
-              sx={{ color: "#ffffff", backgroundColor: "#9bc0ff" }}
+              sx={{ color: "#ffffff", backgroundColor: "#9bc0ff", maxWidth: "none" }}
             />
 
             <BottomNavigationAction
               label="予算設定"
               icon={<ListIcon />}
-              sx={{ color: "#ffffff", backgroundColor: "#9bc0ff" }}
+              sx={{ color: "#ffffff", backgroundColor: "#9bc0ff", maxWidth: "none" }}
             />
             <BottomNavigationAction
               label="レポート"
               icon={<AssessmentIcon />}
-              sx={{ color: "#ffffff", backgroundColor: "#9bc0ff" }}
+              sx={{ color: "#ffffff", backgroundColor: "#9bc0ff", maxWidth: "none" }}
             />
             <BottomNavigationAction
               label="カレンダー"
               icon={<EditCalendarIcon />}
-              sx={{ color: "#ffffff", backgroundColor: "#9bc0ff" }}
+              sx={{ color: "#ffffff", backgroundColor: "#9bc0ff", maxWidth: "none" }}
             />
 
             <BottomNavigationAction
               label="設定"
               icon={<SettingsIcon />}
-              sx={{ color: "#ffffff", backgroundColor: "#9bc0ff" }}
+              sx={{ color: "#ffffff", backgroundColor: "#9bc0ff", maxWidth: "none" }}
             />
           </BottomNavigation>
         </Box>
-    </React.Fragment>
+    </>
   );
 }
