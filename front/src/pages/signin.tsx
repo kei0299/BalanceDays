@@ -98,10 +98,38 @@ export default function InputAdornments() {
   const client = localStorage.getItem("client");
   const uid = localStorage.getItem("uid");
 
-    // railsAPI
-    try {
+    // railsAPIログアウト
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_out`,
+  //       {
+  //         method: "DELETE",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           "access-token": accessToken,
+  //           "client": client,
+  //           "uid": uid  
+  //         }),
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error("ログアウトに失敗しました");
+  //     }
+  //     localStorage.removeItem("access-token");
+  //     localStorage.removeItem("client");
+  //     localStorage.removeItem("uid");
+
+  //     alert("ログアウトしました");
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+
+      try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_out`,
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/session`,
         {
           method: "DELETE",
           headers: {
@@ -118,6 +146,7 @@ export default function InputAdornments() {
       if (!response.ok) {
         throw new Error("ログアウトに失敗しました");
       }
+      console.log(localStorage);
       localStorage.removeItem("access-token");
       localStorage.removeItem("client");
       localStorage.removeItem("uid");
@@ -126,6 +155,7 @@ export default function InputAdornments() {
     } catch (error) {
       console.error(error);
     }
+
   };
 
   return (
@@ -140,10 +170,10 @@ export default function InputAdornments() {
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center", // 垂直方向の中央揃え
-              alignItems: "center", // 水平方向の中央揃え
-              minHeight: "100vh", // 画面全体の高さ
-              textAlign: "center", // テキストを中央揃え
+              justifyContent: "center", 
+              alignItems: "center", 
+              minHeight: "100vh",
+              textAlign: "center",
             }}
           >
             <h1>ログイン</h1>
