@@ -2,6 +2,7 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { Button, Box } from "@mui/material";
 import React, { useState } from "react";
+import { saveAuthHeaders } from "../utils/authHeaders";
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -49,7 +50,7 @@ export default function InputAdornments() {
       return;
     }
 
-    // railsAPI
+    // railsAPI_ログイン
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_in`,
@@ -69,15 +70,7 @@ export default function InputAdornments() {
         throw new Error("ログインに失敗しました");
       }
       // トークンを取得して localStorage に保存
-      const accessToken = response.headers.get("access-token");
-      const client = response.headers.get("client");
-      const uid = response.headers.get("uid");
-
-      if (accessToken && client && uid) {
-        localStorage.setItem("access-token", accessToken);
-        localStorage.setItem("client", client);
-        localStorage.setItem("uid", uid);
-      }
+      saveAuthHeaders(response);
 
       alert("ログインに成功しました");
       setEmail("");
@@ -92,44 +85,15 @@ export default function InputAdornments() {
   const handleLogout = async (event: React.FormEvent) => {
     event.preventDefault();
 
-
-  // localStorageからトークンを取得
-  const accessToken = localStorage.getItem("access-token");
-  const client = localStorage.getItem("client");
-  const uid = localStorage.getItem("uid");
+    // localStorageからトークンを取得
+    const accessToken = localStorage.getItem("access-token");
+    const client = localStorage.getItem("client");
+    const uid = localStorage.getItem("uid");
 
     // railsAPIログアウト
-  //   try {
-  //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_out`,
-  //       {
-  //         method: "DELETE",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           "access-token": accessToken,
-  //           "client": client,
-  //           "uid": uid  
-  //         }),
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("ログアウトに失敗しました");
-  //     }
-  //     localStorage.removeItem("access-token");
-  //     localStorage.removeItem("client");
-  //     localStorage.removeItem("uid");
-
-  //     alert("ログアウトしました");
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-
-      try {
+    try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/session`,
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_out`,
         {
           method: "DELETE",
           headers: {
@@ -137,8 +101,8 @@ export default function InputAdornments() {
           },
           body: JSON.stringify({
             "access-token": accessToken,
-            "client": client,
-            "uid": uid  
+            client: client,
+            uid: uid,
           }),
         }
       );
@@ -146,7 +110,6 @@ export default function InputAdornments() {
       if (!response.ok) {
         throw new Error("ログアウトに失敗しました");
       }
-      console.log(localStorage);
       localStorage.removeItem("access-token");
       localStorage.removeItem("client");
       localStorage.removeItem("uid");
@@ -155,7 +118,6 @@ export default function InputAdornments() {
     } catch (error) {
       console.error(error);
     }
-
   };
 
   return (
@@ -170,8 +132,8 @@ export default function InputAdornments() {
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center", 
-              alignItems: "center", 
+              justifyContent: "center",
+              alignItems: "center",
               minHeight: "100vh",
               textAlign: "center",
             }}

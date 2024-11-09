@@ -2,6 +2,7 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { Button, Box } from "@mui/material";
 import React, { useState } from "react";
+import { saveAuthHeaders } from "../utils/authHeaders";
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -107,15 +108,7 @@ export default function InputAdornments() {
         }
 
         // トークンを取得して localStorage に保存
-        const accessToken = response.headers.get("access-token");
-        const client = response.headers.get("client");
-        const uid = response.headers.get("uid");
-  
-        if (accessToken && client && uid) {
-          localStorage.setItem("access-token", accessToken);
-          localStorage.setItem("client", client);
-          localStorage.setItem("uid", uid);
-        }
+        saveAuthHeaders(response);
   
         alert("ログインしました");
         setEmail("");
