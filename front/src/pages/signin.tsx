@@ -70,51 +70,21 @@ export default function InputAdornments() {
         throw new Error("ログインに失敗しました");
       }
       // トークンを取得して localStorage に保存
-      saveAuthHeaders(response);
+        const accessToken = response.headers.get("access-token");
+        const client = response.headers.get("client");
+        const uid = response.headers.get("uid");
+      
+        if (accessToken && client && uid) {
+          localStorage.setItem("access-token", accessToken);
+          localStorage.setItem("client", client);
+          localStorage.setItem("uid", uid);
+        }
+      
 
       alert("ログインに成功しました");
       setEmail("");
       setPassword("");
       window.location.href = "/home";
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  // ログアウトボタン
-  const handleLogout = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    // localStorageからトークンを取得
-    const accessToken = localStorage.getItem("access-token");
-    const client = localStorage.getItem("client");
-    const uid = localStorage.getItem("uid");
-
-    // railsAPIログアウト
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_out`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            "access-token": accessToken,
-            client: client,
-            uid: uid,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("ログアウトに失敗しました");
-      }
-      localStorage.removeItem("access-token");
-      localStorage.removeItem("client");
-      localStorage.removeItem("uid");
-
-      alert("ログアウトしました");
     } catch (error) {
       console.error(error);
     }
@@ -187,7 +157,7 @@ export default function InputAdornments() {
                 ログインする
               </Button>
 
-              <Button type="submit" variant="outlined" onClick={handleLogout}>
+              <Button type="submit" variant="outlined" >
                 ログアウト
               </Button>
             </Box>

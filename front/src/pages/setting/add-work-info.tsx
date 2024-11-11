@@ -21,7 +21,7 @@ export default function Setting() {
         textAlign: 'center'
       }}
     >
-          <h1>設定画面</h1>
+          <h1>勤務先登録画面</h1>
 
           </Box>
         </main>
