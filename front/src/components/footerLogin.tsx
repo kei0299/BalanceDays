@@ -58,6 +58,7 @@ export default function FooterLogin() {
         localStorage.removeItem("uid");
   
         alert("ログアウトしました");
+        window.location.href = "/";
       } catch (error) {
         console.error(error);
       }
@@ -139,7 +140,7 @@ export default function FooterLogin() {
               backgroundColor: "#9bc0ff",
               maxWidth: "none",
             }}
-          />
+          /></BottomNavigation>
           <Menu
             id="basic-menu"
             anchorEl={anchorEl}
@@ -170,7 +171,7 @@ export default function FooterLogin() {
               <Link href="/">ログアウト</Link>
             </MenuItem>
           </Menu>
-        </BottomNavigation>
+        
       </Box>
     </>
   );

@@ -107,8 +107,15 @@ export default function InputAdornments() {
           throw new Error("ログインに失敗しました");
         }
 
-        // トークンを取得して localStorage に保存
-        saveAuthHeaders(response);
+        const accessToken = response.headers.get("access-token");
+        const client = response.headers.get("client");
+        const uid = response.headers.get("uid");
+      
+        if (accessToken && client && uid) {
+          localStorage.setItem("access-token", accessToken);
+          localStorage.setItem("client", client);
+          localStorage.setItem("uid", uid);
+        }
   
         alert("ログインしました");
         setEmail("");
