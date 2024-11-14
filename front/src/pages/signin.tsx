@@ -2,7 +2,6 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { Button, Box } from "@mui/material";
 import React, { useState } from "react";
-import { saveAuthHeaders } from "../utils/authHeaders";
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -13,6 +12,7 @@ import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LockIcon from "@mui/icons-material/Lock";
+import { setCookie } from "nookies";
 
 export default function InputAdornments() {
   // 目のアイコンクリックイベント（パスワードの表示、非表示）
@@ -69,20 +69,36 @@ export default function InputAdornments() {
       if (!response.ok) {
         throw new Error("ログインに失敗しました");
       }
-      // トークンを取得して localStorage に保存
       const accessToken = response.headers.get("access-token");
       const client = response.headers.get("client");
       const uid = response.headers.get("uid");
 
+      const setAccessToken = (
+        accessToken: string,
+        client: string,
+        uid: string
+      ) => {
+        setCookie(null, "access-token", accessToken, {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+        }); // 30日間の有効期限
+        setCookie(null, "client", client, {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+        });
+        setCookie(null, "uid", uid, { maxAge: 30 * 24 * 60 * 60, path: "/" });
+      };
+
       if (accessToken && client && uid) {
-        localStorage.setItem("access-token", accessToken);
-        localStorage.setItem("client", client);
-        localStorage.setItem("uid", uid);
+        // クッキーにアクセス・クライアント・ユーザーIDを格納
+        setAccessToken(accessToken, client, uid);
+        console.log(setAccessToken);
+        
+        alert("ログインに成功しました");
+        setEmail("");
+        setPassword("");
       }
 
-      alert("ログインに成功しました");
-      setEmail("");
-      setPassword("");
       window.location.href = "/home";
     } catch (error) {
       console.error(error);

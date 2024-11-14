@@ -2,7 +2,6 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { Button, Box } from "@mui/material";
 import React, { useState } from "react";
-import { saveAuthHeaders } from "../utils/authHeaders";
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -14,6 +13,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LockIcon from "@mui/icons-material/Lock";
 import CheckIcon from "@mui/icons-material/Check";
+import { setCookie } from "nookies";
 
 export default function InputAdornments() {
   // 目のアイコンクリックイベント（パスワードの表示、非表示）
@@ -56,7 +56,7 @@ export default function InputAdornments() {
     // パスワードの長さチェック
     if (password.length < 6) {
       alert("パスワードは6文字以上で入力してください。");
-      return; 
+      return;
     }
 
     // railsAPI
@@ -79,14 +79,13 @@ export default function InputAdornments() {
         const errorData = await response.json();
 
         if (errorData.errors && errorData.errors.email) {
-          
           return;
         }
         console.log(errorData);
         throw new Error("登録に失敗しました");
       }
       alert("登録が成功しました");
-      
+
       //　登録後の自動ログイン
       try {
         const loginResponse = await fetch(
@@ -110,13 +109,29 @@ export default function InputAdornments() {
         const accessToken = response.headers.get("access-token");
         const client = response.headers.get("client");
         const uid = response.headers.get("uid");
-      
+
+        const setAccessToken = (
+          accessToken: string,
+          client: string,
+          uid: string
+        ) => {
+          setCookie(null, "access-token", accessToken, {
+            maxAge: 30 * 24 * 60 * 60,
+            path: "/",
+          }); // 30日間の有効期限
+          setCookie(null, "client", client, {
+            maxAge: 30 * 24 * 60 * 60,
+            path: "/",
+          });
+          setCookie(null, "uid", uid, { maxAge: 30 * 24 * 60 * 60, path: "/" });
+        };
+
         if (accessToken && client && uid) {
-          localStorage.setItem("access-token", accessToken);
-          localStorage.setItem("client", client);
-          localStorage.setItem("uid", uid);
+          // クッキーにアクセス・クライアント・ユーザーIDを格納
+          setAccessToken(accessToken, client, uid);
+          console.log(setAccessToken);
         }
-  
+
         alert("ログインしました");
         setEmail("");
         setPassword("");
@@ -126,7 +141,6 @@ export default function InputAdornments() {
         console.error(error);
         alert("自動ログイン処理でエラーが発生しました");
       }
-  
     } catch (error) {
       console.error(error);
       alert("登録処理でエラーが発生しました");
@@ -145,10 +159,10 @@ export default function InputAdornments() {
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center", 
-              alignItems: "center", 
-              minHeight: "100vh", 
-              textAlign: "center", 
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "100vh",
+              textAlign: "center",
             }}
           >
             <h1>新規作成</h1>

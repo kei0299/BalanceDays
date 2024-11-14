@@ -11,6 +11,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { CssBaseline } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { parseCookies, destroyCookie } from 'nookies'
 
 export default function FooterLogin() {
   const [value, setValue] = React.useState(0);
@@ -28,10 +29,11 @@ export default function FooterLogin() {
     const handleLogout = async (event: React.FormEvent) => {
       event.preventDefault();
   
-      // localStorageからトークンを取得
-      const accessToken = localStorage.getItem("access-token");
-      const client = localStorage.getItem("client");
-      const uid = localStorage.getItem("uid");
+    // クッキーからトークンを取得
+    const cookies = parseCookies();
+    const accessToken = cookies["access-token"];
+    const client = cookies["client"];
+    const uid = cookies["uid"];
   
       // railsAPIログアウト
       try {
@@ -53,10 +55,11 @@ export default function FooterLogin() {
         if (!response.ok) {
           throw new Error("ログアウトに失敗しました");
         }
-        localStorage.removeItem("access-token");
-        localStorage.removeItem("client");
-        localStorage.removeItem("uid");
-  
+
+        destroyCookie(null, "access-token")
+        destroyCookie(null, "client")
+        destroyCookie(null, "uid")
+
         alert("ログアウトしました");
         window.location.href = "/";
       } catch (error) {
