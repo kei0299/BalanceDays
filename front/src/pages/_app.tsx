@@ -1,32 +1,29 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
-import { NextPageContext } from "next";
 import { parseCookies } from "nookies";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { checkSession } from "@/utils/auth/checkSession";
 
-const MyApp = ({ Component, pageProps }: AppProps, ctx: NextPageContext) => {
+const MyApp = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
-  const cookies = parseCookies(ctx);
 
   useEffect(() => {
-    const handleAuthCheck = async () => {
+    const AuthCheck = async () => {
       const result = await checkSession();
-      console.log(result);
       if (!result) {
         window.location.href = "/signin";
       }
     };
 
-    router.beforePopState(({ url, as }) => {
+    router.beforePopState(({ url }) => {
       if (
         url !== "/" &&
         url !== "/_error" &&
         url !== "/signin" &&
         url !== "/signup"
       ) {
-        handleAuthCheck(); // 非同期関数を呼び出し
+        AuthCheck(); // 非同期関数を呼び出し
         return false; // `beforePopState`では`false`を返し、リダイレクト処理を非同期で行う
       }
       return true;

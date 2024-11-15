@@ -34,7 +34,7 @@ export default function FooterLogin() {
     const accessToken = cookies["accessToken"];
     const client = cookies["client"];
     const uid = cookies["uid"];
-    console.log(cookies.accessToken);
+
       // railsAPIログアウト
       try {
         const response = await fetch(
