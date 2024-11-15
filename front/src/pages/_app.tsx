@@ -1,45 +1,72 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
-import React, { useEffect, useState } from "react";
+import { NextPageContext } from "next";
+import { parseCookies } from "nookies";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { checkSession } from "@/utils/auth/checkSession";
 
-export default function App({ Component, pageProps }: AppProps) {
+const MyApp = ({ Component, pageProps }: AppProps, ctx: NextPageContext) => {
   const router = useRouter();
-  const [sessionData, setSessionData] = useState<any>(null);
+  const cookies = parseCookies(ctx);
 
   useEffect(() => {
-    const fetchSessionData = async () => {
-      try {
-        const data = await checkSession(); // checkSessionの結果を取得
-        if (!data.is_login){
-          window.location.href = "/signin";
-        }
-        setSessionData(data); // セッション情報を状態に保存
-      } catch (error) {
-        console.error("セッションチェックエラー", error);
+    const handleAuthCheck = async () => {
+      const result = await checkSession();
+      console.log(result);
+      if (!result) {
+        window.location.href = "/signin";
       }
     };
 
-    fetchSessionData(); // 初回レンダリング時にセッション情報を取得
+    router.beforePopState(({ url, as }) => {
+      if (
+        url !== "/" &&
+        url !== "/_error" &&
+        url !== "/signin" &&
+        url !== "/signup"
+      ) {
+        handleAuthCheck(); // 非同期関数を呼び出し
+        return false; // `beforePopState`では`false`を返し、リダイレクト処理を非同期で行う
+      }
+      return true;
+    });
+  }, [router]);
 
-    // router.beforePopState(({ url }) => {
-    //   // 認証チェックを行わない画面の設定
-    //   if (
-    //     url !== "/" &&
-    //     url !== "/_error" &&
-    //     url !== "/signin" &&
-    //     url !== "/signup"
-    //   ) {
-    //     // 非同期処理を含まないコールバックを返す
-    //     if (!sessionData) {
-    //       window.location.href = "/signin";
-    //       return false;
-    //     }
-    //   }
-    //   return true;
-    // });
-  }, []);
+  const component =
+    typeof pageProps === "undefined" ? null : <Component {...pageProps} />;
 
-  return <Component {...pageProps} />;
-}
+  return component;
+};
+
+MyApp.getInitialProps = async (appContext: any) => {
+  const cookies = parseCookies(appContext.ctx);
+  if (
+    appContext.ctx.pathname !== "/" &&
+    appContext.ctx.pathname !== "/_error" &&
+    appContext.ctx.pathname !== "signup" &&
+    appContext.ctx.pathname !== "/signin"
+  ) {
+    if (typeof cookies.accessToken === "undefined") {
+      const isServer = typeof window === "undefined";
+      if (isServer) {
+        console.log("in ServerSide");
+        appContext.ctx.res.statusCode = 302;
+        appContext.ctx.res.setHeader("Location", "/signin");
+        return {};
+      } else {
+        console.log("in ClientSide");
+      }
+    }
+  }
+  return {
+    pageProps: {
+      ...(appContext.Component.getInitialProps
+        ? await appContext.Component.getInitialProps(appContext.ctx)
+        : {}),
+      pathname: appContext.ctx.pathname,
+    },
+  };
+};
+
+export default MyApp;

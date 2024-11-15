@@ -31,10 +31,10 @@ export default function FooterLogin() {
   
     // クッキーからトークンを取得
     const cookies = parseCookies();
-    const accessToken = cookies["access-token"];
+    const accessToken = cookies["accessToken"];
     const client = cookies["client"];
     const uid = cookies["uid"];
-  
+    console.log(cookies.accessToken);
       // railsAPIログアウト
       try {
         const response = await fetch(
@@ -56,7 +56,7 @@ export default function FooterLogin() {
           throw new Error("ログアウトに失敗しました");
         }
 
-        destroyCookie(null, "access-token")
+        destroyCookie(null, "accessToken")
         destroyCookie(null, "client")
         destroyCookie(null, "uid")
 

@@ -5,7 +5,7 @@ export const checkSession = async () => {
   try {
     // クッキーからトークンを取得
     const cookies = parseCookies();
-    const accessToken = cookies["access-token"];
+    const accessToken = cookies["accessToken"];
     const client = cookies["client"];
     const uid = cookies["uid"];
 

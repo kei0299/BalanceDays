@@ -78,7 +78,7 @@ export default function InputAdornments() {
         client: string,
         uid: string
       ) => {
-        setCookie(null, "access-token", accessToken, {
+        setCookie(null, "accessToken", accessToken, {
           maxAge: 30 * 24 * 60 * 60,
           path: "/",
         }); // 30日間の有効期限
@@ -92,7 +92,6 @@ export default function InputAdornments() {
       if (accessToken && client && uid) {
         // クッキーにアクセス・クライアント・ユーザーIDを格納
         setAccessToken(accessToken, client, uid);
-        console.log(setAccessToken);
         
         alert("ログインに成功しました");
         setEmail("");
