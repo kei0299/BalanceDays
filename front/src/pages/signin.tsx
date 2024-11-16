@@ -170,10 +170,6 @@ export default function InputAdornments() {
               <Button type="submit" variant="outlined" onClick={handleLogin}>
                 ログインする
               </Button>
-
-              <Button type="submit" variant="outlined">
-                ログアウト
-              </Button>
             </Box>
           </Box>
         </main>
