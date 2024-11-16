@@ -12,6 +12,7 @@ import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LockIcon from "@mui/icons-material/Lock";
+import { setCookie } from "nookies";
 
 export default function InputAdornments() {
   // 目のアイコンクリックイベント（パスワードの表示、非表示）
@@ -49,7 +50,7 @@ export default function InputAdornments() {
       return;
     }
 
-    // railsAPI
+    // railsAPI_ログイン
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_in`,
@@ -68,94 +69,39 @@ export default function InputAdornments() {
       if (!response.ok) {
         throw new Error("ログインに失敗しました");
       }
-      // トークンを取得して localStorage に保存
       const accessToken = response.headers.get("access-token");
       const client = response.headers.get("client");
       const uid = response.headers.get("uid");
 
+      const setAccessToken = (
+        accessToken: string,
+        client: string,
+        uid: string
+      ) => {
+        setCookie(null, "accessToken", accessToken, {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+        }); // 30日間の有効期限
+        setCookie(null, "client", client, {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+        });
+        setCookie(null, "uid", uid, { maxAge: 30 * 24 * 60 * 60, path: "/" });
+      };
+
       if (accessToken && client && uid) {
-        localStorage.setItem("access-token", accessToken);
-        localStorage.setItem("client", client);
-        localStorage.setItem("uid", uid);
+        // クッキーにアクセス・クライアント・ユーザーIDを格納
+        setAccessToken(accessToken, client, uid);
+        
+        alert("ログインに成功しました");
+        setEmail("");
+        setPassword("");
       }
 
-      alert("ログインに成功しました");
-      setEmail("");
-      setPassword("");
       window.location.href = "/home";
     } catch (error) {
       console.error(error);
     }
-  };
-
-  // ログアウトボタン
-  const handleLogout = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-
-  // localStorageからトークンを取得
-  const accessToken = localStorage.getItem("access-token");
-  const client = localStorage.getItem("client");
-  const uid = localStorage.getItem("uid");
-
-    // railsAPIログアウト
-  //   try {
-  //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_out`,
-  //       {
-  //         method: "DELETE",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           "access-token": accessToken,
-  //           "client": client,
-  //           "uid": uid  
-  //         }),
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("ログアウトに失敗しました");
-  //     }
-  //     localStorage.removeItem("access-token");
-  //     localStorage.removeItem("client");
-  //     localStorage.removeItem("uid");
-
-  //     alert("ログアウトしました");
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-
-      try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/session`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            "access-token": accessToken,
-            "client": client,
-            "uid": uid  
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("ログアウトに失敗しました");
-      }
-      console.log(localStorage);
-      localStorage.removeItem("access-token");
-      localStorage.removeItem("client");
-      localStorage.removeItem("uid");
-
-      alert("ログアウトしました");
-    } catch (error) {
-      console.error(error);
-    }
-
   };
 
   return (
@@ -170,8 +116,8 @@ export default function InputAdornments() {
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center", 
-              alignItems: "center", 
+              justifyContent: "center",
+              alignItems: "center",
               minHeight: "100vh",
               textAlign: "center",
             }}
@@ -225,7 +171,7 @@ export default function InputAdornments() {
                 ログインする
               </Button>
 
-              <Button type="submit" variant="outlined" onClick={handleLogout}>
+              <Button type="submit" variant="outlined">
                 ログアウト
               </Button>
             </Box>

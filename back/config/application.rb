@@ -16,7 +16,7 @@ module App
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     
     config.autoload_lib(ignore: %w[assets tasks])
-    config.session_store :cookie_store, key: '_your_app_session'
+    config.session_store :cookie_store, key: '_your_app_session', expire_after: 2.weeks
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
     
