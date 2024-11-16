@@ -4,6 +4,7 @@ import { parseCookies } from "nookies";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { checkSession } from "@/utils/auth/checkSession";
+import { AppContext } from "next/app";
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -36,8 +37,11 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   return component;
 };
 
-MyApp.getInitialProps = async (appContext: any) => {
+// 型を適切に設定
+MyApp.getInitialProps = async (appContext: AppContext) => {
   const cookies = parseCookies(appContext.ctx);
+  
+  // クライアントサイドでもサーバーサイドでも適切に処理を行う
   if (
     appContext.ctx.pathname !== "/" &&
     appContext.ctx.pathname !== "/_error" &&
@@ -48,14 +52,20 @@ MyApp.getInitialProps = async (appContext: any) => {
       const isServer = typeof window === "undefined";
       if (isServer) {
         console.log("in ServerSide");
-        appContext.ctx.res.statusCode = 302;
-        appContext.ctx.res.setHeader("Location", "/signin");
-        return {};
+
+        // サーバーサイドでのみ res を設定
+        if (appContext.ctx.res) {
+          appContext.ctx.res.statusCode = 302;
+          appContext.ctx.res.setHeader("Location", "/signin");
+        }
+
+        return {}; // サーバーサイドリダイレクト処理
       } else {
         console.log("in ClientSide");
       }
     }
   }
+
   return {
     pageProps: {
       ...(appContext.Component.getInitialProps
