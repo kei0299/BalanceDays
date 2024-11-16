@@ -87,46 +87,6 @@ export default function InputAdornments() {
     }
   };
 
-  // ログアウトボタン
-  const handleLogout = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-
-  // localStorage からトークンを取得
-  const accessToken = localStorage.getItem("access-token");
-  const client = localStorage.getItem("client");
-  const uid = localStorage.getItem("uid");
-
-    // railsAPI
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_out`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            "access-token": accessToken,
-            "client": client,
-            "uid": uid  
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("ログアウトに失敗しました");
-      }
-      localStorage.removeItem("access-token");
-      localStorage.removeItem("client");
-      localStorage.removeItem("uid");
-
-      alert("ログアウトしました");
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
     <>
       <Header />
@@ -194,9 +154,6 @@ export default function InputAdornments() {
                 ログインする
               </Button>
 
-              <Button type="submit" variant="outlined" onClick={handleLogout}>
-                ログアウト
-              </Button>
             </Box>
           </Box>
         </main>
