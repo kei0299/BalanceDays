@@ -119,6 +119,13 @@ const BalanceInput = () => {
             </Box>
 
             <Stack spacing={2} direction="row">
+              <Image
+                src="/image/caution.png"
+                alt="Sample Image"
+                width={100}
+                height={100}
+                objectFit="contain"
+              />
               {/* 注意レベル通知 */}
               <Box sx={{ display: "flex", alignItems: "flex-end", mb: 2 }}>
                 <Box sx={{ minWidth: 150 }}>
@@ -143,13 +150,22 @@ const BalanceInput = () => {
                   </FormControl>
                 </Box>
               </Box>
+            </Stack>
 
+            <Stack spacing={2} direction="row">
               {/* 警告レベル通知 */}
+              <Image
+                src="/image/warning.png"
+                alt="Sample Image"
+                width={100}
+                height={100}
+                objectFit="contain"
+              />
               <Box sx={{ display: "flex", alignItems: "flex-end", mb: 2 }}>
                 <Box sx={{ minWidth: 150 }}>
                   <FormControl fullWidth>
                     <InputLabel id="select-warning-label">
-                      注意レベル通知
+                      警告レベル通知
                     </InputLabel>
                     <Select
                       labelId="select-warning-label"
