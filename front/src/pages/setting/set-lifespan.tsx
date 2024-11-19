@@ -12,6 +12,14 @@ import { parseCookies } from "nookies";
 import React, { useEffect, useState } from "react";
 import { checkSession } from "@/utils/auth/checkSession";
 
+type SessionData = {
+  data: {
+    balance: number | null;
+    caution_lv: number | null;
+    warning_lv: number | null;
+  } | null;
+};
+
 const BalanceInput = () => {
   const [balance, setBalance] = useState("");
   const [caution, setCaution] = useState<number>(1);
@@ -83,7 +91,7 @@ const BalanceInput = () => {
     }
   };
 
-  const [sessionData, setSessionData] = useState<any>(null); // セッションデータを状態として管理
+  const [sessionData, setSessionData] = useState<SessionData | null>(null); // セッションデータを状態として管理
 
   useEffect(() => {
     // 非同期関数を定義してセッション情報を取得
