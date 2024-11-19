@@ -1,11 +1,10 @@
 import { Box } from "@mui/material";
 import Header from "@/components/header";
 import FooterLogin from "@/components/footerLogin";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { checkSession } from "@/utils/auth/checkSession";
 
 export default function Home() {
-  const [sessionData, setSessionData] = useState<any>(null); // セッションデータを状態として管理
 
   useEffect(() => {
     // 非同期関数を定義してセッション情報を取得
@@ -13,7 +12,6 @@ export default function Home() {
       try {
         const data = await checkSession(); // checkSessionの結果を取得
         console.log(data); // データをログに出力
-        setSessionData(data); // セッション情報を状態に保存
       } catch (error) {
         console.error("セッションチェックエラー", error);
       }
@@ -39,14 +37,7 @@ export default function Home() {
             }}
           >
             <h1>Home画面</h1>
-            {sessionData ? (
-              <div>
-                <p>ユーザー名: {sessionData.username}</p>
-                <p>メールアドレス: {sessionData.email}</p>
-              </div>
-            ) : (
-              <p>セッション情報がありません。</p>
-            )}
+
           </Box>
         </main>
         <FooterLogin />
