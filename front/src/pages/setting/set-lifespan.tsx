@@ -7,14 +7,15 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import React, { useState } from "react";
 import Image from "next/image";
 import { parseCookies } from "nookies";
+import React, { useEffect, useState } from "react";
+import { checkSession } from "@/utils/auth/checkSession";
 
 const BalanceInput = () => {
   const [balance, setBalance] = useState("");
-  const [caution, setCaution] = useState<number>(10);
-  const [warning, setWarning] = useState<number>(10);
+  const [caution, setCaution] = useState<number>(1);
+  const [warning, setWarning] = useState<number>(1);
 
   const selectCaution = (event: SelectChangeEvent<unknown>) => {
     setCaution(Number(event.target.value)); // 'unknown' から 'number' にキャスト
@@ -76,10 +77,38 @@ const BalanceInput = () => {
         throw new Error("設定に失敗しました");
       }
       alert("設定しました");
+      window.location.reload()
     } catch (error) {
       console.error(error);
     }
   };
+
+  const [sessionData, setSessionData] = useState<any>(null); // セッションデータを状態として管理
+
+  useEffect(() => {
+    // 非同期関数を定義してセッション情報を取得
+    const fetchSessionData = async () => {
+      try {
+        const data = await checkSession(); // checkSessionの結果を取得
+        setSessionData(data); // セッション情報を状態に保存
+
+        //　初期値の設定
+        if (data.data?.balance) {
+          setBalance(formatBalance(data.data.balance.toString()));
+        }
+        if (data.data?.caution_lv) {
+          setCaution(data.data.caution_lv);
+        }
+        if (data.data?.warning_lv) {
+          setWarning(data.data.warning_lv);
+        }
+      } catch (error) {
+        console.error("セッションチェックエラー", error);
+      }
+    };
+
+    fetchSessionData(); // 初回レンダリング時にセッション情報を取得
+  }, []);
 
   return (
     <>
@@ -99,6 +128,28 @@ const BalanceInput = () => {
             }}
           >
             <h1>生存期間設定</h1>
+
+            {/* セッションデータを表示 */}
+            <div style={{ marginBottom: "20px" }}>
+              {sessionData ? (
+                <ul>
+                  <li>
+                    <strong>貯金残高:</strong>{" "}
+                    {sessionData.data?.balance || "設定なし"}
+                  </li>
+                  <li>
+                    <strong>注意レベル:</strong>{" "}
+                    {sessionData.data?.caution_lv || "設定なし"}
+                  </li>
+                  <li>
+                    <strong>警告レベル:</strong>{" "}
+                    {sessionData.data?.warning_lv || "設定なし"}
+                  </li>
+                </ul>
+              ) : (
+                <p>セッションデータを取得中...</p>
+              )}
+            </div>
 
             <Box sx={{ display: "flex", alignItems: "flex-end", mb: 2 }}>
               <FormControl fullWidth sx={{ m: 1 }}>
@@ -124,7 +175,7 @@ const BalanceInput = () => {
                 alt="Sample Image"
                 width={100}
                 height={100}
-                objectFit="contain"
+                priority
               />
               {/* 注意レベル通知 */}
               <Box sx={{ display: "flex", alignItems: "flex-end", mb: 2 }}>
@@ -142,7 +193,7 @@ const BalanceInput = () => {
                       MenuProps={MenuProps}
                     >
                       {[...Array(12)].map((_, index) => (
-                        <MenuItem key={index + 1} value={(index + 1) * 10}>
+                        <MenuItem key={index + 1} value={(index + 1)}>
                           {index + 1}ヶ月
                         </MenuItem>
                       ))}
@@ -159,7 +210,6 @@ const BalanceInput = () => {
                 alt="Sample Image"
                 width={100}
                 height={100}
-                objectFit="contain"
               />
               <Box sx={{ display: "flex", alignItems: "flex-end", mb: 2 }}>
                 <Box sx={{ minWidth: 150 }}>
@@ -176,7 +226,7 @@ const BalanceInput = () => {
                       MenuProps={MenuProps}
                     >
                       {[...Array(12)].map((_, index) => (
-                        <MenuItem key={index + 1} value={(index + 1) * 10}>
+                        <MenuItem key={index + 1} value={(index + 1)}>
                           {index + 1}ヶ月
                         </MenuItem>
                       ))}
