@@ -1,22 +1,26 @@
-import { Box,Button } from "@mui/material";
+import { Box } from "@mui/material";
 import Header from "@/components/header";
 import FooterLogin from "@/components/footerLogin";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { checkSession } from "@/utils/auth/checkSession";
 
 export default function Home() {
-  const handleSession = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const [sessionData, setSessionData] = useState<any>(null); // セッションデータを状態として管理
 
+  useEffect(() => {
     // 非同期関数を定義してセッション情報を取得
+    const fetchSessionData = async () => {
       try {
         const data = await checkSession(); // checkSessionの結果を取得
         console.log(data); // データをログに出力
+        setSessionData(data); // セッション情報を状態に保存
       } catch (error) {
         console.error("セッションチェックエラー", error);
       }
     };
 
+    fetchSessionData(); // 初回レンダリング時にセッション情報を取得
+  }, []); // 初回レンダリング時のみ実行されるように空の依存配列を指定
   return (
     <>
       <Header />
@@ -35,9 +39,14 @@ export default function Home() {
             }}
           >
             <h1>Home画面</h1>
-            <Button type="submit" variant="outlined" onClick={handleSession}>
-                セッション
-              </Button>
+            {sessionData ? (
+              <div>
+                <p>ユーザー名: {sessionData.username}</p>
+                <p>メールアドレス: {sessionData.email}</p>
+              </div>
+            ) : (
+              <p>セッション情報がありません。</p>
+            )}
           </Box>
         </main>
         <FooterLogin />
