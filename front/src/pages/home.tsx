@@ -1,10 +1,24 @@
 import { Box } from "@mui/material";
 import Header from "@/components/header";
 import FooterLogin from "@/components/footerLogin";
-import React from "react";
+import React, { useEffect } from "react";
+import { checkSession } from "@/utils/auth/checkSession";
 
 export default function Home() {
 
+  useEffect(() => {
+    // 非同期関数を定義してセッション情報を取得
+    const fetchSessionData = async () => {
+      try {
+        const data = await checkSession(); // checkSessionの結果を取得
+        console.log(data); // データをログに出力
+      } catch (error) {
+        console.error("セッションチェックエラー", error);
+      }
+    };
+
+    fetchSessionData(); // 初回レンダリング時にセッション情報を取得
+  }, []); // 初回レンダリング時のみ実行されるように空の依存配列を指定
   return (
     <>
       <Header />
