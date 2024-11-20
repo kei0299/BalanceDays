@@ -1,6 +1,6 @@
 import Header from "@/components/header";
 import FooterLogin from "@/components/footerLogin";
-import { Box, TextField } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -10,51 +10,52 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useState, useEffect } from "react";
 import * as React from "react";
-import { NumericFormat } from 'react-number-format';
-import Input from '@mui/joy/Input';
+import { NumericFormat } from "react-number-format";
+import { parseCookies } from "nookies";
+import Input from "@mui/joy/Input";
 import { fetchCategory } from "@/utils/auth/fetchCategory";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
 // APIデータの型定義
 interface CategoryData {
-  id: number; // 各カテゴリのID
-  name: string; // カテゴリ名
+  id: number;
+  name: string;
 }
 
 // テーブルの行データの型定義
 interface TableRowData {
-  category: string; // カテゴリ名
-  lastMonthExpense: number; // 先月の支出
-  budget: number; // 今月の予算
+  id: number;
+  category: string;
+  lastMonthExpense: number;
+  budget: string; // 値を文字列で管理（フォーマット用）
 }
 
 export default function Budget() {
   const [rows, setRows] = useState<TableRowData[]>([]);
-  const [value, setValue] = React.useState("");
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
   // Rails APIからカテゴリを取得
   useEffect(() => {
-    // 非同期関数を定義してセッション情報を取得
     const fetchCategoryData = async () => {
       try {
-        const data: CategoryData[] = await fetchCategory(); // fetchCategoryの結果を取得
+        const data: CategoryData[] = await fetchCategory();
         const formattedData: TableRowData[] = data.map((item) => ({
-          category: item.name, // APIから取得したカテゴリ名
-          lastMonthExpense: 0, // 初期値として0
-          budget: 0, // 初期値として0
+          id: item.id,
+          category: item.name,
+          lastMonthExpense: 0,
+          budget: "",
         }));
-        setRows(formattedData); // rowsにデータをセット
+        setRows(formattedData);
       } catch (error) {
-        console.error("セッションチェックエラー", error);
+        console.error("取得失敗", error);
       }
     };
 
-    fetchCategoryData(); // 初回レンダリング時にセッション情報を取得
+    fetchCategoryData();
   }, []);
 
-  const handleMonthChange = (direction: "previous" | "next") => {
+  const monthChange = (direction: "previous" | "next") => {
     const newMonth = new Date(currentMonth);
     if (direction === "previous") {
       newMonth.setMonth(currentMonth.getMonth() - 1); // 前月
@@ -68,6 +69,57 @@ export default function Budget() {
   const formattedMonth = `${currentMonth.getFullYear()}年${String(
     currentMonth.getMonth() + 1
   ).padStart(2, "0")}月`;
+
+  // API用のフォーマットを "YYYY-MM-DD" 形式で作成
+  const apiFormattedDate = `${currentMonth.getFullYear()}-${String(
+    currentMonth.getMonth() + 1
+  ).padStart(2, "0")}-01`; // 1日を固定で追加
+
+  const budgetChange = (index: number, newValue: string) => {
+    const updatedRows = [...rows];
+    updatedRows[index].budget = newValue;
+    setRows(updatedRows);
+  };
+
+  const handleSave = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    // railsAPI_予算の登録
+    const cookies = parseCookies();
+    const accessToken = cookies["accessToken"];
+    const client = cookies["client"];
+    const uid = cookies["uid"];
+
+    const budgetsToSave = rows.map((row, index) => ({
+      expense_category_id: rows[index].id, // カテゴリID
+      budget: Number(row.budget.replace(/[^0-9]/g, "")), // 数字のみを抽出
+      month: apiFormattedDate,
+    }));
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/budgets`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+          body: JSON.stringify({ budgets: budgetsToSave }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("設定に失敗しました");
+      }
+      alert("設定しました");
+      // window.location.reload()
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <>
@@ -83,25 +135,20 @@ export default function Budget() {
               textAlign: "center",
             }}
           >
-            <KeyboardArrowLeftIcon
-              onClick={() => handleMonthChange("previous")}
-            />
+            <KeyboardArrowLeftIcon onClick={() => monthChange("previous")} />
             {formattedMonth}
-            <KeyboardArrowRightIcon onClick={() => handleMonthChange("next")} />
+            <KeyboardArrowRightIcon onClick={() => monthChange("next")} />
           </Box>
 
           <Box
             sx={{
               justifyContent: "center",
               textAlign: "center",
-              minHeight: "100vh",
+              minHeight: "150vh",
             }}
           >
             <TableContainer component={Paper}>
-              <Table
-                sx={{ minWidth: 300, maxWidth: 800 }}
-                aria-label="budget_table"
-              >
+              <Table sx={{ minWidth: 300 }} aria-label="budget_table">
                 <TableHead>
                   <TableRow>
                     <TableCell>カテゴリ</TableCell>
@@ -122,16 +169,19 @@ export default function Budget() {
                         {row.lastMonthExpense}
                       </TableCell>
                       <TableCell align="right">
-                        <TextField
-                          type="number"
+                        <Input
                           value={row.budget}
-                          onChange={(e) => {
-                            const updatedRows = [...rows];
-                            updatedRows[index].budget = Number(e.target.value);
-                            setRows(updatedRows); // 新しい状態でrowsを更新
+                          onChange={(event) =>
+                            budgetChange(index, event.target.value)
+                          }
+                          slotProps={{
+                            input: {
+                              component: NumericFormat,
+                              thousandSeparator: true,
+                              valueIsNumericString: true,
+                              prefix: "¥",
+                            },
                           }}
-                          fullWidth
-                          variant="outlined"
                         />
                       </TableCell>
                     </TableRow>
@@ -139,22 +189,15 @@ export default function Budget() {
                 </TableBody>
               </Table>
             </TableContainer>
+            <Button
+              sx={{ mt: 7 }}
+              type="submit"
+              variant="outlined"
+              onClick={handleSave}
+            >
+              登録する
+            </Button>
           </Box>
-
-          <Input
-      value={value}
-      onChange={(event) => setValue(event.target.value)}
-      // NumericFormat を直接 component に指定
-      slotProps={{
-        input: {
-          component: NumericFormat,
-          thousandSeparator: true,
-          valueIsNumericString: true,
-          prefix: "¥",
-        },
-      }}
-    />
-
         </main>
         <FooterLogin />
       </div>
