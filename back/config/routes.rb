@@ -6,6 +6,7 @@ Rails.application.routes.draw do
 
     namespace :auth do
       resources :sessions, only: [:index]
+      resources :expense_categories, only: [:index]
       # resouceだとusers/:idになる
       put 'users', to: 'users#update'
     end
