@@ -1,6 +1,6 @@
 import Header from "@/components/header";
 import FooterLogin from "@/components/footerLogin";
-import { Box } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -10,6 +10,8 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useState, useEffect } from "react";
 import * as React from "react";
+import { NumericFormat } from 'react-number-format';
+import Input from '@mui/joy/Input';
 import { fetchCategory } from "@/utils/auth/fetchCategory";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -29,6 +31,7 @@ interface TableRowData {
 
 export default function Budget() {
   const [rows, setRows] = useState<TableRowData[]>([]);
+  const [value, setValue] = React.useState("");
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
   // Rails APIからカテゴリを取得
@@ -62,8 +65,9 @@ export default function Budget() {
   };
 
   // 年月を "YYYY年MM月" の形式にフォーマット
-  const formattedMonth = `${currentMonth.getFullYear()}年${String(currentMonth.getMonth() + 1).padStart(2, "0")}月`;
-
+  const formattedMonth = `${currentMonth.getFullYear()}年${String(
+    currentMonth.getMonth() + 1
+  ).padStart(2, "0")}月`;
 
   return (
     <>
@@ -79,7 +83,9 @@ export default function Budget() {
               textAlign: "center",
             }}
           >
-            <KeyboardArrowLeftIcon onClick={() => handleMonthChange("previous")} />
+            <KeyboardArrowLeftIcon
+              onClick={() => handleMonthChange("previous")}
+            />
             {formattedMonth}
             <KeyboardArrowRightIcon onClick={() => handleMonthChange("next")} />
           </Box>
@@ -115,13 +121,40 @@ export default function Budget() {
                       <TableCell align="right">
                         {row.lastMonthExpense}
                       </TableCell>
-                      <TableCell align="right">{row.budget}</TableCell>
+                      <TableCell align="right">
+                        <TextField
+                          type="number"
+                          value={row.budget}
+                          onChange={(e) => {
+                            const updatedRows = [...rows];
+                            updatedRows[index].budget = Number(e.target.value);
+                            setRows(updatedRows); // 新しい状態でrowsを更新
+                          }}
+                          fullWidth
+                          variant="outlined"
+                        />
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TableContainer>
           </Box>
+
+          <Input
+      value={value}
+      onChange={(event) => setValue(event.target.value)}
+      // NumericFormat を直接 component に指定
+      slotProps={{
+        input: {
+          component: NumericFormat,
+          thousandSeparator: true,
+          valueIsNumericString: true,
+          prefix: "¥",
+        },
+      }}
+    />
+
         </main>
         <FooterLogin />
       </div>
