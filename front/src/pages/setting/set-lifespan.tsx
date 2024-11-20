@@ -244,7 +244,7 @@ const BalanceInput = () => {
               </Box>
             </Stack>
 
-            <Button type="submit" variant="outlined" onClick={handleSave}>
+            <Button sx={{ mt: 7 }} type="submit" variant="outlined" onClick={handleSave}>
               登録する
             </Button>
           </Box>

@@ -9,15 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@emotion/react": "^11.13.3",
-    "@emotion/styled": "^11.13.0",
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
     "@mui/icons-material": "^6.1.5",
+    "@mui/joy": "^5.0.0-beta.48",
     "@mui/material": "^6.1.5",
     "@types/react-router-dom": "^5.3.3",
     "next": "15.0.0",
     "nookies": "^2.5.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-number-format": "^5.4.2",
     "react-router-dom": "^6.28.0"
   },
   "devDependencies": {
