@@ -9,23 +9,27 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useState, useEffect } from "react";
+import * as React from "react";
 import { fetchCategory } from "@/utils/auth/fetchCategory";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
 // APIデータの型定義
 interface CategoryData {
-  id: number;        // 各カテゴリのID
-  name: string;      // カテゴリ名
+  id: number; // 各カテゴリのID
+  name: string; // カテゴリ名
 }
 
 // テーブルの行データの型定義
 interface TableRowData {
-  category: string;         // カテゴリ名
+  category: string; // カテゴリ名
   lastMonthExpense: number; // 先月の支出
-  budget: number;           // 今月の予算
+  budget: number; // 今月の予算
 }
 
 export default function Budget() {
   const [rows, setRows] = useState<TableRowData[]>([]);
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
   // Rails APIからカテゴリを取得
   useEffect(() => {
@@ -36,7 +40,7 @@ export default function Budget() {
         const formattedData: TableRowData[] = data.map((item) => ({
           category: item.name, // APIから取得したカテゴリ名
           lastMonthExpense: 0, // 初期値として0
-          budget: 0,           // 初期値として0
+          budget: 0, // 初期値として0
         }));
         setRows(formattedData); // rowsにデータをセット
       } catch (error) {
@@ -46,6 +50,20 @@ export default function Budget() {
 
     fetchCategoryData(); // 初回レンダリング時にセッション情報を取得
   }, []);
+
+  const handleMonthChange = (direction: "previous" | "next") => {
+    const newMonth = new Date(currentMonth);
+    if (direction === "previous") {
+      newMonth.setMonth(currentMonth.getMonth() - 1); // 前月
+    } else {
+      newMonth.setMonth(currentMonth.getMonth() + 1); // 次月
+    }
+    setCurrentMonth(newMonth);
+  };
+
+  // 年月を "YYYY年MM月" の形式にフォーマット
+  const formattedMonth = `${currentMonth.getFullYear()}年${String(currentMonth.getMonth() + 1).padStart(2, "0")}月`;
+
 
   return (
     <>
@@ -57,24 +75,26 @@ export default function Budget() {
           <Box
             sx={{
               display: "flex",
-              flexDirection: "column",
               mt: 10,
               textAlign: "center",
             }}
           >
-            <h1>2024年10月</h1>
+            <KeyboardArrowLeftIcon onClick={() => handleMonthChange("previous")} />
+            {formattedMonth}
+            <KeyboardArrowRightIcon onClick={() => handleMonthChange("next")} />
           </Box>
 
           <Box
             sx={{
               justifyContent: "center",
               textAlign: "center",
+              minHeight: "100vh",
             }}
           >
             <TableContainer component={Paper}>
               <Table
-                sx={{ minWidth: 300, maxWidth: 500 }}
-                aria-label="simple table"
+                sx={{ minWidth: 300, maxWidth: 800 }}
+                aria-label="budget_table"
               >
                 <TableHead>
                   <TableRow>
@@ -84,16 +104,16 @@ export default function Budget() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map((row,index) => (
+                  {rows.map((row, index) => (
                     <TableRow
                       key={index}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <TableCell component="th" scope="row">
-                      {row.category}
+                        {row.category}
                       </TableCell>
                       <TableCell align="right">
-                      {row.lastMonthExpense}
+                        {row.lastMonthExpense}
                       </TableCell>
                       <TableCell align="right">{row.budget}</TableCell>
                     </TableRow>
