@@ -14,10 +14,11 @@ import { NumericFormat } from "react-number-format";
 import { parseCookies } from "nookies";
 import Input from "@mui/joy/Input";
 import { fetchCategory } from "@/utils/auth/fetchCategory";
+import { fetchBudget } from "@/utils/auth/fetchBudget";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
-// APIデータの型定義
+// expense_categoryの型定義
 interface CategoryData {
   id: number;
   name: string;
@@ -31,12 +32,25 @@ interface TableRowData {
   budget: string; // 値を文字列で管理（フォーマット用）
 }
 
+// budgetの型定義
+interface BudgetData {
+  id: number;
+  expense_category_id: number;
+  budget: number;
+}
+
+const cookies = parseCookies();
+const accessToken = cookies["accessToken"];
+const client = cookies["client"];
+const uid = cookies["uid"];
+
+
 export default function Budget() {
   const [rows, setRows] = useState<TableRowData[]>([]);
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
-  // Rails APIからカテゴリを取得
   useEffect(() => {
+      // Rails APIからカテゴリを取得
     const fetchCategoryData = async () => {
       try {
         const data: CategoryData[] = await fetchCategory();
@@ -52,7 +66,34 @@ export default function Budget() {
       }
     };
 
+      // Rails APIから設定された予算を取得
+      const fetchBudgetData = async () => {
+        try {
+          const data = await fetchBudget();
+          console.log(data);
+        } catch (error) {
+          console.error("取得失敗", error);
+        }
+      };
+
+      // Rails APIから先月の実績を取得
+    // const lastMonthExpenses = async () => {
+    //   try {
+    //     const data: CategoryData[] = await fetchCategory();
+    //     const formattedData: TableRowData[] = data.map((item) => ({
+    //       id: item.id,
+    //       category: item.name,
+    //       lastMonthExpense: 0,
+    //       budget: "",
+    //     }));
+    //     setRows(formattedData);
+    //   } catch (error) {
+    //     console.error("取得失敗", error);
+    //   }
+    // };
+
     fetchCategoryData();
+    fetchBudgetData();
   }, []);
 
   const monthChange = (direction: "previous" | "next") => {
@@ -85,11 +126,6 @@ export default function Budget() {
     event.preventDefault();
 
     // railsAPI_予算の登録
-    const cookies = parseCookies();
-    const accessToken = cookies["accessToken"];
-    const client = cookies["client"];
-    const uid = cookies["uid"];
-
     const budgetsToSave = rows.map((row, index) => ({
       expense_category_id: rows[index].id, // カテゴリID
       budget: Number(row.budget.replace(/[^0-9]/g, "")), // 数字のみを抽出
