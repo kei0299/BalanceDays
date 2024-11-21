@@ -33,11 +33,11 @@ interface TableRowData {
 }
 
 // budgetの型定義
-interface BudgetData {
-  id: number;
-  expense_category_id: number;
-  budget: number;
-}
+// interface BudgetData {
+//   id: number;
+//   expense_category_id: number;
+//   budget: number;
+// }
 
 const cookies = parseCookies();
 const accessToken = cookies["accessToken"];
