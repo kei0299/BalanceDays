@@ -1,5 +1,13 @@
 class V1::Auth::BudgetsController < ApplicationController
-  before_action :authenticate_v1_user!
+  # before_action :authenticate_v1_user!
+
+  def index
+    # 今日の日付を取ってきて1日とする
+    set_month = Date.today.beginning_of_month
+
+    budgets = Budget.where(user_id: current_v1_user.id, month: set_month)
+    render json: budgets
+  end
 
   def create
     budgets = budget_params
