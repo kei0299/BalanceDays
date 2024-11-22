@@ -1,7 +1,7 @@
 import { parseCookies } from "nookies";
 
 // セッション情報を取得する関数
-export const fetchCategory = async () => {
+export const fetchExpenseCategory = async () => {
   try {
     // クッキーからトークンを取得
     const cookies = parseCookies();

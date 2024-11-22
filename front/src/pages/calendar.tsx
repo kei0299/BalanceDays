@@ -11,11 +11,23 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import { useEffect, useState } from "react";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import { fetchIncomeCategory } from "@/utils/auth/fetchIncomeCategory";
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+}
+
+// income_categoryの型定義
+interface incomeCategoryData {
+  id: number;
+  name: string;
 }
 
 function CustomTabPanel(props: TabPanelProps) {
@@ -45,6 +57,22 @@ export default function Calender() {
   const [value, setValue] = React.useState(0);
   const [incomeAndExpense, setIncomeAndExpense] = React.useState("income");
   const [day, setDay] = React.useState<Dayjs | null>(dayjs());
+  const [incomeCategory, setIncomeCategory] = useState<string>("");
+  const [categories, setCategories] = useState<incomeCategoryData[]>([]); // カテゴリデータ用のstate
+
+  const selectIncomeCategory = (event: SelectChangeEvent<unknown>) => {
+    setIncomeCategory(event.target.value as string);
+  };
+
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP, // メニューの最大高さ
+      },
+    },
+  };
 
   const toggleChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -59,13 +87,26 @@ export default function Calender() {
     setValue(newValue);
   };
 
+  useEffect(() => {
+    // Rails APIからカテゴリを取得
+    const fetchCategoryData = async () => {
+      try {
+        const data: incomeCategoryData[] = await fetchIncomeCategory();
+        setCategories(data);
+      } catch (error) {
+        console.error("取得失敗", error);
+      }
+    };
+    fetchCategoryData();
+  }, []);
+
   return (
     <>
       <Header />
       <title>BalanceDays</title>
       <link rel="icon" href="/favicon.ico" />
       <div>
-        <main style={{ minHeight: "300vh"}}>
+        <main style={{ minHeight: "300vh" }}>
           <Box sx={{ mt: 10, mr: 1000 }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateCalendar />
@@ -111,6 +152,29 @@ export default function Calender() {
                   format="YYYY/MM/DD"
                 />
               </LocalizationProvider>
+
+              {/* カテゴリ選択 */}
+              <Box sx={{ display: "flex", alignItems: "flex-end", ml: 10 }}>
+                <Box sx={{ minWidth: 150 }}>
+                  <FormControl fullWidth>
+                    <InputLabel id="income-category-label">カテゴリ</InputLabel>
+                    <Select
+                      labelId="income-category-label"
+                      id="income-select"
+                      value={incomeCategory}
+                      label="カテゴリ"
+                      onChange={selectIncomeCategory}
+                      MenuProps={MenuProps}
+                    >
+                      {categories.map((category) => (
+                        <MenuItem key={category.id} value={category.id}>
+                          {category.name} {/* APIから取得したカテゴリ名 */}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+              </Box>
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
               シフト入力

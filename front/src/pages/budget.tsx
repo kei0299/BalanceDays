@@ -13,13 +13,13 @@ import * as React from "react";
 import { NumericFormat } from "react-number-format";
 import { parseCookies } from "nookies";
 import Input from "@mui/joy/Input";
-import { fetchCategory } from "@/utils/auth/fetchCategory";
+import { fetchExpenseCategory } from "@/utils/auth/fetchExpenseCategory";
 import { fetchBudget } from "@/utils/auth/fetchBudget";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
 // expense_categoryの型定義
-interface CategoryData {
+interface expenseCategoryData {
   id: number;
   name: string;
 }
@@ -53,7 +53,7 @@ export default function Budget() {
       // Rails APIからカテゴリを取得
     const fetchCategoryData = async () => {
       try {
-        const data: CategoryData[] = await fetchCategory();
+        const data: expenseCategoryData[] = await fetchExpenseCategory();
         const formattedData: TableRowData[] = data.map((item) => ({
           id: item.id,
           category: item.name,
