@@ -30,7 +30,6 @@ export const fetchBudget = async () => {
 
     // レスポンスのJSONデータを取得
     const data = await response.json();
-    console.log(data);
     return data;
 
     // セッションチェックの結果を利用して、必要に応じて状態を更新する処理を追加できます
