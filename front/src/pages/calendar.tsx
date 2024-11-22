@@ -55,7 +55,7 @@ function a11yProps(index: number) {
 
 export default function Calender() {
   const [value, setValue] = React.useState(0);
-  const [incomeAndExpense, setIncomeAndExpense] = React.useState("income");
+  const [incomeAndExpense, setIncomeAndExpense] = React.useState("expense");
   const [day, setDay] = React.useState<Dayjs | null>(dayjs());
   const [incomeCategory, setIncomeCategory] = useState<string>("");
   const [categories, setCategories] = useState<incomeCategoryData[]>([]); // カテゴリデータ用のstate

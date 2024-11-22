@@ -1,17 +1,23 @@
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import Header from "@/components/header";
 import FooterLogin from "@/components/footerLogin";
-import { Button, Stack, Box } from "@mui/material";
+
+// MUI
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import Image from "next/image";
+
 import { parseCookies } from "nookies";
-import React, { useEffect, useState } from "react";
 import { checkSession } from "@/utils/auth/checkSession";
 
+// sessionの型を定義
 type SessionData = {
   data: {
     balance: number | null;
@@ -21,9 +27,10 @@ type SessionData = {
 };
 
 const BalanceInput = () => {
-  const [balance, setBalance] = useState("");
-  const [caution, setCaution] = useState<number>(1);
-  const [warning, setWarning] = useState<number>(1);
+  const [balance, setBalance] = useState(""); // 貯金残高
+  const [caution, setCaution] = useState<number>(1); // 注意レベル
+  const [warning, setWarning] = useState<number>(1); // 警告レベル
+  const [sessionData, setSessionData] = useState<SessionData | null>(null); // セッションデータの状態管理
 
   const selectCaution = (event: SelectChangeEvent<unknown>) => {
     setCaution(Number(event.target.value)); // 'unknown' から 'number' にキャスト
@@ -53,10 +60,10 @@ const BalanceInput = () => {
     setBalance(formatBalance(event.target.value)); // カンマ区切りを適用して状態を更新
   };
 
+  // railsAPI_生存確認設定の登録
   const handleSave = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    // railsAPI_生存確認設定の登録
     const cookies = parseCookies();
     const accessToken = cookies["accessToken"];
     const client = cookies["client"];
@@ -85,13 +92,11 @@ const BalanceInput = () => {
         throw new Error("設定に失敗しました");
       }
       alert("設定しました");
-      window.location.reload()
+      window.location.reload();
     } catch (error) {
       console.error(error);
     }
   };
-
-  const [sessionData, setSessionData] = useState<SessionData | null>(null); // セッションデータを状態として管理
 
   useEffect(() => {
     // 非同期関数を定義してセッション情報を取得
@@ -101,17 +106,12 @@ const BalanceInput = () => {
         setSessionData(data); // セッション情報を状態に保存
 
         //　初期値の設定
-        if (data.data?.balance) {
+        if (data.data?.balance)
           setBalance(formatBalance(data.data.balance.toString()));
-        }
-        if (data.data?.caution_lv) {
-          setCaution(data.data.caution_lv);
-        }
-        if (data.data?.warning_lv) {
-          setWarning(data.data.warning_lv);
-        }
+        if (data.data?.caution_lv) setCaution(data.data.caution_lv);
+        if (data.data?.warning_lv) setWarning(data.data.warning_lv);
       } catch (error) {
-        console.error("セッションチェックエラー", error);
+        console.error("セッションデータ取得エラー:", error);
       }
     };
 
@@ -201,7 +201,7 @@ const BalanceInput = () => {
                       MenuProps={MenuProps}
                     >
                       {[...Array(12)].map((_, index) => (
-                        <MenuItem key={index + 1} value={(index + 1)}>
+                        <MenuItem key={index + 1} value={index + 1}>
                           {index + 1}ヶ月
                         </MenuItem>
                       ))}
@@ -234,7 +234,7 @@ const BalanceInput = () => {
                       MenuProps={MenuProps}
                     >
                       {[...Array(12)].map((_, index) => (
-                        <MenuItem key={index + 1} value={(index + 1)}>
+                        <MenuItem key={index + 1} value={index + 1}>
                           {index + 1}ヶ月
                         </MenuItem>
                       ))}
@@ -244,7 +244,12 @@ const BalanceInput = () => {
               </Box>
             </Stack>
 
-            <Button sx={{ mt: 7 }} type="submit" variant="outlined" onClick={handleSave}>
+            <Button
+              sx={{ mt: 7 }}
+              type="submit"
+              variant="outlined"
+              onClick={handleSave}
+            >
               登録する
             </Button>
           </Box>
