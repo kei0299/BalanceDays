@@ -61,7 +61,7 @@ const BalanceInput = () => {
   };
 
   // railsAPI_生存確認設定の登録
-  const handleSave = async (event: React.FormEvent) => {
+  const lifeSave = async (event: React.FormEvent) => {
     event.preventDefault();
 
     const cookies = parseCookies();
@@ -248,7 +248,7 @@ const BalanceInput = () => {
               sx={{ mt: 7 }}
               type="submit"
               variant="outlined"
-              onClick={handleSave}
+              onClick={lifeSave}
             >
               登録する
             </Button>

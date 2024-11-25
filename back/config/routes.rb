@@ -9,6 +9,9 @@ Rails.application.routes.draw do
       resources :expense_categories, only: [:index]
       resources :income_categories, only: [:index]
       resources :budgets, only: [:index, :create]
+      resources :expense_log, only: [:create]
+      resources :income_log, only: [:create]
+      
       # resouceだとusers/:idになる
       put 'users', to: 'users#update'
     end

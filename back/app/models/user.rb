@@ -6,6 +6,8 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   include DeviseTokenAuth::Concerns::User
-  has_many :budgets
+  has_many :budgets, dependent: :destroy
+  has_many :expense_logs, dependent: :destroy
+  has_many :income_logs, dependent: :destroy
 end
 
