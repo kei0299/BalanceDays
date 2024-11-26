@@ -4,17 +4,24 @@ Rails.application.routes.draw do
     registrations: 'v1/auth/registrations'
   }
 
+    resources :budgets, only: [:index, :create]
+    resources :transactions, only: [:index]
+
+    namespace :expense do
+      resources :expense_categories, only: [:index]
+      resources :expense_log, only: [:create]
+    end
+  
+    namespace :income do
+      resources :income_log, only: [:create]
+      resources :income_categories, only: [:index]
+    end
+
     namespace :auth do
       resources :sessions, only: [:index]
-      resources :expense_categories, only: [:index]
-      resources :income_categories, only: [:index]
-      resources :budgets, only: [:index, :create]
-      resources :expense_log, only: [:create]
-      resources :income_log, only: [:create]
-      
       # resouceだとusers/:idになる
       put 'users', to: 'users#update'
     end
   end
-
+  
 end

@@ -11,7 +11,7 @@ export const fetchExpenseCategory = async () => {
 
     // APIリクエスト
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/expense_categories`,
+      `${process.env.NEXT_PUBLIC_API_URL}/v1/expense/expense_categories`,
       {
         method: "GET",
         headers: {

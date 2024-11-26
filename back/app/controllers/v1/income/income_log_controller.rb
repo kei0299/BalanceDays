@@ -1,4 +1,4 @@
-class V1::Auth::IncomeLogController < ApplicationController
+class V1::Income::IncomeLogController < ApplicationController
   before_action :authenticate_v1_user!
   
   def create

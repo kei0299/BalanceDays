@@ -1,6 +1,6 @@
 require "test_helper"
 
-class V1::Auth::IncomeLogControllerTest < ActionDispatch::IntegrationTest
+class V1::Income::ExpenseLogControllerTest < ActionDispatch::IntegrationTest
   # test "the truth" do
   #   assert true
   # end

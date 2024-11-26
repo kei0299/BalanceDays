@@ -11,7 +11,7 @@ export const fetchIncomeCategory = async () => {
 
     // APIリクエスト
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/income_categories`,
+      `${process.env.NEXT_PUBLIC_API_URL}/v1/income/income_categories`,
       {
         method: "GET",
         headers: {

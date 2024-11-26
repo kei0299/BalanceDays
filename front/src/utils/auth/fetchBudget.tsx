@@ -11,7 +11,7 @@ export const fetchBudget = async () => {
 
     // APIリクエスト
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/budgets`,
+      `${process.env.NEXT_PUBLIC_API_URL}/v1/budgets`,
       {
         method: "GET",
         headers: {

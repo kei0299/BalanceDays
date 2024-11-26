@@ -84,8 +84,12 @@ export default function Calender() {
   // カテゴリセット
   const [incomeCategory, setIncomeCategory] = useState<number | "">("");
   const [expenseCategory, setExpenseCategory] = useState<number | "">("");
-  const [incomeCategories, setIncomeCategories] = useState<incomeCategoryData[]>([]); // カテゴリデータ用のstate
-  const [expenseCategories, setExpenseCategories] = useState<expenseCategoryData[]>([]); // カテゴリデータ用のstate
+  const [incomeCategories, setIncomeCategories] = useState<
+    incomeCategoryData[]
+  >([]); // カテゴリデータ用のstate
+  const [expenseCategories, setExpenseCategories] = useState<
+    expenseCategoryData[]
+  >([]); // カテゴリデータ用のstate
 
   const selectIncomeCategory = (event: SelectChangeEvent<number>) => {
     setIncomeCategory(Number(event.target.value));
@@ -95,51 +99,66 @@ export default function Calender() {
     setExpenseCategory(Number(event.target.value));
   };
 
-// メモ
-const [incomeMemo, setIncomeMemo] = React.useState<string>("");
-const [expenseMemo, setExpenseMemo] = React.useState<string>("");
+  // メモ
+  const [incomeMemo, setIncomeMemo] = React.useState<string>("");
+  const [expenseMemo, setExpenseMemo] = React.useState<string>("");
 
-const expenseMemoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  setExpenseMemo(event.target.value);
-};
+  const expenseMemoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setExpenseMemo(event.target.value);
+  };
 
-const incomeMemoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  setIncomeMemo(event.target.value);
-};
-  
-// カレンダーのデータ取得
-const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
-const [transactions, setTransactions] = useState<TransactionData[]>([]);
-const [loading, setLoading] = useState(false);
+  const incomeMemoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIncomeMemo(event.target.value);
+  };
 
-const dateChange = async (date: Dayjs | null) => {
-  if (!date) return;
+  // カレンダーのデータ取得
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
+  const [transactions, setTransactions] = useState<TransactionData[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  setSelectedDate(date);
-  setLoading(true);
+  const dateChange = async (date: Dayjs | null) => {
+    if (!date) return;
 
-  try {
-    // APIリクエストを送信
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/transactions?date=${date.format(
-        "YYYY-MM-DD"
-      )}`
-    );
+    setSelectedDate(date);
+    setLoading(true);
 
-    if (!response.ok) {
-      throw new Error("データ取得に失敗しました");
+    try {
+      // APIリクエストを送信
+
+      const cookies = parseCookies();
+      const accessToken = cookies["accessToken"];
+      const client = cookies["client"];
+      const uid = cookies["uid"];
+
+      const response = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_API_URL
+        }/v1/transactions?date=${date.format("YYYY-MM-DD")}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("データ取得に失敗しました");
+      }
+
+      const data: TransactionData[] = await response.json();
+      setTransactions(data); // 取得したデータをstateに保存
+    } catch (error) {
+      console.error("エラー:", error);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const data: TransactionData[] = await response.json();
-    setTransactions(data); // 取得したデータをstateに保存
-  } catch (error) {
-    console.error("エラー:", error);
-  } finally {
-    setLoading(false);
-  }
-};
-
-// menuitemの設定
+  // menuitemの設定
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
   const MenuProps = {
@@ -157,7 +176,8 @@ const dateChange = async (date: Dayjs | null) => {
   // 金額をフォーマットする関数
   const formatAmountChange = <T extends HTMLInputElement | HTMLTextAreaElement>(
     event: React.ChangeEvent<T>,
-    setAmount: React.Dispatch<React.SetStateAction<string>>) => {
+    setAmount: React.Dispatch<React.SetStateAction<string>>
+  ) => {
     const numericValue = event.target.value.replace(/[^0-9]/g, ""); // 数字以外を削除
     const formattedValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // 3桁ごとにカンマを挿入
     setAmount(formattedValue); // カンマ区切りを適用して状態を更新
@@ -174,7 +194,7 @@ const dateChange = async (date: Dayjs | null) => {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/expense_log`,
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/expense/expense_log`,
         {
           method: "POST",
           headers: {
@@ -187,7 +207,7 @@ const dateChange = async (date: Dayjs | null) => {
             amount: Number(expenseAmount.replace(/,/g, "")),
             date: day,
             expense_category_id: expenseCategory,
-            memo: expenseMemo
+            memo: expenseMemo,
           }),
         }
       );
@@ -213,7 +233,7 @@ const dateChange = async (date: Dayjs | null) => {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/income_log`,
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/income/income_log`,
         {
           method: "POST",
           headers: {
@@ -226,7 +246,7 @@ const dateChange = async (date: Dayjs | null) => {
             amount: Number(incomeAmount.replace(/,/g, "")),
             date: day,
             income_category_id: incomeCategory,
-            memo: incomeMemo
+            memo: incomeMemo,
           }),
         }
       );
@@ -255,6 +275,7 @@ const dateChange = async (date: Dayjs | null) => {
       }
     };
     fetchCategoryData();
+    dateChange(dayjs());
   }, []);
 
   return (
@@ -265,35 +286,43 @@ const dateChange = async (date: Dayjs | null) => {
       <div>
         {/* <main style={{ minHeight: "300vh" }}> */}
         <main>
-          <Box sx={{ mt: 10, mr: 1000 }}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateCalendar onChange={dateChange}/>
-            </LocalizationProvider>
-          </Box>
-
-          {selectedDate && (
-        <Box sx={{ mt: 2 }}>
-          <h2>{selectedDate.format("YYYY/MM/DD")}の収支データ</h2>
-          {loading ? (
-            <p>読み込み中...</p>
-          ) : transactions.length > 0 ? (
-            <ul>
-              {transactions.map((transaction) => (
-                <li key={transaction.id}>
-                  <strong>
-                    {transaction.type === "income" ? "収入" : "支出"}
-                  </strong>
-                  : ¥{transaction.amount.toLocaleString()} - {transaction.category}{" "}
-                  ({transaction.memo})
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>データがありません。</p>
-          )}
-        </Box>
-      )}
-
+          <table>
+          <thead>
+            <tr>
+              <td>
+                <Box sx={{ mt: 10 }}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DateCalendar onChange={dateChange} />
+                  </LocalizationProvider>
+                </Box>
+              </td>
+              <td>
+                {selectedDate && (
+                  <Box sx={{ mb: 20 }}>
+                    <h2>{selectedDate.format("YYYY/MM/DD")}の収支データ</h2>
+                    {loading ? (
+                      <p>読み込み中...</p>
+                    ) : transactions.length > 0 ? (
+                      <ul>
+                        {transactions.map((transaction) => (
+                          <li key={transaction.id}>
+                            <strong>
+                              {transaction.type === "income" ? "収入" : "支出"}
+                            </strong>
+                            : ¥{transaction.amount.toLocaleString()} -{" "}
+                            {transaction.category} ({transaction.memo})
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>データがありません。</p>
+                    )}
+                  </Box>
+                )}
+              </td>
+            </tr>
+            </thead>
+          </table>
 
           <Box sx={{ width: "100%" }}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -341,7 +370,9 @@ const dateChange = async (date: Dayjs | null) => {
                   id="outlined-incomeAmount"
                   label="金額"
                   value={incomeAmount}
-                  onChange={(event) => formatAmountChange(event, setIncomeAmount)}
+                  onChange={(event) =>
+                    formatAmountChange(event, setIncomeAmount)
+                  }
                   startAdornment={
                     <InputAdornment position="start">¥</InputAdornment>
                   }
@@ -406,7 +437,9 @@ const dateChange = async (date: Dayjs | null) => {
                   id="outlined-incomeAmount"
                   label="金額"
                   value={expenseAmount}
-                  onChange={(event) => formatAmountChange(event, setExpenseAmount)}
+                  onChange={(event) =>
+                    formatAmountChange(event, setExpenseAmount)
+                  }
                   startAdornment={
                     <InputAdornment position="start">¥</InputAdornment>
                   }

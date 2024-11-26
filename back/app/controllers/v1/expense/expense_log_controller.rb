@@ -1,4 +1,4 @@
-class V1::Auth::ExpenseLogController < ApplicationController
+class V1::Expense::ExpenseLogController < ApplicationController
   before_action :authenticate_v1_user!
   
   def create

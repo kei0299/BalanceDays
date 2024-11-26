@@ -1,5 +1,5 @@
-class V1::Auth::BudgetsController < ApplicationController
-  # before_action :authenticate_v1_user!
+class V1::BudgetsController < ApplicationController
+  before_action :authenticate_v1_user!
 
   def index
     # 今日の日付を取ってきて1日とする
