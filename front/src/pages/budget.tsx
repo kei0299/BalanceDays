@@ -13,13 +13,13 @@ import * as React from "react";
 import { NumericFormat } from "react-number-format";
 import { parseCookies } from "nookies";
 import Input from "@mui/joy/Input";
-import { fetchCategory } from "@/utils/auth/fetchCategory";
+import { fetchExpenseCategory } from "@/utils/auth/fetchExpenseCategory";
 import { fetchBudget } from "@/utils/auth/fetchBudget";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
 // expense_categoryの型定義
-interface CategoryData {
+interface expenseCategoryData {
   id: number;
   name: string;
 }
@@ -53,7 +53,7 @@ export default function Budget() {
       // Rails APIからカテゴリを取得
     const fetchCategoryData = async () => {
       try {
-        const data: CategoryData[] = await fetchCategory();
+        const data: expenseCategoryData[] = await fetchExpenseCategory();
         const formattedData: TableRowData[] = data.map((item) => ({
           id: item.id,
           category: item.name,
@@ -134,7 +134,7 @@ export default function Budget() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/budgets`,
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/budgets`,
         {
           method: "POST",
           headers: {
@@ -187,9 +187,11 @@ export default function Budget() {
               <Table sx={{ minWidth: 300 }} aria-label="budget_table">
                 <TableHead>
                   <TableRow>
+                  <TableCell></TableCell>
                     <TableCell>カテゴリ</TableCell>
                     <TableCell align="right">先月の支出</TableCell>
                     <TableCell align="right">今月の予算</TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -198,6 +200,7 @@ export default function Budget() {
                       key={index}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
+                      <TableCell></TableCell>
                       <TableCell component="th" scope="row">
                         {row.category}
                       </TableCell>
@@ -206,6 +209,7 @@ export default function Budget() {
                       </TableCell>
                       <TableCell align="right">
                         <Input
+                        sx={{maxWidth: 100,ml: "auto"}}
                           value={row.budget}
                           onChange={(event) =>
                             budgetChange(index, event.target.value)
@@ -220,6 +224,7 @@ export default function Budget() {
                           }}
                         />
                       </TableCell>
+                      <TableCell></TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

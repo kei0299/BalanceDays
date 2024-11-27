@@ -1,7 +1,7 @@
 import { parseCookies } from "nookies";
 
 // セッション情報を取得する関数
-export const fetchCategory = async () => {
+export const fetchIncomeCategory = async () => {
   try {
     // クッキーからトークンを取得
     const cookies = parseCookies();
@@ -11,7 +11,7 @@ export const fetchCategory = async () => {
 
     // APIリクエスト
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/expense_categories`,
+      `${process.env.NEXT_PUBLIC_API_URL}/v1/income/income_categories`,
       {
         method: "GET",
         headers: {

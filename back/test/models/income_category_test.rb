@@ -1,6 +1,6 @@
 require "test_helper"
 
-class V1::Auth::BudgetsControllerTest < ActionDispatch::IntegrationTest
+class IncomeCategoryTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end
