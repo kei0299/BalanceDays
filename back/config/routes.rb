@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   }
 
     resources :budgets, only: [:index, :create]
-    resources :transactions, only: [:index]
+    resources :transactions, only: [:index, :update, :destroy]
 
     namespace :expense do
       resources :expense_categories, only: [:index]

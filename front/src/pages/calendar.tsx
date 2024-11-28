@@ -263,6 +263,52 @@ export default function Calender() {
     }
   };
 
+  // railsAPI_削除
+  const transactionDelete = async (transactionId: number, transactionType: string) => {
+
+    const cookies = parseCookies();
+    const accessToken = cookies["accessToken"];
+    const client = cookies["client"];
+    const uid = cookies["uid"];
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/transactions/${transactionId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+          body: JSON.stringify({
+            "id": transactionId,
+            "type": transactionType
+          }),
+        }
+      );
+      if (!response.ok) {
+        // 失敗した場合、エラーメッセージを表示
+        const errorData = await response.json();
+        console.error("Error:", errorData);
+        alert(`削除に失敗しました: ${errorData.error || "不明なエラー"}`);
+        return;
+      }
+  
+      // 成功した場合、通知
+      const data = await response.json();
+      alert(data.message || "削除完了");
+  
+      // ページをリロードして反映
+      window.location.reload();
+      
+    } catch (error) {
+      // ネットワークエラーやその他のエラーをキャッチ
+      console.error("Network Error:", error);
+      alert("エラーが発生しました。再度お試しください。");
+    }
+  };
+
   useEffect(() => {
     // Rails APIからカテゴリを取得
     const fetchCategoryData = async () => {
@@ -319,10 +365,15 @@ export default function Calender() {
                                 sx={{ ml: 1 }}
                                 aria-label="edit"
                                 size="small"
+                                // onClick={transactionEdit}
                               >
                                 <EditIcon fontSize="inherit" />
                               </IconButton>
-                              <IconButton aria-label="delete" size="small">
+                              <IconButton
+                                aria-label="delete"
+                                size="small"
+                                onClick={() => transactionDelete(transaction.id,transaction.type)}
+                              >
                                 <DeleteIcon fontSize="inherit" />
                               </IconButton>
                             </li>
