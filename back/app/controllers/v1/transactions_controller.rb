@@ -42,4 +42,27 @@ class V1::TransactionsController < ApplicationController
 
     render json: transactions, status: :ok
   end
+
+  def destroy
+    transaction_id = params[:id]
+    transaction_type = params[:type]
+
+    if transaction_type == "income"
+      income_log = IncomeLog.find_by(id: transaction_id)
+      if income_log
+        income_log.destroy
+        render json: { message: "収入が削除されました", transaction: income_log }, status: :ok
+      else
+        render json: { message: "収入ログが見つかりません" }, status: :not_found
+      end
+    else
+      expense_log = ExpenseLog.find_by(id: transaction_id)
+      if expense_log
+        expense_log.destroy
+        render json: { message: "支出が削除されました", transaction: expense_log }, status: :ok
+      else
+        render json: { message: "支出ログが見つかりません" }, status: :not_found
+      end
+    end
+  end
 end

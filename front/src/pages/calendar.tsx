@@ -1,6 +1,6 @@
 import Header from "@/components/header";
 import FooterLogin from "@/components/footerLogin";
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import * as React from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -21,6 +21,8 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { parseCookies } from "nookies";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -131,9 +133,9 @@ export default function Calender() {
       const uid = cookies["uid"];
 
       const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL
-        }/v1/transactions?date=${date.format("YYYY-MM-DD")}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/transactions?date=${date.format(
+          "YYYY-MM-DD"
+        )}`,
         {
           method: "GET",
           headers: {
@@ -261,6 +263,52 @@ export default function Calender() {
     }
   };
 
+  // railsAPI_削除
+  const transactionDelete = async (transactionId: number, transactionType: string) => {
+
+    const cookies = parseCookies();
+    const accessToken = cookies["accessToken"];
+    const client = cookies["client"];
+    const uid = cookies["uid"];
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/transactions/${transactionId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+          body: JSON.stringify({
+            "id": transactionId,
+            "type": transactionType
+          }),
+        }
+      );
+      if (!response.ok) {
+        // 失敗した場合、エラーメッセージを表示
+        const errorData = await response.json();
+        console.error("Error:", errorData);
+        alert(`削除に失敗しました: ${errorData.error || "不明なエラー"}`);
+        return;
+      }
+  
+      // 成功した場合、通知
+      const data = await response.json();
+      alert(data.message || "削除完了");
+  
+      // ページをリロードして反映
+      window.location.reload();
+      
+    } catch (error) {
+      // ネットワークエラーやその他のエラーをキャッチ
+      console.error("Network Error:", error);
+      alert("エラーが発生しました。再度お試しください。");
+    }
+  };
+
   useEffect(() => {
     // Rails APIからカテゴリを取得
     const fetchCategoryData = async () => {
@@ -287,40 +335,57 @@ export default function Calender() {
         {/* <main style={{ minHeight: "300vh" }}> */}
         <main>
           <table>
-          <thead>
-            <tr>
-              <td>
-                <Box sx={{ mt: 10 }}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DateCalendar onChange={dateChange} />
-                  </LocalizationProvider>
-                </Box>
-              </td>
-              <td>
-                {selectedDate && (
-                  <Box sx={{ mb: 20 }}>
-                    <h2>{selectedDate.format("YYYY/MM/DD")}の収支データ</h2>
-                    {loading ? (
-                      <p>読み込み中...</p>
-                    ) : transactions.length > 0 ? (
-                      <ul>
-                        {transactions.map((transaction) => (
-                          <li key={transaction.id}>
-                            <strong>
-                              {transaction.type === "income" ? "収入" : "支出"}
-                            </strong>
-                            : ¥{transaction.amount.toLocaleString()} -{" "}
-                            {transaction.category} ({transaction.memo})
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p>データがありません。</p>
-                    )}
+            <thead>
+              <tr>
+                <td>
+                  <Box sx={{ mt: 10 }}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DateCalendar onChange={dateChange} />
+                    </LocalizationProvider>
                   </Box>
-                )}
-              </td>
-            </tr>
+                </td>
+                <td>
+                  {selectedDate && (
+                    <Box sx={{ mb: 20, ml: 5 }}>
+                      <h2>{selectedDate.format("YYYY/MM/DD")}の収支データ</h2>
+                      {loading ? (
+                        <p>読み込み中...</p>
+                      ) : transactions.length > 0 ? (
+                        <ul>
+                          {transactions.map((transaction) => (
+                            <li key={transaction.id}>
+                              <strong>
+                                {transaction.type === "income"
+                                  ? "収入"
+                                  : "支出"}
+                              </strong>
+                              : ¥{transaction.amount.toLocaleString()} -{" "}
+                              {transaction.category} ({transaction.memo})
+                              <IconButton
+                                sx={{ ml: 1 }}
+                                aria-label="edit"
+                                size="small"
+                                // onClick={transactionEdit}
+                              >
+                                <EditIcon fontSize="inherit" />
+                              </IconButton>
+                              <IconButton
+                                aria-label="delete"
+                                size="small"
+                                onClick={() => transactionDelete(transaction.id,transaction.type)}
+                              >
+                                <DeleteIcon fontSize="inherit" />
+                              </IconButton>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p>データがありません。</p>
+                      )}
+                    </Box>
+                  )}
+                </td>
+              </tr>
             </thead>
           </table>
 
