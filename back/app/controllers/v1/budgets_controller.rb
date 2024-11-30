@@ -5,27 +5,32 @@ class V1::BudgetsController < ApplicationController
     # 今日の日付を取ってきて1日とする
     set_month = Date.today.beginning_of_month
 
-    budgets = Budget.where(user_id: current_v1_user.id, month: set_month)
+    # ログイン中ユーザーを取得しidの順に並び替え
+    budgets = Budget.where(user_id: current_v1_user.id, month: set_month).order(:id)
+
     render json: budgets
   end
 
   def create
     budgets = budget_params
-
-    Budget.transaction do
+    
       budgets.each do |budget_params|
-        Budget.create!(
+        # 条件に一致するレコードを探すか、新規作成
+        budget = Budget.find_or_initialize_by(
           user_id: current_v1_user.id,
-          expense_category_id: budget_params[:expense_category_id],
-          budget: budget_params[:budget],
-          month: budget_params[:month]
+          month: budget_params[:month],
+          expense_category_id: budget_params[:expense_category_id]
         )
+        
+        # 値を更新
+        budget.budget = budget_params[:budget]
+        
+        # 保存
+        budget.save!
       end
-    end
+    
+      render json: { message: "予算を保存しました" }, status: :ok
 
-    render json: { message: "予算を保存しました" }, status: :ok
-  rescue => e
-    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   private

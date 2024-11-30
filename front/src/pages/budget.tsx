@@ -151,7 +151,7 @@ export default function Budget() {
         throw new Error("設定に失敗しました");
       }
       alert("設定しました");
-      // window.location.reload()
+      window.location.reload()
     } catch (error) {
       console.error(error);
     }
