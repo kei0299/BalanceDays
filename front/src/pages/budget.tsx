@@ -32,18 +32,15 @@ interface TableRowData {
   budget: string; // 値を文字列で管理（フォーマット用）
 }
 
-// budgetの型定義
-// interface BudgetData {
-//   id: number;
-//   expense_category_id: number;
-//   budget: number;
-// }
+interface BudgetData {
+  id: number;      // カテゴリのID
+  budget: string;  // 予算の金額
+}
 
 const cookies = parseCookies();
 const accessToken = cookies["accessToken"];
 const client = cookies["client"];
 const uid = cookies["uid"];
-
 
 export default function Budget() {
   const [rows, setRows] = useState<TableRowData[]>([]);
@@ -70,27 +67,21 @@ export default function Budget() {
       const fetchBudgetData = async () => {
         try {
           const data = await fetchBudget();
-          console.log(data);
+          console.log(data[0].budget);
+          if (data && data.length > 0) {
+            const updatedRows = rows.map(row => {
+              const budget = data.find((b: BudgetData) => b.id === row.id);
+              if (budget) {
+                return { ...row, budget: budget.budget };
+              }
+              return row;
+            });
+            setRows(updatedRows);
+          }
         } catch (error) {
           console.error("取得失敗", error);
         }
       };
-
-      // Rails APIから先月の実績を取得
-    // const lastMonthExpenses = async () => {
-    //   try {
-    //     const data: CategoryData[] = await fetchCategory();
-    //     const formattedData: TableRowData[] = data.map((item) => ({
-    //       id: item.id,
-    //       category: item.name,
-    //       lastMonthExpense: 0,
-    //       budget: "",
-    //     }));
-    //     setRows(formattedData);
-    //   } catch (error) {
-    //     console.error("取得失敗", error);
-    //   }
-    // };
 
     fetchCategoryData();
     fetchBudgetData();
@@ -117,6 +108,7 @@ export default function Budget() {
   ).padStart(2, "0")}-01`; // 1日を固定で追加
 
   const budgetChange = (index: number, newValue: string) => {
+    // 指定されたindex番目の要素を取り出し、そのbudgetプロパティにnewValue（新しい値）をセット
     const updatedRows = [...rows];
     updatedRows[index].budget = newValue;
     setRows(updatedRows);
