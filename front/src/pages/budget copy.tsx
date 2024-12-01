@@ -18,20 +18,23 @@ import { fetchBudget } from "@/utils/auth/fetchBudget";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
-// API用の型定義
-interface expenseData {
+// expense_categoryの型定義
+interface expenseCategoryData {
   id: number;
   name: string;
-  budget: number;
-  last_month_expense: number;
 }
 
-// テーブルの行データ用の型定義
-interface BudgetRowData {
+// テーブルの行データの型定義
+interface TableRowData {
   id: number;
-  budget: string; // 値を文字列で管理（フォーマット用）
   category: string;
   lastMonthExpense: number;
+  budget: string; // 値を文字列で管理（フォーマット用）
+}
+
+interface BudgetData {
+  id: number;      // カテゴリのID
+  budget: string;  // 予算の金額
 }
 
 const cookies = parseCookies();
@@ -40,27 +43,38 @@ const client = cookies["client"];
 const uid = cookies["uid"];
 
 export default function Budget() {
-  const [budgets, setBudgets] = useState<BudgetRowData[]>([]);
+  const [rows, setRows] = useState<TableRowData[]>([]);
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
   useEffect(() => {
-    // Rails APIからカテゴリを取得
-    const fetchBudgetData = async () => {
+      // Rails APIからカテゴリを取得
+    const fetchCategoryData = async () => {
       try {
-        const data: expenseData[] = await fetchBudget(); // APIから取得したデータが BudgetRowData[] に対応
-        const formattedData: BudgetRowData[] = data.map((item) => ({
+        const data: expenseCategoryData[] = await fetchExpenseCategory();
+        const formattedData: TableRowData[] = data.map((item) => ({
           id: item.id,
           category: item.name,
-          lastMonthExpense: item.last_month_expense,
-          budget: String(item.budget), // 必要に応じてフォーマットを調整
+          // この2つはカテゴリじゃないので下のAPIでいれる？
+          lastMonthExpense: 0,
+          budget: "",  //　Q ここで初期化してた
         }));
-        console.log(data);
-        setBudgets(formattedData);
+        setRows(formattedData);
       } catch (error) {
         console.error("取得失敗", error);
       }
     };
 
+      // Rails APIから設定された予算を取得
+      const fetchBudgetData = async () => {
+        try {
+          const data = await fetchBudget();
+          console.log(data[2].budget);
+        } catch (error) {
+          console.error("取得失敗", error);
+        }
+      };
+
+    fetchCategoryData();
     fetchBudgetData();
   }, []);
 
@@ -86,17 +100,17 @@ export default function Budget() {
 
   const budgetChange = (index: number, newValue: string) => {
     // 指定されたindex番目の要素を取り出し、そのbudgetプロパティにnewValue（新しい値）をセット
-    const updatedRows = [...budgets];
+    const updatedRows = [...rows];
     updatedRows[index].budget = newValue;
-    setBudgets(updatedRows);
+    setRows(updatedRows);
   };
 
   const handleSave = async (event: React.FormEvent) => {
     event.preventDefault();
 
     // railsAPI_予算の登録
-    const budgetsToSave = budgets.map((row, index) => ({
-      expense_category_id: budgets[index].id, // カテゴリID
+    const budgetsToSave = rows.map((row, index) => ({
+      expense_category_id: rows[index].id, // カテゴリID
       budget: Number(row.budget.replace(/[^0-9]/g, "")), // 数字のみを抽出
       month: apiFormattedDate,
     }));
@@ -120,7 +134,7 @@ export default function Budget() {
         throw new Error("設定に失敗しました");
       }
       alert("設定しました");
-      window.location.reload();
+      window.location.reload()
     } catch (error) {
       console.error(error);
     }
@@ -156,7 +170,7 @@ export default function Budget() {
               <Table sx={{ minWidth: 300 }} aria-label="budget_table">
                 <TableHead>
                   <TableRow>
-                    <TableCell></TableCell>
+                  <TableCell></TableCell>
                     <TableCell>カテゴリ</TableCell>
                     <TableCell align="right">先月の支出</TableCell>
                     <TableCell align="right">今月の予算</TableCell>
@@ -164,20 +178,22 @@ export default function Budget() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {budgets.map((row, index) => (
+                  {rows.map((row, index) => (
                     <TableRow
                       key={index}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <TableCell></TableCell>
-                      <TableCell component="th">{row.category}</TableCell>
+                      <TableCell component="th" scope="row">
+                        {row.category}
+                      </TableCell>
                       <TableCell align="right">
                         {row.lastMonthExpense}
                       </TableCell>
                       <TableCell align="right">
                         <Input
-                          sx={{ maxWidth: 100, ml: "auto" }}
-                          value={row.budget}
+                        sx={{maxWidth: 100,ml: "auto"}}
+                          value={row.budget}  // Q ここで表示
                           onChange={(event) =>
                             budgetChange(index, event.target.value)
                           }
