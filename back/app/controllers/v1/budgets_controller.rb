@@ -2,7 +2,7 @@ class V1::BudgetsController < ApplicationController
   before_action :authenticate_v1_user!
 
   def index
-    # 今日の日付を取ってきて1日とする
+    # monthの日付を取ってきて1日とする
     set_month = Date.today.beginning_of_month
 
     budgets = ExpenseCategory
@@ -13,6 +13,7 @@ class V1::BudgetsController < ApplicationController
       'budgets.budget',
       'budgets.month'
     )
+    # 期間の追加が必要
     .joins(
       <<~SQL
         LEFT OUTER JOIN budgets 
@@ -20,6 +21,7 @@ class V1::BudgetsController < ApplicationController
         AND budgets.user_id = #{current_v1_user.id}
       SQL
     )
+    # 期間を変数にして渡すことが必要
     .joins(
       <<~SQL
         LEFT OUTER JOIN expense_logs 
