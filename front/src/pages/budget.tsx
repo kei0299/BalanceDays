@@ -13,7 +13,6 @@ import * as React from "react";
 import { NumericFormat } from "react-number-format";
 import { parseCookies } from "nookies";
 import Input from "@mui/joy/Input";
-import { fetchExpenseCategory } from "@/utils/auth/fetchExpenseCategory";
 import { fetchBudget } from "@/utils/auth/fetchBudget";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
