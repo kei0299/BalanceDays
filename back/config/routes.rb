@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
     namespace :expense do
       resources :expense_categories, only: [:index]
-      resources :expense_log, only: [:create]
+      resources :expense_log, only: [:index, :create]
     end
   
     namespace :income do

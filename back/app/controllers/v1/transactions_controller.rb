@@ -47,6 +47,7 @@ class V1::TransactionsController < ApplicationController
     transaction_id = params[:id]
     transaction_type = params[:type]
 
+    # 振り分けだけして処理は各コントローラで行う
     if transaction_type == "income"
       income_log = IncomeLog.find_by(id: transaction_id)
       if income_log
