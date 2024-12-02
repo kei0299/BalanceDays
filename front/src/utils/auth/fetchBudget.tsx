@@ -1,7 +1,8 @@
 import { parseCookies } from "nookies";
 
 // セッション情報を取得する関数
-export const fetchBudget = async () => {
+export const fetchBudget = async (currentMonth: string) => {
+  console.log(currentMonth);
   try {
     // クッキーからトークンを取得
     const cookies = parseCookies();
@@ -19,6 +20,7 @@ export const fetchBudget = async () => {
           "access-token": accessToken,
           client: client,
           uid: uid,
+          currentMonth: currentMonth
         },
       }
     );

@@ -23,6 +23,7 @@ interface expenseData {
   name: string;
   budget: number;
   last_month_expense: number;
+  currentMonth: string;
 }
 
 // テーブルの行データ用の型定義
@@ -31,6 +32,7 @@ interface BudgetRowData {
   budget: string; // 値を文字列で管理（フォーマット用）
   category: string;
   lastMonthExpense: number;
+  currentMonth: string;
 }
 
 const cookies = parseCookies();
@@ -46,12 +48,13 @@ export default function Budget() {
     // Rails APIからカテゴリを取得
     const fetchBudgetData = async () => {
       try {
-        const data: expenseData[] = await fetchBudget(); // APIから取得したデータが BudgetRowData[] に対応
+        const data: expenseData[] = await fetchBudget(apiFormattedDate); // APIから取得したデータが BudgetRowData[] に対応
         const formattedData: BudgetRowData[] = data.map((item) => ({
           id: item.id,
           category: item.name,
           lastMonthExpense: item.last_month_expense,
-          budget: String(item.budget), // 必要に応じてフォーマットを調整
+          budget: String(item.budget),
+          currentMonth: String(item.currentMonth),
         }));
         console.log(data);
         setBudgets(formattedData);
@@ -61,7 +64,7 @@ export default function Budget() {
     };
 
     fetchBudgetData();
-  }, []);
+  }, [currentMonth]);
 
   const monthChange = (direction: "previous" | "next") => {
     const newMonth = new Date(currentMonth);
@@ -171,12 +174,17 @@ export default function Budget() {
                       <TableCell></TableCell>
                       <TableCell component="th">{row.category}</TableCell>
                       <TableCell align="right">
-                        {row.lastMonthExpense}
+                        <NumericFormat
+                          value={row.lastMonthExpense}
+                          displayType="text"
+                          thousandSeparator={true}
+                          prefix="¥"
+                        />
                       </TableCell>
                       <TableCell align="right">
                         <Input
                           sx={{ maxWidth: 100, ml: "auto" }}
-                          value={row.budget}
+                          value={row.budget === "0" ? "" : row.budget}
                           onChange={(event) =>
                             budgetChange(index, event.target.value)
                           }
