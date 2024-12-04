@@ -40,9 +40,9 @@ export default function Home() {
               <Image
                 src="/image/home.jpg"
                 alt="Sample Image"
-                width={1600}
+                width={1670}
                 height={800}
-                style={{ marginTop: "-70px"}}
+                style={{ marginTop: "-5px"}}
               />
             </div>
           </Box>

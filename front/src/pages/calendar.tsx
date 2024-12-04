@@ -90,7 +90,12 @@ export default function Calender() {
 
   // tabの状態管理
   const [tab, setTab] = React.useState(0);
-  const [day, setDay] = React.useState<Dayjs | null>(dayjs());
+  const [formDay, setFormDay] = React.useState<Dayjs | null>(dayjs()); // フォーム用の日付
+  let formatFormDay: Date = new Date(); // フォーム受け渡し用の日付
+  if (formDay) {
+    // Dayjs型からDate型に変換
+    formatFormDay = dayjs(formDay.toDate()).add(9, 'hour').toDate();
+  }
 
   // カテゴリセット
   const [incomeCategory, setIncomeCategory] = useState<number | "">("");
@@ -162,6 +167,13 @@ export default function Calender() {
     } finally {
       setLoading(false);
     }
+    setIsEditMode(false);
+    setIncomeCategory("");
+    setExpenseCategory("");
+    setIncomeMemo("");
+    setExpenseMemo("");
+    setIncomeAmount("");
+    setExpenseAmount("");
   };
 
   // menuitemの設定
@@ -199,13 +211,13 @@ const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) =
   logId = transaction.id;
   if (transaction.type === "income") {
     setTab(0);
-    setDay(selectedDate);
+    setFormDay(selectedDate);
     setIncomeCategory(transaction.categoryId); // APIのカテゴリ
     setIncomeAmount(formatNum(transaction.amount)); // 金額
     setIncomeMemo(transaction.memo); // メモ
   } else {
     setTab(1);
-    setDay(selectedDate);
+    setFormDay(selectedDate);
     setExpenseCategory(transaction.categoryId); // APIのカテゴリ
     setExpenseAmount(formatNum(transaction.amount)); // 金額
     setExpenseMemo(transaction.memo); // メモ
@@ -232,7 +244,7 @@ const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) =
           },
           body: JSON.stringify({
             amount: Number(expenseAmount.replace(/,/g, "")),
-            date: day,
+            date: formatFormDay,
             expense_category_id: expenseCategory,
             memo: expenseMemo,
           }),
@@ -266,7 +278,7 @@ const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) =
           },
           body: JSON.stringify({
             amount: Number(expenseAmount.replace(/,/g, "")),
-            date: day,
+            date: formatFormDay,
             expense_category_id: expenseCategory,
             memo: expenseMemo,
           }),
@@ -301,7 +313,7 @@ const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) =
           },
           body: JSON.stringify({
             amount: Number(incomeAmount.replace(/,/g, "")),
-            date: day,
+            date: formatFormDay,
             income_category_id: incomeCategory,
             memo: incomeMemo,
           }),
@@ -322,7 +334,6 @@ const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) =
     // railsAPI_収入の更新
     const incomeEditSave = async (event: React.FormEvent) => {
       event.preventDefault();
-      
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/v1/income/income_log/${logId}`,
@@ -336,7 +347,7 @@ const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) =
             },
             body: JSON.stringify({
               amount: Number(incomeAmount.replace(/,/g, "")),
-              date: day,
+              date: formatFormDay,
               income_category_id: incomeCategory,
               memo: incomeMemo,
             }),
@@ -434,7 +445,7 @@ const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) =
                 </td>
                 <td>
                   {selectedDate && (
-                    <Box sx={{ mb: 20, ml: 5,}}>
+                    <Box sx={{ mb: 20, ml: 5}}>
                       <h2>{selectedDate.format("YYYY/MM/DD")}の収支データ</h2>
                       {loading ? (
                         <p>読み込み中...</p>
@@ -497,8 +508,8 @@ const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) =
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label="日付"
-                  value={day}
-                  onChange={(newDay) => setDay(newDay)}
+                  value={formDay}
+                  onChange={(newDay) => setFormDay(newDay)}
                   format="YYYY/MM/DD"
                 />
               </LocalizationProvider>
@@ -565,8 +576,8 @@ const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) =
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label="日付"
-                  value={day}
-                  onChange={(newDay) => setDay(newDay)}
+                  value={formDay}
+                  onChange={(newDay) => setFormDay(newDay)}
                   format="YYYY/MM/DD"
                 />
               </LocalizationProvider>

@@ -59,7 +59,7 @@ export default function InputAdornments() {
       return;
     }
 
-    // railsAPI
+    // railsAPI_新規登録
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/v1/auth`,
@@ -115,7 +115,7 @@ export default function InputAdornments() {
           client: string,
           uid: string
         ) => {
-          setCookie(null, "access-token", accessToken, {
+          setCookie(null, "accessToken", accessToken, {
             maxAge: 30 * 24 * 60 * 60,
             path: "/",
           }); // 30日間の有効期限
@@ -129,7 +129,6 @@ export default function InputAdornments() {
         if (accessToken && client && uid) {
           // クッキーにアクセス・クライアント・ユーザーIDを格納
           setAccessToken(accessToken, client, uid);
-          console.log(setAccessToken);
         }
 
         alert("ログインしました");

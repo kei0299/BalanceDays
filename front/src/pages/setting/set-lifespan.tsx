@@ -64,6 +64,11 @@ const BalanceInput = () => {
   const lifeSave = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    if (caution <= warning) {
+      alert("注意レベル>警告レベルに設定してください。");
+      return;
+    }
+
     const cookies = parseCookies();
     const accessToken = cookies["accessToken"];
     const client = cookies["client"];
