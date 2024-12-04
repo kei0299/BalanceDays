@@ -11,58 +11,41 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
   useEffect(() => {
     const AuthCheck = async () => {
-      const result = await checkSession();
-      if (!result) {
-        window.location.href = "/signin";
+      const publicPages = ["/", "/_error", "/signin", "/signup"];
+      if (!publicPages.includes(router.pathname)) {
+        const result = await checkSession();
+        if (!result) {
+          router.push("/signin");
+        }
       }
     };
 
+    AuthCheck(); // 初期ロード時のチェック
+
     router.beforePopState(({ url }) => {
-      if (
-        url !== "/" &&
-        url !== "/_error" &&
-        url !== "/signin" &&
-        url !== "/signup"
-      ) {
-        AuthCheck(); // 非同期関数を呼び出し
-        return false; // `beforePopState`では`false`を返し、リダイレクト処理を非同期で行う
+      const publicPages = ["/", "/_error", "/signin", "/signup"];
+      if (!publicPages.includes(url)) {
+        AuthCheck();
+        return false;
       }
       return true;
     });
   }, [router]);
 
-  const component =
-    typeof pageProps === "undefined" ? null : <Component {...pageProps} />;
-
-  return component;
+  return <Component {...pageProps} />;
 };
 
-// 型を適切に設定
 MyApp.getInitialProps = async (appContext: AppContext) => {
+  const publicPages = ["/", "/_error", "/signin", "/signup"];
   const cookies = parseCookies(appContext.ctx);
-  
-  // クライアントサイドでもサーバーサイドでも適切に処理を行う
-  if (
-    appContext.ctx.pathname !== "/" &&
-    appContext.ctx.pathname !== "/_error" &&
-    appContext.ctx.pathname !== "signup" &&
-    appContext.ctx.pathname !== "/signin"
-  ) {
-    if (typeof cookies.accessToken === "undefined") {
-      const isServer = typeof window === "undefined";
-      if (isServer) {
-        console.log("in ServerSide");
 
-        // サーバーサイドでのみ res を設定
-        if (appContext.ctx.res) {
-          appContext.ctx.res.statusCode = 302;
-          appContext.ctx.res.setHeader("Location", "/signin");
-        }
-
-        return {}; // サーバーサイドリダイレクト処理
-      } else {
-        console.log("in ClientSide");
+  if (!publicPages.includes(appContext.ctx.pathname)) {
+    if (!cookies.accessToken) {
+      if (appContext.ctx.res) {
+        appContext.ctx.res.statusCode = 302;
+        appContext.ctx.res.setHeader("Location", "/signin");
       }
+      return {};
     }
   }
 
@@ -71,7 +54,6 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
       ...(appContext.Component.getInitialProps
         ? await appContext.Component.getInitialProps(appContext.ctx)
         : {}),
-      pathname: appContext.ctx.pathname,
     },
   };
 };

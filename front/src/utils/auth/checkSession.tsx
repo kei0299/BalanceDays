@@ -31,9 +31,8 @@ export const checkSession = async () => {
     // レスポンスのJSONデータを取得
     const data = await response.json();
     return data;
-    // console.log(data.is_login); // ログイン状態を確認
 
-    // セッションチェックの結果を利用して、必要に応じて状態を更新する処理を追加できます
+    // セッションチェックの結果を利用して、必要に応じて状態を更新する処理を追加
   } catch (error) {
     console.error(error); // エラー処理
   }

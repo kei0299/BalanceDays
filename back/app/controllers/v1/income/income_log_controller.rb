@@ -15,9 +15,26 @@ class V1::Income::IncomeLogController < ApplicationController
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
+  def update
+    income_log = IncomeLog.find(params[:id])
+
+    if income_log.nil?
+      render json: { error: "収入ログが見つかりません" }, status: :not_found
+      return
+    end
+  
+    # レコードの更新
+    income_log.update!(income_logs_params)
+  
+    render json: { message: "収入ログを更新しました" }, status: :ok
+  rescue => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+  
+
   private
 
   def income_logs_params
-    params.permit(:amount, :income_category_id, :date, :memo)
+    params.require(:income_log).permit(:amount, :income_category_id, :date, :memo)
   end
 end

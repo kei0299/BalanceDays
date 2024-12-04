@@ -9,12 +9,14 @@ Rails.application.routes.draw do
 
     namespace :expense do
       resources :expense_categories, only: [:index]
-      resources :expense_log, only: [:index, :create]
+      resources :expense_log, only: [:index, :create, :update]
+      # put 'expense_log', to: 'expense_log#update'
     end
   
     namespace :income do
-      resources :income_log, only: [:create]
       resources :income_categories, only: [:index]
+      resources :income_log, only: [:create, :update]
+      # put 'income_log', to: 'income_log#update'
     end
 
     namespace :auth do

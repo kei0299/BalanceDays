@@ -15,6 +15,7 @@ class V1::TransactionsController < ApplicationController
         id: income.id,
         type: "income",
         amount: income.amount,
+        categoryId: income.income_category_id,
         category: income.income_category.name, # income_category.name でカテゴリ名を取得
         memo: income.memo || "",
         created_at: income.created_at
@@ -31,6 +32,7 @@ class V1::TransactionsController < ApplicationController
         id: expense.id,
         type: "expense",
         amount: expense.amount,
+        categoryId: expense.expense_category_id,
         category: expense.expense_category.name, # expense_category.name でカテゴリ名を取得
         memo: expense.memo || "",
         created_at: expense.created_at
