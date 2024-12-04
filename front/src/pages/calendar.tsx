@@ -57,7 +57,7 @@ const accessToken = cookies["accessToken"];
 const client = cookies["client"];
 const uid = cookies["uid"];
 
-let logId: string = "";
+let logId: number = 0;
 
 // Tab関連
 function CustomTabPanel(props: TabPanelProps) {
@@ -195,7 +195,7 @@ const formatNum = (num: string | number): string => {
 };
 
 // 選択した取引データをフォームに反映
-const setEditTransaction = (transaction: any, selectedDate: Dayjs) => {
+const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) => {
   logId = transaction.id;
   if (transaction.type === "income") {
     setTab(0);
