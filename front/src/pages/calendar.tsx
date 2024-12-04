@@ -1,6 +1,8 @@
 import Header from "@/components/header";
 import FooterLogin from "@/components/footerLogin";
-import { Box, IconButton } from "@mui/material";
+import { useEffect, useState } from "react";
+
+import { Box, IconButton, Button } from "@mui/material";
 import * as React from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -9,7 +11,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { useEffect, useState } from "react";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
@@ -19,7 +20,6 @@ import { fetchExpenseCategory } from "@/utils/auth/fetchExpenseCategory";
 import InputAdornment from "@mui/material/InputAdornment";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import { parseCookies } from "nookies";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -47,10 +47,19 @@ interface TransactionData {
   id: number;
   type: "income" | "expense";
   amount: number;
+  categoryId: number;
   category: string;
   memo: string;
 }
 
+const cookies = parseCookies();
+const accessToken = cookies["accessToken"];
+const client = cookies["client"];
+const uid = cookies["uid"];
+
+let logId: string = "";
+
+// Tab関連
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
@@ -118,6 +127,8 @@ export default function Calender() {
   const [transactions, setTransactions] = useState<TransactionData[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const [isEditMode, setIsEditMode] = useState(false);
+
   const dateChange = async (date: Dayjs | null) => {
     if (!date) return;
 
@@ -125,13 +136,6 @@ export default function Calender() {
     setLoading(true);
 
     try {
-      // APIリクエストを送信
-
-      const cookies = parseCookies();
-      const accessToken = cookies["accessToken"];
-      const client = cookies["client"];
-      const uid = cookies["uid"];
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/v1/transactions?date=${date.format(
           "YYYY-MM-DD"
@@ -176,23 +180,44 @@ export default function Calender() {
   };
 
   // 金額をフォーマットする関数
-  const formatAmountChange = <T extends HTMLInputElement | HTMLTextAreaElement>(
-    event: React.ChangeEvent<T>,
-    setAmount: React.Dispatch<React.SetStateAction<string>>
-  ) => {
-    const numericValue = event.target.value.replace(/[^0-9]/g, ""); // 数字以外を削除
-    const formattedValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // 3桁ごとにカンマを挿入
-    setAmount(formattedValue); // カンマ区切りを適用して状態を更新
-  };
+const formatAmountChange = <T extends HTMLInputElement | HTMLTextAreaElement>(
+  event: React.ChangeEvent<T>,
+  setAmount: React.Dispatch<React.SetStateAction<string>>
+) => {
+  const numericValue = event.target.value.replace(/[^0-9]/g, ""); // 数字以外を削除
+  const formattedValue = formatNum(numericValue); // フォーマット適用
+  setAmount(formattedValue); // カンマ区切りを適用して状態を更新
+};
+
+// 3桁ごとにカンマを挿入する関数
+const formatNum = (num: string | number): string => {
+  return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+// 選択した取引データをフォームに反映
+const setEditTransaction = (transaction: any, selectedDate: Dayjs) => {
+  logId = transaction.id;
+  if (transaction.type === "income") {
+    setTab(0);
+    setDay(selectedDate);
+    setIncomeCategory(transaction.categoryId); // APIのカテゴリ
+    setIncomeAmount(formatNum(transaction.amount)); // 金額
+    setIncomeMemo(transaction.memo); // メモ
+  } else {
+    setTab(1);
+    setDay(selectedDate);
+    setExpenseCategory(transaction.categoryId); // APIのカテゴリ
+    setExpenseAmount(formatNum(transaction.amount)); // 金額
+    setExpenseMemo(transaction.memo); // メモ
+  }
+  console.log(selectedDate);
+  setIsEditMode(true);
+};
+
 
   // railsAPI_支出の登録
   const expenseSave = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    const cookies = parseCookies();
-    const accessToken = cookies["accessToken"];
-    const client = cookies["client"];
-    const uid = cookies["uid"];
 
     try {
       const response = await fetch(
@@ -222,16 +247,46 @@ export default function Calender() {
     } catch (error) {
       console.error(error);
     }
+    setIsEditMode(false);
+  };
+
+  // railsAPI_支出の更新
+  const expenseEditSave = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/expense/expense_log/${logId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+          body: JSON.stringify({
+            amount: Number(expenseAmount.replace(/,/g, "")),
+            date: day,
+            expense_category_id: expenseCategory,
+            memo: expenseMemo,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("支出ログの更新に失敗しました");
+      }
+      alert("支出ログを更新しました");
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+    setIsEditMode(false);
   };
 
   // railsAPI_収入の登録
   const incomeSave = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    const cookies = parseCookies();
-    const accessToken = cookies["accessToken"];
-    const client = cookies["client"];
-    const uid = cookies["uid"];
 
     try {
       const response = await fetch(
@@ -261,15 +316,49 @@ export default function Calender() {
     } catch (error) {
       console.error(error);
     }
+    setIsEditMode(false);
   };
 
-  // railsAPI_削除
-  const transactionDelete = async (transactionId: number, transactionType: string) => {
+    // railsAPI_収入の更新
+    const incomeEditSave = async (event: React.FormEvent) => {
+      event.preventDefault();
+      
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/v1/income/income_log/${logId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              "access-token": accessToken,
+              client: client,
+              uid: uid,
+            },
+            body: JSON.stringify({
+              amount: Number(incomeAmount.replace(/,/g, "")),
+              date: day,
+              income_category_id: incomeCategory,
+              memo: incomeMemo,
+            }),
+          }
+        );
+  
+        if (!response.ok) {
+          throw new Error("収入ログの更新に失敗しました");
+        }
+        alert("収入ログを更新しました");
+        window.location.reload();
+      } catch (error) {
+        console.error(error);
+      }
+      setIsEditMode(false);
+    };
 
-    const cookies = parseCookies();
-    const accessToken = cookies["accessToken"];
-    const client = cookies["client"];
-    const uid = cookies["uid"];
+  // railsAPI_削除
+  const transactionDelete = async (
+    transactionId: number,
+    transactionType: string
+  ) => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/v1/transactions/${transactionId}`,
@@ -282,8 +371,8 @@ export default function Calender() {
             uid: uid,
           },
           body: JSON.stringify({
-            "id": transactionId,
-            "type": transactionType
+            id: transactionId,
+            type: transactionType,
           }),
         }
       );
@@ -294,14 +383,13 @@ export default function Calender() {
         alert(`削除に失敗しました: ${errorData.error || "不明なエラー"}`);
         return;
       }
-  
+
       // 成功した場合、通知
       const data = await response.json();
       alert(data.message || "削除完了");
-  
+
       // ページをリロードして反映
       window.location.reload();
-      
     } catch (error) {
       // ネットワークエラーやその他のエラーをキャッチ
       console.error("Network Error:", error);
@@ -346,7 +434,7 @@ export default function Calender() {
                 </td>
                 <td>
                   {selectedDate && (
-                    <Box sx={{ mb: 20, ml: 5 }}>
+                    <Box sx={{ mb: 20, ml: 5,}}>
                       <h2>{selectedDate.format("YYYY/MM/DD")}の収支データ</h2>
                       {loading ? (
                         <p>読み込み中...</p>
@@ -365,14 +453,19 @@ export default function Calender() {
                                 sx={{ ml: 1 }}
                                 aria-label="edit"
                                 size="small"
-                                // onClick={transactionEdit}
+                                onClick={() => setEditTransaction(transaction,selectedDate) } // 編集モードに切り替え
                               >
                                 <EditIcon fontSize="inherit" />
                               </IconButton>
                               <IconButton
                                 aria-label="delete"
                                 size="small"
-                                onClick={() => transactionDelete(transaction.id,transaction.type)}
+                                onClick={() =>
+                                  transactionDelete(
+                                    transaction.id,
+                                    transaction.type
+                                  )
+                                }
                               >
                                 <DeleteIcon fontSize="inherit" />
                               </IconButton>
@@ -412,10 +505,8 @@ export default function Calender() {
 
               {/* カテゴリ選択 */}
               <FormControl sx={{ minWidth: 150, ml: 2 }}>
-                <InputLabel id="income-category-label">カテゴリ</InputLabel>
+                <InputLabel>カテゴリ</InputLabel>
                 <Select
-                  labelId="income-category-label"
-                  id="income-select"
                   value={incomeCategory}
                   label="カテゴリ"
                   onChange={selectIncomeCategory}
@@ -458,8 +549,12 @@ export default function Calender() {
 
               {/* ボタン */}
               <Box sx={{ display: "flex", mt: 2 }}>
-                <Button type="submit" variant="outlined" onClick={incomeSave}>
-                  登録する
+                <Button
+                  type="submit"
+                  variant="outlined"
+                  onClick={isEditMode ? incomeEditSave : incomeSave}
+                >
+                  {isEditMode ? "更新する" : "登録する"}
                 </Button>
               </Box>
             </CustomTabPanel>
@@ -478,10 +573,8 @@ export default function Calender() {
 
               {/* カテゴリ選択 */}
               <FormControl sx={{ minWidth: 150, ml: 2 }}>
-                <InputLabel id="income-category-label">カテゴリ</InputLabel>
+                <InputLabel>カテゴリ</InputLabel>
                 <Select
-                  labelId="income-category-label"
-                  id="income-select"
                   value={expenseCategory}
                   label="カテゴリ"
                   onChange={selectExpenseCategory}
@@ -525,8 +618,12 @@ export default function Calender() {
 
               {/* ボタン */}
               <Box sx={{ display: "flex", mt: 2 }}>
-                <Button type="submit" variant="outlined" onClick={expenseSave}>
-                  登録する
+                <Button
+                  type="submit"
+                  variant="outlined"
+                  onClick={isEditMode ? expenseEditSave : expenseSave}
+                >
+                  {isEditMode ? "更新する" : "登録する"}
                 </Button>
               </Box>
             </CustomTabPanel>
