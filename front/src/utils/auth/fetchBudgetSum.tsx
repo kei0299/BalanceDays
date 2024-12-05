@@ -30,7 +30,7 @@ export const fetchBudgetSum = async (currentMonth: string) => {
     }
 
     // レスポンスのJSONデータを取得
-    const { budgets, total_budget } = await response.json();
+    const { total_budget } = await response.json();
     return total_budget;
  
 

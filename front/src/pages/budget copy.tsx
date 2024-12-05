@@ -36,6 +36,12 @@ interface BudgetRowData {
   currentMonth: string;
 }
 
+// fetchBudget のレスポンス型
+interface BudgetResponse {
+  budgets: expenseData[];  // 'budgets' 配列
+  total_budget: number;  // 'total_budget'
+}
+
 const cookies = parseCookies();
 const accessToken = cookies["accessToken"];
 const client = cookies["client"];
@@ -50,18 +56,21 @@ export default function Budget() {
     // Rails APIからカテゴリを取得
     const fetchBudgetData = async () => {
       try {
-        const data: expenseData[] = await fetchBudget(apiFormattedDate); // APIから取得したデータが BudgetRowData[] に対応
-        const formattedData: BudgetRowData[] = data.map((item) => ({
+        const response: BudgetResponse = await fetchBudget(apiFormattedDate); // fetchBudget から返ってくるのは BudgetResponse 型
+        const budgets : BudgetResponse = response; // 'budgets' を取り出し
+        console.log( budgets );
+        // 'budgets' 配列を適切にフォーマット
+        const formattedData: BudgetRowData[] = budgets.map((item) => ({
           id: item.id,
           category: item.name,
           lastMonthExpense: item.last_month_expense,
           budget: String(item.budget),
           currentMonth: String(item.currentMonth),
         }));
-        const sumData: string = await fetchBudgetSum(apiFormattedDate);
-        console.log("aaaa",data);
-        setBudgets(formattedData);
-        setSumBudget(sumData);
+        // const sumData: string = await fetchBudgetSum(apiFormattedDate);
+        // console.log(sumData);
+        // setBudgets(formattedData);
+        // setSumBudget(sumData);
       } catch (error) {
         console.error("取得失敗", error);
       }
