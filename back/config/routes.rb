@@ -4,13 +4,16 @@ Rails.application.routes.draw do
     registrations: 'v1/auth/registrations'
   }
 
-    resources :budgets, only: [:index, :create]
+    resources :budgets, only: [:index, :create] do
+      collection do
+        get :sum_month_budget
+      end
+    end
     resources :transactions, only: [:index, :update, :destroy]
 
     namespace :expense do
       resources :expense_categories, only: [:index]
       resources :expense_log, only: [:index, :create, :update]
-      # put 'expense_log', to: 'expense_log#update'
     end
   
     namespace :income do

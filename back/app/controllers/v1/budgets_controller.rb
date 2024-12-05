@@ -37,9 +37,13 @@ class V1::BudgetsController < ApplicationController
       'expense_categories.id, expense_categories.name, budgets.budget, budgets.month'
     )
     .order('expense_categories.id ASC')
-  
 
-    render json: budgets
+    total_budget = budgets.sum { |b| b.budget.to_i }
+  
+    render json: {
+      budgets: budgets,
+      total_budget: total_budget
+    }, status: :ok
   end
 
   def create

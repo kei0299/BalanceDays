@@ -1,7 +1,7 @@
 import { parseCookies } from "nookies";
 
 // セッション情報を取得する関数
-export const fetchBudget = async (currentMonth: string) => {
+export const fetchBudgetSum = async (currentMonth: string) => {
   try {
     // クッキーからトークンを取得
     const cookies = parseCookies();
@@ -30,8 +30,8 @@ export const fetchBudget = async (currentMonth: string) => {
     }
 
     // レスポンスのJSONデータを取得
-    const { budgets } = await response.json();
-    return budgets;
+    const { total_budget } = await response.json();
+    return total_budget;
  
 
     // セッションチェックの結果を利用して、必要に応じて状態を更新する処理を追加できます
