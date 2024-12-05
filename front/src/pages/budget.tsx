@@ -14,6 +14,7 @@ import { NumericFormat } from "react-number-format";
 import { parseCookies } from "nookies";
 import Input from "@mui/joy/Input";
 import { fetchBudget } from "@/utils/auth/fetchBudget";
+import { fetchBudgetSum } from "@/utils/auth/fetchBudgetSum";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
@@ -42,6 +43,7 @@ const uid = cookies["uid"];
 
 export default function Budget() {
   const [budgets, setBudgets] = useState<BudgetRowData[]>([]);
+  const [sumBudget, setSumBudget] = useState<string>("");
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
   useEffect(() => {
@@ -56,15 +58,17 @@ export default function Budget() {
           budget: String(item.budget),
           currentMonth: String(item.currentMonth),
         }));
-        console.log(data);
+        const sumData: string = await fetchBudgetSum(apiFormattedDate);
+        console.log(sumData);
         setBudgets(formattedData);
+        setSumBudget(sumData);
       } catch (error) {
         console.error("取得失敗", error);
       }
     };
-
     fetchBudgetData();
   }, [currentMonth]);
+  
 
   const monthChange = (direction: "previous" | "next") => {
     const newMonth = new Date(currentMonth);
@@ -146,6 +150,9 @@ export default function Budget() {
             {formattedMonth}
             <KeyboardArrowRightIcon onClick={() => monthChange("next")} />
           </Box>
+          <Box sx={{mr:10, textAlign: "right"}}>
+              <h2>今月の予算合計：￥{sumBudget}</h2>
+            </Box>
 
           <Box
             sx={{
