@@ -8,7 +8,9 @@ import { fetchCharacter } from "@/utils/auth/fetchCharacter";
 
 export default function Home() {
   const currentMonth: Date = new Date();
-  
+  // キャラ切り替えのための状態を管理
+  const [characterStatus, setCharacterStatus] = useState<number | null>(null);
+
   useEffect(() => {
     // 非同期関数を定義してセッション情報を取得
     const fetchSessionData = async () => {
@@ -20,25 +22,17 @@ export default function Home() {
       }
     };
 
-    const fetchBudgetData = async () => {
+    const fetchCharacterData = async () => {
       try {
         const data = await fetchCharacter(apiFormattedDate); // APIから取得したデータが BudgetRowData[] に対応
-        //     const formattedData: BudgetRowData[] = data.map((item) => ({
-        //       id: item.id,
-        //       category: item.name,
-        //       lastMonthExpense: item.last_month_expense,
-        //       budget: String(item.budget),
-        //       currentMonth: String(item.currentMonth),
-        //     }));
         console.log(data);
-        //     setBudgets(formattedData);
-        //     setSumBudget(sumData);
+        setCharacterStatus(data)
       } catch (error) {
         console.error("取得失敗", error);
       }
     };
 
-    fetchBudgetData();
+    fetchCharacterData();
     fetchSessionData(); // 初回レンダリング時にセッション情報を取得
   }, []); // 初回レンダリング時のみ実行されるように空の依存配列を指定
 
@@ -64,7 +58,7 @@ export default function Home() {
               textAlign: "center",
             }}
           >
-            <div className={`fixed top-0 left-0 w-full h-screen z-[100]`}>
+            {/* <div className={`fixed top-0 left-0 w-full h-screen z-[100]`}>
               <Image
                 src="/image/home.jpg"
                 alt="Sample Image"
@@ -72,6 +66,38 @@ export default function Home() {
                 height={800}
                 style={{ marginTop: "-5px" }}
               />
+            </div> */}
+            <div className={`fixed top-0 left-0 w-full h-screen z-[100]`}>
+              {/* characterStatusの値に応じて画像を切り替え */}
+              {characterStatus === 3 ? (
+                <Image
+                  src="/image/warning.png"
+                  alt="Character 1"
+                  width={300}
+                  height={300}
+                  style={{ marginTop: "100px" }}
+                />
+              ) : characterStatus === 2 ? (
+                <Image
+                  src="/image/caution.png"
+                  alt="Character 2"
+                  width={300}
+                  height={300}
+                  style={{ marginTop: "100px" }}
+                />
+              ) : characterStatus === 1 ? (
+                <Image
+                src="/image/stable.png"
+                alt="Character 3"
+                width={300}
+                height={300}
+                style={{ marginTop: "100px" }}
+              />
+              ) : (
+                <p>設定→生存期間設定から情報を登録してください。<br></br>
+                  予算を設定することで先月の予算から12ヶ月分を取得し、生存期間を算出します。
+                </p>
+              )}
             </div>
           </Box>
         </main>

@@ -5,7 +5,6 @@ class V1::BudgetsController < ApplicationController
     # yyyy-mm-ddの形でフロントから取得
     set_month = request.headers['currentMonth'] # フロントから取得（例: "2024-12-01"）
     date = Date.strptime(set_month, '%Y-%m-%d') # 文字列をDate型に変換
-    avg_first_month = (date - 12.month).beginning_of_month # (例： "2023-12-01")
     first_month = (date - 1.month).beginning_of_month # (例： "2024-11-01")
     end_month = (date - 1.month).end_of_month # # (例： "2024-11-30")
 
@@ -41,47 +40,6 @@ class V1::BudgetsController < ApplicationController
 
     # 今月の予算合計
     total_budget = budgets.sum { |b| b.budget.to_i }
-
-    # キャラチェンジ_先月〜12ヶ月間の平均金額
-    avg_budgets = ExpenseCategory
-    .select(
-      'budgets.month AS month',
-      'COALESCE(SUM(budgets.budget), 0) AS total_budget'
-    )
-    .joins(
-      <<~SQL
-        LEFT OUTER JOIN budgets 
-        ON expense_categories.id = budgets.expense_category_id
-        AND budgets.month BETWEEN '#{avg_first_month}' AND '#{end_month}'
-        AND budgets.user_id = #{current_v1_user.id}
-      SQL
-    )
-    .group('budgets.month')
-
-    # 合計して取得したavg_budgetsの数で割る
-    avg_budget = avg_budgets.sum { |b| b.total_budget.to_i } / avg_budgets.size.to_i
-
-    # キャラクターをユーザーテーブルに登録
-    user = User.find_by(id: current_v1_user)
-    
-    if user && user.balance && user.warning_lv && user.caution_lv
-      balance = user.balance
-      warning_lv = user.warning_lv
-      caution_lv = user.caution_lv
-      set_life = balance / avg_budget
-  
-      set_chara_status =
-      if warning_lv > set_life
-        3
-      elsif caution_lv > set_life
-        2
-      else
-        1
-      end
-
-      user.update!(chara_status: set_chara_status)
-
-    end
   
     render json: {
       budgets: budgets,
