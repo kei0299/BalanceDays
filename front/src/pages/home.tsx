@@ -1,24 +1,46 @@
 import { Box } from "@mui/material";
 import Header from "@/components/header";
 import FooterLogin from "@/components/footerLogin";
-import React, { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { checkSession } from "@/utils/auth/checkSession";
 import Image from "next/image";
+import { fetchCharacter } from "@/utils/auth/fetchCharacter";
 
 export default function Home() {
+  const currentMonth: Date = new Date();
+  // キャラ切り替えのための状態を管理
+  const [characterStatus, setCharacterStatus] = useState<number | null>(null);
+
   useEffect(() => {
     // 非同期関数を定義してセッション情報を取得
     const fetchSessionData = async () => {
       try {
-        const data = await checkSession(); // checkSessionの結果を取得
-        console.log(data); // データをログに出力
+        const sessionData = await checkSession(); // checkSessionの結果を取得
+        console.log(sessionData); // データをログに出力
       } catch (error) {
         console.error("セッションチェックエラー", error);
       }
     };
 
+    const fetchCharacterData = async () => {
+      try {
+        const data = await fetchCharacter(apiFormattedDate); // APIから取得したデータが BudgetRowData[] に対応
+        console.log(data);
+        setCharacterStatus(data)
+      } catch (error) {
+        console.error("取得失敗", error);
+      }
+    };
+
+    fetchCharacterData();
     fetchSessionData(); // 初回レンダリング時にセッション情報を取得
   }, []); // 初回レンダリング時のみ実行されるように空の依存配列を指定
+
+  // API用のフォーマットを "YYYY-MM-DD" 形式で作成
+  const apiFormattedDate = `${currentMonth.getFullYear()}-${String(
+    currentMonth.getMonth() + 1
+  ).padStart(2, "0")}-01`; // 1日を固定で追加
+
   return (
     <>
       <Header />
@@ -36,14 +58,46 @@ export default function Home() {
               textAlign: "center",
             }}
           >
-            <div className={`fixed top-0 left-0 w-full h-screen z-[100]`}>
+            {/* <div className={`fixed top-0 left-0 w-full h-screen z-[100]`}>
               <Image
                 src="/image/home.jpg"
                 alt="Sample Image"
                 width={1670}
                 height={800}
-                style={{ marginTop: "-5px"}}
+                style={{ marginTop: "-5px" }}
               />
+            </div> */}
+            <div className={`fixed top-0 left-0 w-full h-screen z-[100]`}>
+              {/* characterStatusの値に応じて画像を切り替え */}
+              {characterStatus === 3 ? (
+                <Image
+                  src="/image/warning.png"
+                  alt="Character 1"
+                  width={300}
+                  height={300}
+                  style={{ marginTop: "100px" }}
+                />
+              ) : characterStatus === 2 ? (
+                <Image
+                  src="/image/caution.png"
+                  alt="Character 2"
+                  width={300}
+                  height={300}
+                  style={{ marginTop: "100px" }}
+                />
+              ) : characterStatus === 1 ? (
+                <Image
+                src="/image/stable.png"
+                alt="Character 3"
+                width={300}
+                height={300}
+                style={{ marginTop: "100px" }}
+              />
+              ) : (
+                <p>設定→生存期間設定から情報を登録してください。<br></br>
+                  予算を設定することで先月の予算から12ヶ月分を取得し、生存期間を算出します。
+                </p>
+              )}
             </div>
           </Box>
         </main>

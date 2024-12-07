@@ -59,7 +59,7 @@ export default function Budget() {
           currentMonth: String(item.currentMonth),
         }));
         const sumData: string = await fetchBudgetSum(apiFormattedDate);
-        console.log("aaaa",data);
+        console.log(data);
         setBudgets(formattedData);
         setSumBudget(sumData);
       } catch (error) {

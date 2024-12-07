@@ -9,5 +9,27 @@ class User < ActiveRecord::Base
   has_many :budgets, dependent: :destroy
   has_many :expense_logs, dependent: :destroy
   has_many :income_logs, dependent: :destroy
+
+  def update_character_status!(avg_budget,user)
+    balance = user.balance
+    warning_lv = user.warning_lv
+    caution_lv = user.caution_lv
+    set_life = balance / avg_budget
+
+    return unless balance && warning_lv && caution_lv
+
+    set_chara_status =
+      if warning_lv >= set_life
+        3
+      elsif caution_lv >= set_life
+        2
+      else
+        1
+      end
+
+    update!(chara_status: set_chara_status)
+    return set_chara_status
+  
+  end
 end
 

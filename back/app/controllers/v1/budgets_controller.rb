@@ -5,9 +5,10 @@ class V1::BudgetsController < ApplicationController
     # yyyy-mm-ddの形でフロントから取得
     set_month = request.headers['currentMonth'] # フロントから取得（例: "2024-12-01"）
     date = Date.strptime(set_month, '%Y-%m-%d') # 文字列をDate型に変換
-    first_month = (date - 1.month).beginning_of_month # 先月の初日
-    end_month = (date - 1.month).end_of_month # 先月の最終日
+    first_month = (date - 1.month).beginning_of_month # (例： "2024-11-01")
+    end_month = (date - 1.month).end_of_month # # (例： "2024-11-30")
 
+    # 今月の予算を取得
     budgets = ExpenseCategory
     .select(
       'expense_categories.id',
@@ -16,7 +17,6 @@ class V1::BudgetsController < ApplicationController
       'budgets.budget',
       'budgets.month'
     )
-    # 期間の追加が必要
     .joins(
       <<~SQL
         LEFT OUTER JOIN budgets 
@@ -25,11 +25,11 @@ class V1::BudgetsController < ApplicationController
         AND budgets.month = '#{set_month}'
       SQL
     )
-    # 期間を変数にして渡すことが必要
     .joins(
       <<~SQL
         LEFT OUTER JOIN expense_logs 
         ON expense_categories.id = expense_logs.expense_category_id 
+        AND expense_logs.user_id = #{current_v1_user.id}
         AND expense_logs.date BETWEEN '#{first_month}' AND '#{end_month}'
       SQL
     )
@@ -38,6 +38,7 @@ class V1::BudgetsController < ApplicationController
     )
     .order('expense_categories.id ASC')
 
+    # 今月の予算合計
     total_budget = budgets.sum { |b| b.budget.to_i }
   
     render json: {

@@ -433,17 +433,13 @@ const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) =
       <div>
         {/* <main style={{ minHeight: "300vh" }}> */}
         <main>
-          <table>
-            <thead>
-              <tr>
-                <td>
-                  <Box sx={{ mt: 10 }}>
+        <div style={{ display: 'flex', marginTop: '80px' }}>
+                  <Box sx={{ mt: 0 }}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DateCalendar onChange={dateChange} />
                     </LocalizationProvider>
                   </Box>
-                </td>
-                <td>
+
                   {selectedDate && (
                     <Box sx={{ mb: 20, ml: 5}}>
                       <h2>{selectedDate.format("YYYY/MM/DD")}の収支データ</h2>
@@ -488,10 +484,7 @@ const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) =
                       )}
                     </Box>
                   )}
-                </td>
-              </tr>
-            </thead>
-          </table>
+                  </div>
 
           <Box sx={{ width: "100%" }}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
