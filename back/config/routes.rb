@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       end
     end
     resources :transactions, only: [:index, :update, :destroy]
+    resources :characters, only: [:index]
 
     namespace :expense do
       resources :expense_categories, only: [:index]

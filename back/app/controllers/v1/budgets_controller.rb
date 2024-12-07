@@ -5,9 +5,11 @@ class V1::BudgetsController < ApplicationController
     # yyyy-mm-ddの形でフロントから取得
     set_month = request.headers['currentMonth'] # フロントから取得（例: "2024-12-01"）
     date = Date.strptime(set_month, '%Y-%m-%d') # 文字列をDate型に変換
-    first_month = (date - 1.month).beginning_of_month # 先月の初日
-    end_month = (date - 1.month).end_of_month # 先月の最終日
+    avg_first_month = (date - 12.month).beginning_of_month # (例： "2023-12-01")
+    first_month = (date - 1.month).beginning_of_month # (例： "2024-11-01")
+    end_month = (date - 1.month).end_of_month # # (例： "2024-11-30")
 
+    # 今月の予算を取得
     budgets = ExpenseCategory
     .select(
       'expense_categories.id',
@@ -16,7 +18,6 @@ class V1::BudgetsController < ApplicationController
       'budgets.budget',
       'budgets.month'
     )
-    # 期間の追加が必要
     .joins(
       <<~SQL
         LEFT OUTER JOIN budgets 
@@ -25,11 +26,11 @@ class V1::BudgetsController < ApplicationController
         AND budgets.month = '#{set_month}'
       SQL
     )
-    # 期間を変数にして渡すことが必要
     .joins(
       <<~SQL
         LEFT OUTER JOIN expense_logs 
         ON expense_categories.id = expense_logs.expense_category_id 
+        AND expense_logs.user_id = #{current_v1_user.id}
         AND expense_logs.date BETWEEN '#{first_month}' AND '#{end_month}'
       SQL
     )
@@ -38,7 +39,49 @@ class V1::BudgetsController < ApplicationController
     )
     .order('expense_categories.id ASC')
 
+    # 今月の予算合計
     total_budget = budgets.sum { |b| b.budget.to_i }
+
+    # キャラチェンジ_先月〜12ヶ月間の平均金額
+    avg_budgets = ExpenseCategory
+    .select(
+      'budgets.month AS month',
+      'COALESCE(SUM(budgets.budget), 0) AS total_budget'
+    )
+    .joins(
+      <<~SQL
+        LEFT OUTER JOIN budgets 
+        ON expense_categories.id = budgets.expense_category_id
+        AND budgets.month BETWEEN '#{avg_first_month}' AND '#{end_month}'
+        AND budgets.user_id = #{current_v1_user.id}
+      SQL
+    )
+    .group('budgets.month')
+
+    # 合計して取得したavg_budgetsの数で割る
+    avg_budget = avg_budgets.sum { |b| b.total_budget.to_i } / avg_budgets.size.to_i
+
+    # キャラクターをユーザーテーブルに登録
+    user = User.find_by(id: current_v1_user)
+    
+    if user && user.balance && user.warning_lv && user.caution_lv
+      balance = user.balance
+      warning_lv = user.warning_lv
+      caution_lv = user.caution_lv
+      set_life = balance / avg_budget
+  
+      set_chara_status =
+      if warning_lv > set_life
+        3
+      elsif caution_lv > set_life
+        2
+      else
+        1
+      end
+
+      user.update!(chara_status: set_chara_status)
+
+    end
   
     render json: {
       budgets: budgets,

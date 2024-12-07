@@ -1,24 +1,52 @@
 import { Box } from "@mui/material";
 import Header from "@/components/header";
 import FooterLogin from "@/components/footerLogin";
-import React, { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { checkSession } from "@/utils/auth/checkSession";
 import Image from "next/image";
+import { fetchCharacter } from "@/utils/auth/fetchCharacter";
 
 export default function Home() {
+  const currentMonth: Date = new Date();
+  
   useEffect(() => {
     // 非同期関数を定義してセッション情報を取得
     const fetchSessionData = async () => {
       try {
-        const data = await checkSession(); // checkSessionの結果を取得
-        console.log(data); // データをログに出力
+        const sessionData = await checkSession(); // checkSessionの結果を取得
+        console.log(sessionData); // データをログに出力
       } catch (error) {
         console.error("セッションチェックエラー", error);
       }
     };
 
+    const fetchBudgetData = async () => {
+      try {
+        const data = await fetchCharacter(apiFormattedDate); // APIから取得したデータが BudgetRowData[] に対応
+        //     const formattedData: BudgetRowData[] = data.map((item) => ({
+        //       id: item.id,
+        //       category: item.name,
+        //       lastMonthExpense: item.last_month_expense,
+        //       budget: String(item.budget),
+        //       currentMonth: String(item.currentMonth),
+        //     }));
+        console.log(data);
+        //     setBudgets(formattedData);
+        //     setSumBudget(sumData);
+      } catch (error) {
+        console.error("取得失敗", error);
+      }
+    };
+
+    fetchBudgetData();
     fetchSessionData(); // 初回レンダリング時にセッション情報を取得
   }, []); // 初回レンダリング時のみ実行されるように空の依存配列を指定
+
+  // API用のフォーマットを "YYYY-MM-DD" 形式で作成
+  const apiFormattedDate = `${currentMonth.getFullYear()}-${String(
+    currentMonth.getMonth() + 1
+  ).padStart(2, "0")}-01`; // 1日を固定で追加
+
   return (
     <>
       <Header />
@@ -42,7 +70,7 @@ export default function Home() {
                 alt="Sample Image"
                 width={1670}
                 height={800}
-                style={{ marginTop: "-5px"}}
+                style={{ marginTop: "-5px" }}
               />
             </div>
           </Box>
