@@ -4,8 +4,6 @@ import { Button, Stack, Box } from "@mui/material";
 import Head from "next/head";
 
 export default function Index() {
-  const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
-
   return (
     <>
       <Header />
@@ -15,14 +13,14 @@ export default function Index() {
         {/* Google Analytics Script */}
         <script
           async
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
         ></script>
         <script>
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${GA_ID}');
+            gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
           `}
         </script>
       </Head>
@@ -47,6 +45,7 @@ export default function Index() {
                 ログイン
               </Button>
             </Stack>
+            {mt}
           </Box>
         </main>
         <Footer />
