@@ -6,7 +6,6 @@ import Script from "next/script";
 import * as gtag from "@/lib/gtag";
 
 export default function Index() {
-  console.log(gtag.GA_MEASUREMENT_ID);
 
   return (
     <>
@@ -15,7 +14,7 @@ export default function Index() {
         <title>BalanceDays</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      
+
         {/* Google Analytics Script */}
         <Script
           strategy="afterInteractive"
