@@ -13,7 +13,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
   useEffect(() => {
     // Google Analytics のページビュー計測
-    const handleRouterChange = (url: any) => {
+    const handleRouterChange = (url: string) => {
       gtag.pageview(url);
     };
     router.events.on("routeChangeComplete", handleRouterChange);
