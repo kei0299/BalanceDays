@@ -2,8 +2,12 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { Button, Stack, Box } from "@mui/material";
 import Head from "next/head";
+import Script from "next/script";
+import * as gtag from "@/lib/gtag";
 
 export default function Index() {
+  console.log(gtag.GA_MEASUREMENT_ID);
+
   return (
     <>
       <Header />
@@ -11,18 +15,23 @@ export default function Index() {
         <title>BalanceDays</title>
         <link rel="icon" href="/favicon.ico" />
         {/* Google Analytics Script */}
-        <script
-          async
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
-        ></script>
-        <script>
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
-          `}
-        </script>
+        <Script
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=${gtag.GA_MEASUREMENT_ID}`}
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+           window.dataLayer = window.dataLayer || [];
+           function gtag(){dataLayer.push(arguments);}
+           gtag('js', new Date());
+ 
+           gtag('config', '${gtag.GA_MEASUREMENT_ID}');
+           `,
+          }}
+        />
       </Head>
       <div>
         <main>
