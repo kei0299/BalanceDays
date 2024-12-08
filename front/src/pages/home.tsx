@@ -70,32 +70,40 @@ export default function Home() {
               />
             </div> */}
             <div className={`fixed top-0 left-0 w-full h-screen z-[100]`}>
-              <h1 style={{ color: '#4169e1' }}>あと{life}ヶ月生活できそうです</h1>
               {/* characterStatusの値に応じて画像を切り替え */}
               {characterStatus === 3 ? (
+                 <>
+                <h1 style={{ color: '#ff4500' }}>あと{life}ヶ月生活できそうです</h1>
                 <Image
                   src="/image/warning.png"
                   alt="Character 1"
                   width={300}
                   height={300}
                 />
+                </>
               ) : characterStatus === 2 ? (
+                <>
+                <h1 style={{ color: '#ffd700' }}>あと{life}ヶ月生活できそうです</h1>
                 <Image
                   src="/image/caution.png"
                   alt="Character 2"
                   width={300}
                   height={300}
                 />
+                </>
               ) : characterStatus === 1 ? (
+                <>
+                <h1 style={{ color: '#4169e1' }}>あと{life}ヶ月生活できそうです</h1>
                 <Image
                 src="/image/stable.png"
                 alt="Character 3"
                 width={300}
                 height={300}
               />
+              </>
               ) : (
-                <p>設定→生存期間設定から情報を登録してください。<br></br>
-                  予算を設定することで先月の予算から12ヶ月分を取得し、生存期間を算出します。
+                <p>設定→生存期間設定から情報を登録してください。<br />
+                  予算を設定することで今月の予算から過去12ヶ月分を取得し、生存期間を算出します。
                 </p>
               )}
             </div>

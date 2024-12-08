@@ -5,7 +5,6 @@ class V1::CharactersController < ApplicationController
     set_month = request.headers['currentMonth'] # フロントから取得（例: "2024-12-01"）
     date = Date.strptime(set_month, '%Y-%m-%d') # 文字列をDate型に変換
     first_month = (date - 12.month).beginning_of_month # (例： "2023-12-01")
-    end_month = (date - 1.month).end_of_month # # (例： "2024-11-30")
 
     # キャラチェンジ_先月〜12ヶ月間の平均金額
     avg_budgets = ExpenseCategory
@@ -17,7 +16,7 @@ class V1::CharactersController < ApplicationController
     <<~SQL
       LEFT OUTER JOIN budgets 
       ON expense_categories.id = budgets.expense_category_id
-      AND budgets.month BETWEEN '#{first_month}' AND '#{end_month}'
+      AND budgets.month BETWEEN '#{first_month}' AND '#{date}'
       AND budgets.user_id = #{current_v1_user.id}
     SQL
     )
