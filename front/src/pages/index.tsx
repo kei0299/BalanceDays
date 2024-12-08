@@ -13,7 +13,7 @@ export default function Index() {
         {/* Google Analytics Script */}
         <script
           async
-          src='https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}'
+          src={'https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}'}
         ></script>
         <script>
           {`
