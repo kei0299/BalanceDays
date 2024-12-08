@@ -13,14 +13,14 @@ export default function Index() {
         {/* Google Analytics Script */}
         <script
           async
-          src="https://www.googletagmanager.com/gtag/js?id=G-Y29564B25L"
+          src='https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}'
         ></script>
         <script>
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-Y29564B25L');
+            gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
           `}
         </script>
       </Head>
