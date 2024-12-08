@@ -59,7 +59,7 @@ export default function Budget() {
           currentMonth: String(item.currentMonth),
         }));
         const sumData: string = await fetchBudgetSum(apiFormattedDate);
-        console.log(data);
+        // console.log(data);
         setBudgets(formattedData);
         setSumBudget(sumData);
       } catch (error) {
@@ -123,9 +123,9 @@ export default function Budget() {
       );
 
       if (!response.ok) {
-        throw new Error("設定に失敗しました");
+        throw new Error("予算の登録に失敗しました");
       }
-      alert("設定しました");
+      alert("予算を登録しました");
       window.location.reload();
     } catch (error) {
       console.error(error);

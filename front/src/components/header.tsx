@@ -13,7 +13,6 @@ export default function MenuAppBar() {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             BalanceDays
           </Typography>
-          <Link href="/">Top</Link>
         </Toolbar>
       </AppBar>
     </Box>

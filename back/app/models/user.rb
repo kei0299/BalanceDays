@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
       end
 
     update!(chara_status: set_chara_status)
-    return set_chara_status
+    return set_chara_status,set_life
   
   end
 end
