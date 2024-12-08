@@ -14,6 +14,8 @@ export default function Index() {
       <Head>
         <title>BalanceDays</title>
         <link rel="icon" href="/favicon.ico" />
+      </Head>
+      
         {/* Google Analytics Script */}
         <Script
           strategy="afterInteractive"
@@ -32,7 +34,7 @@ export default function Index() {
            `,
           }}
         />
-      </Head>
+
       <div>
         <main>
           <Box
