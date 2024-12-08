@@ -45,7 +45,6 @@ export default function Index() {
                 ログイン
               </Button>
             </Stack>
-            {mt}
           </Box>
         </main>
         <Footer />
