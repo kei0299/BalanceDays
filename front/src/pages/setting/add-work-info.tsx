@@ -22,6 +22,7 @@ export default function Setting() {
       }}
     >
           <h1>勤務先登録画面</h1>
+          <p>開発中です</p>
 
           </Box>
         </main>

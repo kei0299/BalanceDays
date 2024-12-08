@@ -3,7 +3,6 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
 
 export default function MenuAppBar() {
   return (
@@ -13,7 +12,6 @@ export default function MenuAppBar() {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             BalanceDays
           </Typography>
-          <Link href="/">Top</Link>
         </Toolbar>
       </AppBar>
     </Box>

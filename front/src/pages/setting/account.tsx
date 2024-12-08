@@ -22,6 +22,7 @@ export default function Setting() {
       }}
     >
           <h1>アカウント画面</h1>
+          <p>開発中です</p>
 
           </Box>
         </main>

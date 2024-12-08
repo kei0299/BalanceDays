@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import Header from "@/components/header";
 import FooterLogin from "@/components/footerLogin";
 import { useState, useEffect } from "react";
-import { checkSession } from "@/utils/auth/checkSession";
+// import { checkSession } from "@/utils/auth/checkSession";　// セッション情報確認用
 import Image from "next/image";
 import { fetchCharacter } from "@/utils/auth/fetchCharacter";
 
@@ -10,30 +10,32 @@ export default function Home() {
   const currentMonth: Date = new Date();
   // キャラ切り替えのための状態を管理
   const [characterStatus, setCharacterStatus] = useState<number | null>(null);
+  const [life, setLife] = useState<number | null>(null);
 
   useEffect(() => {
-    // 非同期関数を定義してセッション情報を取得
-    const fetchSessionData = async () => {
-      try {
-        const sessionData = await checkSession(); // checkSessionの結果を取得
-        console.log(sessionData); // データをログに出力
-      } catch (error) {
-        console.error("セッションチェックエラー", error);
-      }
-    };
+    // セッション情報確認用
+    // const fetchSessionData = async () => {
+    //   try {
+    //     const sessionData = await checkSession(); // checkSessionの結果を取得
+    //     console.log(sessionData); // データをログに出力
+    //   } catch (error) {
+    //     console.error("セッションチェックエラー", error);
+    //   }
+    // };
 
     const fetchCharacterData = async () => {
       try {
-        const data = await fetchCharacter(apiFormattedDate); // APIから取得したデータが BudgetRowData[] に対応
-        console.log(data);
-        setCharacterStatus(data)
+        const response = await fetchCharacter(apiFormattedDate); // `fetchCharacter`はAPIコール関数と仮定
+        const { character_status: characterNum, set_life } = response; // JSONからデータを分割代入
+        setCharacterStatus(characterNum);
+        setLife(set_life);
       } catch (error) {
         console.error("取得失敗", error);
       }
     };
 
     fetchCharacterData();
-    fetchSessionData(); // 初回レンダリング時にセッション情報を取得
+    // fetchSessionData(); // HOMEでのセッション確認用
   }, []); // 初回レンダリング時のみ実行されるように空の依存配列を指定
 
   // API用のフォーマットを "YYYY-MM-DD" 形式で作成
@@ -68,6 +70,7 @@ export default function Home() {
               />
             </div> */}
             <div className={`fixed top-0 left-0 w-full h-screen z-[100]`}>
+              <h1 style={{ color: '#4169e1' }}>あと{life}ヶ月生活できそうです</h1>
               {/* characterStatusの値に応じて画像を切り替え */}
               {characterStatus === 3 ? (
                 <Image
@@ -75,7 +78,6 @@ export default function Home() {
                   alt="Character 1"
                   width={300}
                   height={300}
-                  style={{ marginTop: "100px" }}
                 />
               ) : characterStatus === 2 ? (
                 <Image
@@ -83,7 +85,6 @@ export default function Home() {
                   alt="Character 2"
                   width={300}
                   height={300}
-                  style={{ marginTop: "100px" }}
                 />
               ) : characterStatus === 1 ? (
                 <Image
@@ -91,7 +92,6 @@ export default function Home() {
                 alt="Character 3"
                 width={300}
                 height={300}
-                style={{ marginTop: "100px" }}
               />
               ) : (
                 <p>設定→生存期間設定から情報を登録してください。<br></br>

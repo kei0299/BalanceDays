@@ -31,12 +31,12 @@ class V1::CharactersController < ApplicationController
       user = User.find_by(id: current_v1_user)
 
       if user && user.balance && user.warning_lv && user.caution_lv
-        chara_status = user.update_character_status!(avg_budget,user)
+        character_status, set_life = user.update_character_status!(avg_budget,user)
       end
   
     end
   
-    render json: chara_status, status: :ok
+    render json: { character_status: character_status, set_life: set_life }, status: :ok
   end
 
 end
