@@ -29,7 +29,7 @@ class V1::CharactersController < ApplicationController
       # キャラクターをユーザーテーブルに登録
       user = User.find_by(id: current_v1_user)
 
-      if user && user.balance && user.warning_lv && user.caution_lv
+      if user && user.balance && user.warning_lv && user.caution_lv && avg_budget != 0
         character_status, set_life = user.update_character_status!(avg_budget,user)
       end
   

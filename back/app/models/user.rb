@@ -14,9 +14,10 @@ class User < ActiveRecord::Base
     balance = user.balance
     warning_lv = user.warning_lv
     caution_lv = user.caution_lv
-    set_life = balance / avg_budget
 
     return unless balance && warning_lv && caution_lv
+
+    set_life = balance / avg_budget
 
     set_chara_status =
       if warning_lv >= set_life

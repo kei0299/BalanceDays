@@ -431,8 +431,8 @@ const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) =
       <title>BalanceDays</title>
       <link rel="icon" href="/favicon.ico" />
       <div>
-        {/* <main style={{ minHeight: "300vh" }}> */}
-        <main>
+        <main style={{ minHeight: "115vh" }}>
+        {/* <main> */}
         <div style={{ display: 'flex', marginTop: '80px' }}>
                   <Box sx={{ mt: 0 }}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
