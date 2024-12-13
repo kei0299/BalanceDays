@@ -45,6 +45,67 @@ class V1::TransactionsController < ApplicationController
     render json: transactions, status: :ok
   end
 
+  def pie_chart
+    month_param = params[:month]
+    month = Date.parse(month_param)
+    end_month = (month - 0.month).end_of_month
+    checked = params[:checked]
+
+    # 収入がtrue,支出がfalse
+      if checked == "true"
+        totalIncome = IncomeCategory
+        .select(
+          'income_categories.id',
+          'income_categories.name',
+          'COALESCE(SUM(income_logs.amount), 0) AS current_month_amount',
+          # 'budgets.budget',
+          # 'budgets.month'
+        )
+        .joins(
+          <<~SQL
+            LEFT OUTER JOIN income_logs 
+            ON income_categories.id = income_logs.income_category_id 
+            AND income_logs.user_id = #{current_v1_user.id}
+            AND income_logs.date BETWEEN '#{month}' AND '#{end_month}'
+          SQL
+        )
+        # .group(
+        #   'expense_categories.id, expense_categories.name, budgets.budget, budgets.month'
+        # )
+        .group(
+          'income_categories.id, income_categories.name'
+        )
+        .order('income_categories.id ASC')
+        render json: totalIncome , status: :ok
+      else
+        totalExpense = ExpenseCategory
+        .select(
+          'expense_categories.id',
+          'expense_categories.name',
+          'COALESCE(SUM(expense_logs.amount), 0) AS current_month_amount',
+          # 'budgets.budget',
+          # 'budgets.month'
+        )
+        .joins(
+          <<~SQL
+            LEFT OUTER JOIN expense_logs 
+            ON expense_categories.id = expense_logs.expense_category_id 
+            AND expense_logs.user_id = #{current_v1_user.id}
+            AND expense_logs.date BETWEEN '#{month}' AND '#{end_month}'
+          SQL
+        )
+        # .group(
+        #   'expense_categories.id, expense_categories.name, budgets.budget, budgets.month'
+        # )
+        .group(
+          'expense_categories.id, expense_categories.name'
+        )
+        .order('expense_categories.id ASC')
+        render json: totalExpense , status: :ok
+      end  
+
+  end
+
   def destroy
     transaction_id = params[:id]
     transaction_type = params[:type]

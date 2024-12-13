@@ -8,14 +8,83 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import React from "react";
 import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
+import { parseCookies } from "nookies";
+
+// 円グラフ用の型定義
+interface pieChartData {
+  id: number;
+  current_month_amount: number;
+  name: string;
+}
 
 export default function Report() {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [checked, setChecked] = useState(false);
+  const [expenses, setExpenses] = useState([]);
 
   const checkedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
+
+  const cookies = parseCookies();
+  const accessToken = cookies["accessToken"];
+  const client = cookies["client"];
+  const uid = cookies["uid"];
+
+  // Rails APIからカテゴリを取得
+  const fetchTransactions = async (isChecked: boolean) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/transactions/pie_chart?month=${apiFormattedDate}&checked=${isChecked}`, // クエリパラメータとして送信
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`エラー: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("取得データ:", data);
+
+      // カテゴリごとに色を指定（ここでは例として色を手動で設定）
+      const colors = [
+        "#36A2EB", // 青
+        "#FFCE56", // 黄
+        "#4BC0C0", // 緑
+        "#FF9F40", // オレンジ
+        "#9966FF", // 紫
+        "#FFB6C1", // ピンク
+        "#00FF00", // ライムグリーン
+        "#FF6384", // 赤
+        "#8A2BE2", // ブルーバイオレット
+        "#FFD700", // ゴールド
+        "#8B0000", // ダークレッド
+      ];
+
+      // APIレスポンスを PieChart に渡す形式に変換
+      const pieChartData = data.map((item: pieChartData, index: number) => ({
+        id: item.id, // カテゴリのID
+        value: item.current_month_amount, // 現在の月の収支
+        label: item.name, // カテゴリ名
+        color: colors[index % colors.length],
+      }));
+      setExpenses(pieChartData);
+    } catch (error) {
+      console.error("取得失敗", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTransactions(checked); // 正しい関数を呼び出す
+  }, [currentMonth]); // currentMonthが変化したときに再実行
 
   // 年月を "YYYY年MM月" の形式にフォーマット
   const formattedMonth = `${currentMonth.getFullYear()}年${String(
@@ -35,6 +104,12 @@ export default function Report() {
       newMonth.setMonth(currentMonth.getMonth() + 1); // 次月
     }
     setCurrentMonth(newMonth);
+  };
+
+  const switchToggle = () => {
+    const newChecked = !checked; // スイッチの新しい状態
+    setChecked(newChecked);
+    fetchTransactions(newChecked); // スイッチの状態を渡してデータ取得
   };
 
   return (
@@ -68,20 +143,13 @@ export default function Report() {
             <PieChart
               series={[
                 {
-                  data: [
-                    { id: 0, value: 10, label: "カテゴリ名" },
-                    { id: 1, value: 15, label: "series B" },
-                    { id: 2, value: 20, label: "series C" },
-                    { id: 3, value: 20, label: "series C" },
-                    { id: 4, value: 20, label: "series C" },
-                    { id: 5, value: 20, label: "series C" },
-                  ],
+                  data: expenses, // 変換したデータを渡す
                 },
               ]}
               width={500}
               height={200}
             />
-            <Box display="flex" alignItems="center" gap={1}>
+            <Box display="flex" alignItems="center" gap={1} marginTop={1}>
               {/* 支出ラベル */}
               <Typography
                 sx={{
@@ -96,6 +164,7 @@ export default function Report() {
               <Switch
                 checked={checked}
                 onChange={checkedChange}
+                onClick={switchToggle}
                 sx={{
                   "& .MuiSwitch-track": {
                     backgroundColor: checked ? "blue" : "red", // トラックの色

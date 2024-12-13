@@ -9,7 +9,12 @@ Rails.application.routes.draw do
         get :sum_month_budget
       end
     end
-    resources :transactions, only: [:index, :update, :destroy]
+    resources :transactions, only: [:index, :update, :destroy] do
+      collection do
+        get 'pie_chart', to: 'transactions#pie_chart'
+      end
+    end
+
     resources :characters, only: [:index]
 
     namespace :expense do
