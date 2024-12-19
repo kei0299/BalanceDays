@@ -21,22 +21,22 @@ interface pieChartData {
 }
 
 // ゲージ用の型定義
-interface gaugeData {
-  id: number;
-  last_month_amount: number;
-  name: string;
-  budget: number
-}
+// interface gaugeData {
+//   id: number;
+//   last_month_amount: number;
+//   name: string;
+//   budget: number
+// }
 
 export default function Report() {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [checked, setChecked] = useState(false);
   const [expenses, setExpenses] = useState([]);
-  const [gauge, setGauge] = useState([]);
+  // const [gauge, setGauge] = useState([]);
   const [totalBudget, setTotalBudget] = useState([]);
   const [totalExpense, setTotalExpense] = useState([]);
   const [totalRatio, setTotalRatio] = useState<number | null>(null);
-  const [categoryRatio, setCategoryRatio] = useState([]);
+  // const [categoryRatio, setCategoryRatio] = useState([]);
 
   const checkedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
