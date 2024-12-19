@@ -4,16 +4,20 @@ Rails.application.routes.draw do
     registrations: 'v1/auth/registrations'
   }
 
+  resources :reports, only: [] do
+    collection do
+      get 'pie_chart', to: 'reports#pie_chart'
+      get 'gauge', to: 'reports#gauge'
+    end
+  end
+
+
     resources :budgets, only: [:index, :create] do
       collection do
         get :sum_month_budget
       end
     end
-    resources :transactions, only: [:index, :update, :destroy] do
-      collection do
-        get 'pie_chart', to: 'transactions#pie_chart'
-      end
-    end
+    resources :transactions, only: [:index, :update, :destroy]
 
     resources :characters, only: [:index]
 

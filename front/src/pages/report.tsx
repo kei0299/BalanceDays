@@ -9,6 +9,9 @@ import React from "react";
 import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
 import { parseCookies } from "nookies";
+import { Gauge } from "@mui/x-charts/Gauge";
+import Stack from "@mui/material/Stack";
+// import { BarChart } from '@mui/x-charts/BarChart';
 
 // 円グラフ用の型定義
 interface pieChartData {
@@ -17,10 +20,23 @@ interface pieChartData {
   name: string;
 }
 
+// ゲージ用の型定義
+interface gaugeData {
+  id: number;
+  last_month_amount: number;
+  name: string;
+  budget: number
+}
+
 export default function Report() {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [checked, setChecked] = useState(false);
   const [expenses, setExpenses] = useState([]);
+  const [gauge, setGauge] = useState([]);
+  const [totalBudget, setTotalBudget] = useState([]);
+  const [totalExpense, setTotalExpense] = useState([]);
+  const [totalRatio, setTotalRatio] = useState<number | null>(null);
+  const [categoryRatio, setCategoryRatio] = useState([]);
 
   const checkedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
@@ -31,11 +47,11 @@ export default function Report() {
   const client = cookies["client"];
   const uid = cookies["uid"];
 
-  // Rails APIからカテゴリを取得
-  const fetchTransactions = async (isChecked: boolean) => {
+  // Rails APIから円チャートを作成
+  const fetchPieChart = async (isChecked: boolean) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/transactions/pie_chart?month=${apiFormattedDate}&checked=${isChecked}`, // クエリパラメータとして送信
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/reports/pie_chart?month=${apiFormattedDate}&checked=${isChecked}`, // クエリパラメータとして送信
         {
           method: "GET",
           headers: {
@@ -52,21 +68,21 @@ export default function Report() {
       }
 
       const data = await response.json();
-      console.log("取得データ:", data);
+      // console.log("取得データ:", data);
 
       // カテゴリごとに色を指定（ここでは例として色を手動で設定）
       const colors = [
-        "#36A2EB", // 青
-        "#FFCE56", // 黄
-        "#4BC0C0", // 緑
-        "#FF9F40", // オレンジ
-        "#9966FF", // 紫
-        "#FFB6C1", // ピンク
-        "#00FF00", // ライムグリーン
-        "#FF6384", // 赤
-        "#8A2BE2", // ブルーバイオレット
-        "#FFD700", // ゴールド
-        "#8B0000", // ダークレッド
+        "#4682b4",
+        "#FFCE56",
+        "#4BC0C0",
+        "#FF9F40",
+        "#9966FF",
+        "#FFB6C1",
+        "#2e8b57",
+        "#FF6384",
+        "#8A2BE2",
+        "#FFD700",
+        "#8B0000",
       ];
 
       // APIレスポンスを PieChart に渡す形式に変換
@@ -82,8 +98,46 @@ export default function Report() {
     }
   };
 
+    // Rails APIから予算ゲージを作成
+    const fetchGauge = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/v1/reports/gauge?month=${apiFormattedDate}`, 
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "access-token": accessToken,
+              client: client,
+              uid: uid,
+            },
+          }
+        );
+  
+        if (!response.ok) {
+          throw new Error(`エラー: ${response.status}`);
+        }
+  
+        const data = await response.json();
+        console.log("取得:", data);
+  
+        // APIレスポンスを Gauge に渡す形式に変換
+        // const gaugeData = data.map((item: pieChartData, index: number) => ({
+        //   id: item.id, // カテゴリのID
+        //   value: item.current_month_amount, // 現在の月の収支
+        //   label: item.name, // カテゴリ名
+        // }));
+        setTotalBudget(data.total_budget);
+        setTotalExpense(data.total_expense);
+        setTotalRatio(data.total_ratio);
+      } catch (error) {
+        console.error("取得失敗", error);
+      }
+    };
+
   useEffect(() => {
-    fetchTransactions(checked); // 正しい関数を呼び出す
+    fetchPieChart(checked);
+    fetchGauge()
   }, [currentMonth]); // currentMonthが変化したときに再実行
 
   // 年月を "YYYY年MM月" の形式にフォーマット
@@ -109,7 +163,7 @@ export default function Report() {
   const switchToggle = () => {
     const newChecked = !checked; // スイッチの新しい状態
     setChecked(newChecked);
-    fetchTransactions(newChecked); // スイッチの状態を渡してデータ取得
+    fetchPieChart(newChecked); // スイッチの状態を渡してデータ取得
   };
 
   return (
@@ -122,66 +176,76 @@ export default function Report() {
           <Box
             sx={{
               display: "flex",
+              mt: 10,
+            }}
+          >
+            <KeyboardArrowLeftIcon onClick={() => monthChange("previous")} />
+            {formattedMonth}
+            <KeyboardArrowRightIcon onClick={() => monthChange("next")} />
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
               textAlign: "center",
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                mt: 10,
-                textAlign: "center",
-              }}
-            >
-              <KeyboardArrowLeftIcon onClick={() => monthChange("previous")} />
-              {formattedMonth}
-              <KeyboardArrowRightIcon onClick={() => monthChange("next")} />
-            </Box>
+            <Stack spacing={2} direction="row">
+              {/* 円グラフ */}
+              <Stack spacing={3} direction="column" alignItems="center">
+                <Typography sx={{}}>カテゴリ別収支レポート（￥）</Typography>
+                <PieChart
+                  series={[{ data: expenses }]}
+                  width={500}
+                  height={200}
+                />
 
-            <PieChart
-              series={[
-                {
-                  data: expenses, // 変換したデータを渡す
-                },
-              ]}
-              width={500}
-              height={200}
-            />
-            <Box display="flex" alignItems="center" gap={1} marginTop={1}>
-              {/* 支出ラベル */}
-              <Typography
-                sx={{
-                  color: checked ? "gray" : "red", // オフ時は赤、オン時は灰色
-                  fontWeight: !checked ? "bold" : "normal", // オフ時は太字
-                }}
-              >
-                支出
-              </Typography>
+                {/* スイッチ */}
+                <Box display="flex" alignItems="center" gap={1} marginTop={1}>
+                  <Typography
+                    sx={{
+                      color: checked ? "gray" : "red", // オフ時は赤、オン時は灰色
+                      fontWeight: !checked ? "bold" : "normal", // オフ時は太字
+                    }}
+                  >
+                    支出
+                  </Typography>
+                  <Switch
+                    checked={checked}
+                    onChange={checkedChange}
+                    onClick={switchToggle}
+                    sx={{
+                      "& .MuiSwitch-track": {
+                        backgroundColor: checked ? "blue" : "red", // トラックの色
+                      },
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      color: checked ? "blue" : "gray", // オン時は緑、オフ時は灰色
+                      fontWeight: checked ? "bold" : "normal", // オン時は太字
+                    }}
+                  >
+                    収入
+                  </Typography>
+                </Box>
+              </Stack>
 
-              {/* スイッチ */}
-              <Switch
-                checked={checked}
-                onChange={checkedChange}
-                onClick={switchToggle}
-                sx={{
-                  "& .MuiSwitch-track": {
-                    backgroundColor: checked ? "blue" : "red", // トラックの色
-                  },
-                }}
-              />
+              <Stack spacing={3} direction="column">
+                <Typography>総予算 / カテゴリ別予算（％）</Typography>
+                <Stack spacing={3} direction="row">
+                <Stack spacing={2} direction="column">
+                  <Gauge width={130} height={130} value={totalRatio} />
+                  <Typography>{totalExpense} / {totalBudget}</Typography>
+                  </Stack>
 
-              {/* 収入ラベル */}
-              <Typography
-                sx={{
-                  color: checked ? "blue" : "gray", // オン時は緑、オフ時は灰色
-                  fontWeight: checked ? "bold" : "normal", // オン時は太字
-                }}
-              >
-                収入
-              </Typography>
-            </Box>
+                  <Gauge width={130} height={130} value={26} />
+                </Stack>
+              </Stack>
+            </Stack>
           </Box>
         </main>
         <FooterLogin />
