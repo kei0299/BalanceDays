@@ -8,7 +8,7 @@ class V1::BudgetsController < ApplicationController
     first_month = (date - 1.month).beginning_of_month # (例： "2024-11-01")
     end_month = (date - 1.month).end_of_month # # (例： "2024-11-30")
 
-    # 今月の予算を取得
+    # 今月の予算&先月の支出を取得
     budgets = ExpenseCategory
     .select(
       'expense_categories.id',

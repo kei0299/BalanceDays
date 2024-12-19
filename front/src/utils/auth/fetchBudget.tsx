@@ -33,8 +33,6 @@ export const fetchBudget = async (currentMonth: string) => {
     const { budgets } = await response.json();
     return budgets;
  
-
-    // セッションチェックの結果を利用して、必要に応じて状態を更新する処理を追加できます
   } catch (error) {
     console.error(error); // エラー処理
   }
