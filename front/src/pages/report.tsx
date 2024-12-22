@@ -31,12 +31,12 @@ interface pieChartData {
 }
 
 // ゲージ用の型定義
-interface gaugeData {
-  id: number;
-  last_month_amount: number;
-  name: string;
-  budget: number;
-}
+// interface gaugeData {
+//   id: number;
+//   last_month_amount: number;
+//   name: string;
+//   budget: number;
+// }
 
 // menuitemの設定
 const ITEM_HEIGHT = 48;
@@ -153,12 +153,12 @@ export default function Report() {
       // console.log("取得:", data.budgets);
 
       // APIレスポンスを Gauge に渡す形式に変換
-      const gaugeData = data.budgets.map((item: gaugeData, index: number) => ({
-        id: item.id, // カテゴリのID
-        value: item.last_month_amount, // 現在の月の収支
-        label: item.name, // カテゴリ名
-        budget: item.budget, // 予算
-      }));
+      // const gaugeData = data.budgets.map((item: gaugeData, index: number) => ({
+      //   id: item.id, // カテゴリのID
+      //   value: item.last_month_amount, // 現在の月の収支
+      //   label: item.name, // カテゴリ名
+      //   budget: item.budget, // 予算
+      // }));
       setTotalBudget(data.total_budget);
       setTotalExpense(data.total_expense);
       setTotalRatio(data.total_ratio);
