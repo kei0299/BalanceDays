@@ -61,7 +61,7 @@ class V1::ReportsController < ApplicationController
       end  
   end
 
-  def gauge
+  def total_gauge
     # yyyy-mm-ddの形でフロントから取得
     set_month = params[:month]
     date = Date.strptime(set_month, '%Y-%m-%d') # 文字列をDate型に変換
@@ -102,14 +102,84 @@ class V1::ReportsController < ApplicationController
     total_budget = budgets.sum { |b| b.budget.to_i }
     # 今月の支出合計
     total_expense = budgets.sum { |b| b.last_month_expense.to_i }
-    # 総予算と支出実績の割合
-    total_ratio = total_expense.to_f / total_budget.to_f * 100
+
   
+    if total_budget == 0
+      total_ratio = 0
+    else
+      # 総予算と支出実績の割合
+      total_ratio = total_expense.to_f / total_budget.to_f * 100
+    end
+
     render json: {
       budgets: budgets,
       total_budget: total_budget,
       total_expense: total_expense,
       total_ratio: total_ratio.to_i
+    }, status: :ok
+  end
+
+  def category_gauge
+    # yyyy-mm-ddの形でフロントから取得
+    set_month = params[:month]
+    set_category = params[:category]
+    date = Date.strptime(set_month, '%Y-%m-%d') # 文字列をDate型に変換
+    first_month = (date - 0.month).beginning_of_month # (例： "2024-11-01")
+    end_month = (date - 0.month).end_of_month # # (例： "2024-11-30")
+
+    if set_category.empty?
+      set_category = 0
+    end
+
+    # 今月の予算&今月の支出を取得
+    budgets = ExpenseCategory
+    .select(
+      'expense_categories.id',
+      'expense_categories.name',
+      'COALESCE(SUM(expense_logs.amount), 0) AS last_month_expense',
+      'budgets.budget',
+      'budgets.month'
+    )
+    .joins(
+      <<~SQL
+        LEFT OUTER JOIN budgets 
+        ON expense_categories.id = budgets.expense_category_id 
+        AND budgets.user_id = #{current_v1_user.id}
+        AND budgets.month = '#{set_month}'
+      SQL
+    )
+    .joins(
+      <<~SQL
+        LEFT OUTER JOIN expense_logs 
+        ON expense_categories.id = expense_logs.expense_category_id 
+        AND expense_logs.user_id = #{current_v1_user.id}
+        AND expense_logs.date BETWEEN '#{first_month}' AND '#{end_month}'
+      SQL
+    )
+    .group(
+      'expense_categories.id, expense_categories.name, budgets.budget, budgets.month'
+    )
+    .where('expense_categories.id = ?', set_category)
+
+    if budgets.any?
+      category_budget = budgets.first.budget
+      category_expense = budgets.first.last_month_expense
+      category_ratio = category_expense.to_f / category_budget.to_f * 100
+    else
+      category_ratio = nil
+    end
+
+    # if total_budget == 0
+    #   total_ratio = 0
+    # else
+    #   # 総予算と支出実績の割合
+    #   total_ratio = total_expense.to_f / total_budget.to_f * 100
+    # end
+
+    render json: {
+      category_budget: category_budget,
+      category_expense: category_expense,
+      category_ratio: category_ratio.to_i
     }, status: :ok
   end
 end

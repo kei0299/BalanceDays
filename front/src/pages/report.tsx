@@ -11,7 +11,17 @@ import Typography from "@mui/material/Typography";
 import { parseCookies } from "nookies";
 import { Gauge } from "@mui/x-charts/Gauge";
 import Stack from "@mui/material/Stack";
-// import { BarChart } from '@mui/x-charts/BarChart';
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { fetchExpenseCategory } from "@/utils/auth/fetchExpenseCategory";
+
+// expense_categoryの型定義
+interface expenseCategoryData {
+  id: number;
+  name: string;
+}
 
 // 円グラフ用の型定義
 interface pieChartData {
@@ -21,12 +31,23 @@ interface pieChartData {
 }
 
 // ゲージ用の型定義
-// interface gaugeData {
-//   id: number;
-//   last_month_amount: number;
-//   name: string;
-//   budget: number
-// }
+interface gaugeData {
+  id: number;
+  last_month_amount: number;
+  name: string;
+  budget: number;
+}
+
+// menuitemの設定
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4 + ITEM_PADDING_TOP, // メニューの最大高さ
+    },
+  },
+};
 
 export default function Report() {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
@@ -35,8 +56,19 @@ export default function Report() {
   // const [gauge, setGauge] = useState([]);
   const [totalBudget, setTotalBudget] = useState([]);
   const [totalExpense, setTotalExpense] = useState([]);
-  const [totalRatio, setTotalRatio] = useState<number | null>(null);
-  // const [categoryRatio, setCategoryRatio] = useState([]);
+
+  const [categoryBudget, setCategoryBudget] = useState([]);
+  const [categoryExpense, setCategoryExpense] = useState([]);
+  const [totalRatio, setTotalRatio] = useState<number>(0);
+  const [categoryRatio, setCategoryRatio] = useState<number>(0);
+  const [expenseCategory, setExpenseCategory] = useState<number>(1);
+  const [expenseCategories, setExpenseCategories] = useState<
+    expenseCategoryData[]
+  >([]); // カテゴリデータ用のstate
+
+  const selectExpenseCategory = (event: SelectChangeEvent<number>) => {
+    setExpenseCategory(Number(event.target.value));
+  };
 
   const checkedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
@@ -68,7 +100,6 @@ export default function Report() {
       }
 
       const data = await response.json();
-      // console.log("取得データ:", data);
 
       // カテゴリごとに色を指定（ここでは例として色を手動で設定）
       const colors = [
@@ -98,11 +129,67 @@ export default function Report() {
     }
   };
 
-    // Rails APIから予算ゲージを作成
-    const fetchGauge = async () => {
+  // Rails APIから予算ゲージを作成
+  const fetchGauge = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/reports/total_gauge?month=${apiFormattedDate}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`エラー: ${response.status}`);
+      }
+
+      const data = await response.json();
+      // console.log("取得:", data.budgets);
+
+      // APIレスポンスを Gauge に渡す形式に変換
+      const gaugeData = data.budgets.map((item: gaugeData, index: number) => ({
+        id: item.id, // カテゴリのID
+        value: item.last_month_amount, // 現在の月の収支
+        label: item.name, // カテゴリ名
+        budget: item.budget, // 予算
+      }));
+      setTotalBudget(data.total_budget);
+      setTotalExpense(data.total_expense);
+      setTotalRatio(data.total_ratio);
+    } catch (error) {
+      console.error("取得失敗", error);
+    }
+  };
+
+  useEffect(() => {
+    // Rails APIからカテゴリを取得
+    const fetchCategoryData = async () => {
+      try {
+        const expenseData: expenseCategoryData[] = await fetchExpenseCategory();
+        setExpenseCategories(expenseData);
+      } catch (error) {
+        console.error("取得失敗", error);
+      }
+    };
+
+    fetchCategoryData();
+    fetchPieChart(checked);
+    fetchGauge();
+    setExpenseCategory(1);
+  }, [currentMonth]); // currentMonthが変化したときに再実行
+
+  useEffect(() => {
+    // Rails APIからカテゴリ別予算を取得
+    const changeCategory = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/v1/reports/gauge?month=${apiFormattedDate}`, 
+          `${process.env.NEXT_PUBLIC_API_URL}/v1/reports/category_gauge?month=${apiFormattedDate}&category=${expenseCategory}`,
           {
             method: "GET",
             headers: {
@@ -113,32 +200,21 @@ export default function Report() {
             },
           }
         );
-  
+
         if (!response.ok) {
           throw new Error(`エラー: ${response.status}`);
         }
-  
+
         const data = await response.json();
-        console.log("取得:", data);
-  
-        // APIレスポンスを Gauge に渡す形式に変換
-        // const gaugeData = data.map((item: pieChartData, index: number) => ({
-        //   id: item.id, // カテゴリのID
-        //   value: item.current_month_amount, // 現在の月の収支
-        //   label: item.name, // カテゴリ名
-        // }));
-        setTotalBudget(data.total_budget);
-        setTotalExpense(data.total_expense);
-        setTotalRatio(data.total_ratio);
+        setCategoryBudget(data.category_budget);
+        setCategoryExpense(data.category_expense);
+        setCategoryRatio(data.category_ratio);
       } catch (error) {
-        console.error("取得失敗", error);
+        console.error("エラーが発生しました:", error);
       }
     };
-
-  useEffect(() => {
-    fetchPieChart(checked);
-    fetchGauge()
-  }, [currentMonth]); // currentMonthが変化したときに再実行
+    changeCategory();
+  }, [expenseCategory]);
 
   // 年月を "YYYY年MM月" の形式にフォーマット
   const formattedMonth = `${currentMonth.getFullYear()}年${String(
@@ -237,12 +313,35 @@ export default function Report() {
               <Stack spacing={3} direction="column">
                 <Typography>総予算 / カテゴリ別予算（％）</Typography>
                 <Stack spacing={3} direction="row">
-                <Stack spacing={2} direction="column">
-                  <Gauge width={130} height={130} value={totalRatio} />
-                  <Typography>{totalExpense} / {totalBudget}</Typography>
+                  <Stack spacing={2} direction="column">
+                    <Gauge width={130} height={130} value={totalRatio} />
+                    <Typography>
+                      {totalExpense} / {totalBudget}
+                    </Typography>
                   </Stack>
 
-                  <Gauge width={130} height={130} value={26} />
+                  <Stack spacing={2} direction="column">
+                    <Gauge width={130} height={130} value={categoryRatio} />
+                    <Typography>
+                      {categoryExpense} / {categoryBudget}
+                    </Typography>
+                  </Stack>
+                  {/* カテゴリ選択 */}
+                  <FormControl variant="standard" sx={{ minWidth: 150, ml: 2 }}>
+                    <InputLabel>カテゴリ</InputLabel>
+                    <Select
+                      value={expenseCategory}
+                      label="カテゴリ"
+                      onChange={selectExpenseCategory}
+                      MenuProps={MenuProps}
+                    >
+                      {expenseCategories.map((category) => (
+                        <MenuItem key={category.id} value={category.id}>
+                          {category.name} {/* APIから取得したカテゴリ名 */}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Stack>
               </Stack>
             </Stack>

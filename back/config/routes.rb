@@ -7,7 +7,8 @@ Rails.application.routes.draw do
   resources :reports, only: [] do
     collection do
       get 'pie_chart', to: 'reports#pie_chart'
-      get 'gauge', to: 'reports#gauge'
+      get 'total_gauge', to: 'reports#total_gauge'
+      get 'category_gauge', to: 'reports#category_gauge'
     end
   end
 
