@@ -178,14 +178,6 @@ export default function Report() {
       }
     };
 
-    fetchCategoryData();
-    fetchPieChart(checked);
-    fetchGauge();
-    setExpenseCategory(1);
-  }, [currentMonth]); // currentMonthが変化したときに再実行
-
-  useEffect(() => {
-    // Rails APIからカテゴリ別予算を取得
     const changeCategory = async () => {
       try {
         const response = await fetch(
@@ -206,6 +198,7 @@ export default function Report() {
         }
 
         const data = await response.json();
+        console.log(data);
         setCategoryBudget(data.category_budget);
         setCategoryExpense(data.category_expense);
         setCategoryRatio(data.category_ratio);
@@ -214,7 +207,44 @@ export default function Report() {
       }
     };
     changeCategory();
-  }, [expenseCategory]);
+
+    fetchCategoryData();
+    fetchPieChart(checked);
+    fetchGauge();
+  }, [currentMonth, expenseCategory]); // currentMonthが変化したときに再実行
+
+  // useEffect(() => {
+  //   // Rails APIからカテゴリ別予算を取得
+  //   const changeCategory = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `${process.env.NEXT_PUBLIC_API_URL}/v1/reports/category_gauge?month=${apiFormattedDate}&category=${expenseCategory}`,
+  //         {
+  //           method: "GET",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             "access-token": accessToken,
+  //             client: client,
+  //             uid: uid,
+  //           },
+  //         }
+  //       );
+
+  //       if (!response.ok) {
+  //         throw new Error(`エラー: ${response.status}`);
+  //       }
+
+  //       const data = await response.json();
+  //       console.log(data);
+  //       setCategoryBudget(data.category_budget);
+  //       setCategoryExpense(data.category_expense);
+  //       setCategoryRatio(data.category_ratio);
+  //     } catch (error) {
+  //       console.error("エラーが発生しました:", error);
+  //     }
+  //   };
+  //   changeCategory();
+  // }, [expenseCategory]);
 
   // 年月を "YYYY年MM月" の形式にフォーマット
   const formattedMonth = `${currentMonth.getFullYear()}年${String(

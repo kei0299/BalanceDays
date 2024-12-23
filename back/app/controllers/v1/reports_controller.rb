@@ -162,20 +162,17 @@ class V1::ReportsController < ApplicationController
     .where('expense_categories.id = ?', set_category)
 
     if budgets.any?
-      category_budget = budgets.first.budget
-      category_expense = budgets.first.last_month_expense
-      category_ratio = category_expense.to_f / category_budget.to_f * 100
+      category_budget = budgets.first.budget.to_i
+      category_expense = budgets.first.last_month_expense.to_i
+      category_ratio = category_budget.zero? ? 0 : category_expense.to_f / category_budget.to_f * 100
     else
-      category_ratio = nil
+      category_budget = 0
+      category_expense = 0
+      category_ratio = 0
     end
+    
 
-    # if total_budget == 0
-    #   total_ratio = 0
-    # else
-    #   # 総予算と支出実績の割合
-    #   total_ratio = total_expense.to_f / total_budget.to_f * 100
-    # end
-
+    # render json: budgets
     render json: {
       category_budget: category_budget,
       category_expense: category_expense,
