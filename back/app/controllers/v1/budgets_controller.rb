@@ -6,7 +6,7 @@ class V1::BudgetsController < ApplicationController
     set_month = request.headers['currentMonth'] # フロントから取得（例: "2024-12-01"）
     date = Date.strptime(set_month, '%Y-%m-%d') # 文字列をDate型に変換
     first_month = (date - 1.month).beginning_of_month # (例： "2024-11-01")
-    end_month = (date - 1.month).end_of_month # # (例： "2024-11-30")
+    end_month = (date - 1.month).end_of_month # (例： "2024-11-30")
 
     # 今月の予算&先月の支出を取得
     budgets = ExpenseCategory

@@ -10,7 +10,14 @@ class V1::Expense::ExpenseLogController < ApplicationController
       memo: expense_logs_params[:memo]
     )
 
-    render json: { message: "支出を保存しました" }, status: :ok
+    amount = expense_logs_params[:amount].to_i
+    user = User.find(current_v1_user.id)
+    
+    if user.balance.present?
+      user.update!(balance: user.balance - amount)
+    end
+
+    render json: { message: "支出を保存しました", balance: user.balance }, status: :ok
   rescue => e
     Rails.logger.error("Create Error: #{e.class} - #{e.message}")
     Rails.logger.error(e.backtrace.join("\n"))
@@ -18,20 +25,38 @@ class V1::Expense::ExpenseLogController < ApplicationController
   end
 
   def update
-    expense_log = ExpenseLog.find(params[:id])
-
+    expense_log = ExpenseLog.find_by(id: params[:id])
+  
     if expense_log.nil?
-      render json: { error: "支出ログが見つかりません" }, status: :not_found
+      render json: { error: "収入ログが見つかりません" }, status: :not_found
       return
+    end
+  
+    # 元々の金額を取得
+    original_amount = expense_log.amount
+  
+    # 入力された新しい金額を取得
+    new_amount = expense_logs_params[:amount].to_i
+  
+    # 差分を計算
+    amount_difference = new_amount - original_amount
+  
+    # ユーザーの残高を更新
+    user = User.find(current_v1_user.id)
+    if user.balance.present?
+      user.update!(balance: user.balance + amount_difference)
     end
   
     # レコードの更新
     expense_log.update!(expense_logs_params)
   
     render json: { message: "収入ログを更新しました" }, status: :ok
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { error: e.record.errors.full_messages }, status: :unprocessable_entity
   rescue => e
-    render json: { error: e.message }, status: :unprocessable_entity
+    render json: { error: "予期しないエラーが発生しました: #{e.message}" }, status: :internal_server_error
   end
+  
 
   private
 

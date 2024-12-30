@@ -53,6 +53,13 @@ class V1::TransactionsController < ApplicationController
     if transaction_type == "income"
       income_log = IncomeLog.find_by(id: transaction_id)
       if income_log
+        amount = income_log.amount
+        user = User.find(current_v1_user.id)
+        
+        if user.balance.present?
+          user.update!(balance: user.balance - amount)
+        end
+    
         income_log.destroy
         render json: { message: "収入が削除されました", transaction: income_log }, status: :ok
       else
@@ -61,6 +68,13 @@ class V1::TransactionsController < ApplicationController
     else
       expense_log = ExpenseLog.find_by(id: transaction_id)
       if expense_log
+        amount = expense_log.amount
+        user = User.find(current_v1_user.id)
+        
+        if user.balance.present?
+          user.update!(balance: user.balance - amount)
+        end
+    
         expense_log.destroy
         render json: { message: "支出が削除されました", transaction: expense_log }, status: :ok
       else

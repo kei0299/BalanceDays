@@ -14,8 +14,6 @@ class V1::ReportsController < ApplicationController
           'income_categories.id',
           'income_categories.name',
           'COALESCE(SUM(income_logs.amount), 0) AS current_month_amount',
-          # 'budgets.budget',
-          # 'budgets.month'
         )
         .joins(
           <<~SQL
@@ -25,9 +23,6 @@ class V1::ReportsController < ApplicationController
             AND income_logs.date BETWEEN '#{month}' AND '#{end_month}'
           SQL
         )
-        # .group(
-        #   'expense_categories.id, expense_categories.name, budgets.budget, budgets.month'
-        # )
         .group(
           'income_categories.id, income_categories.name'
         )
@@ -39,8 +34,6 @@ class V1::ReportsController < ApplicationController
           'expense_categories.id',
           'expense_categories.name',
           'COALESCE(SUM(expense_logs.amount), 0) AS current_month_amount',
-          # 'budgets.budget',
-          # 'budgets.month'
         )
         .joins(
           <<~SQL
@@ -50,9 +43,6 @@ class V1::ReportsController < ApplicationController
             AND expense_logs.date BETWEEN '#{month}' AND '#{end_month}'
           SQL
         )
-        # .group(
-        #   'expense_categories.id, expense_categories.name, budgets.budget, budgets.month'
-        # )
         .group(
           'expense_categories.id, expense_categories.name'
         )
