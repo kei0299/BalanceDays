@@ -1,17 +1,17 @@
-#!/bin/bash
-set -e
+#!/bin/bash -e
 
-rm -f /app/tmp/pids/server.pid
-
-# Enable jemalloc for reduced memory usage and latency.
+# jemallocの設定 (省略可能)
 if [ -z "${LD_PRELOAD+x}" ] && [ -f /usr/lib/*/libjemalloc.so.2 ]; then
   export LD_PRELOAD="$(echo /usr/lib/*/libjemalloc.so.2)"
 fi
 
-if [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
-  ./bin/rails db:prepare
-  ./bin/rails db:seed
+# データベースの準備とシードデータの投入を追加
+if [ "${1}" == "rails" ] && [ "${2}" == "server" ]; then
+  echo "Preparing the database..."
+  bundle exec rails db:prepare
+  echo "Seeding the database..."
+  bundle exec rails db:seed
 fi
 
-exec "${@}"
-
+# 最後にコマンドを実行
+exec "$@"
