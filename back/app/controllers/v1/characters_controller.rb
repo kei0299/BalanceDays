@@ -29,13 +29,22 @@ class V1::CharactersController < ApplicationController
       # キャラクターをユーザーテーブルに登録
       user = User.find_by(id: current_v1_user)
 
-      if user && user.balance && user.warning_lv && user.caution_lv && avg_budget != 0
+      if user && user.balance && user.warning_lv && user.caution_lv && avg_budget.present? && avg_budget != 0
         character_status, set_life = user.update_character_status!(avg_budget,user)
+
+        # homeグラフデータ作成
+        chart_data = []
+        chart = user.balance
+        chart_data << user.balance
+
+        11.times do
+          chart = chart - avg_budget
+          chart_data << chart.to_i
+        end
       end
-  
     end
   
-    render json: { character_status: character_status, set_life: set_life }, status: :ok
+    render json: { character_status: character_status , set_life: set_life, chart_data: chart_data }, status: :ok
   end
 
 end
