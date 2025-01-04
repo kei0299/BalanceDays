@@ -176,6 +176,7 @@ export default function InputAdornments() {
                   label="メールアドレス"
                   variant="standard"
                   onChange={(e) => setEmail(e.target.value)}
+                  sx={{ width: "100%" }}
                 />
               </Box>
 
@@ -188,6 +189,7 @@ export default function InputAdornments() {
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
+                    sx={{ width: "135%" }}
                     endAdornment={
                       <InputAdornment position="end"></InputAdornment>
                     }
@@ -205,6 +207,7 @@ export default function InputAdornments() {
                   <Input
                     id="confirm-password"
                     type={showPassword ? "text" : "password"}
+                    sx={{ width: "110%" }}
                     onChange={(e) => setPasswordConfirmation(e.target.value)}
                     endAdornment={
                       <InputAdornment position="end">
