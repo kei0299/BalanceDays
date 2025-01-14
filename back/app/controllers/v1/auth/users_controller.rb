@@ -24,6 +24,6 @@ class V1::Auth::UsersController < ApplicationController
   private
 
   def user_params
-    params.permit(:balance, :caution_lv, :warning_lv)
+    params.require(:user).permit(:email, :uid, :balance, :caution_lv, :warning_lv)
   end
 end

@@ -2,64 +2,71 @@ import Header from "@/components/header";
 import FooterLogin from "@/components/footerLogin";
 import { Box, Button, Stack } from "@mui/material";
 import TextField from "@mui/material/TextField";
+import { checkSession } from "@/utils/auth/checkSession";
 import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
-import React, { useState } from "react";
-import { setCookie } from "nookies";
+import React, { useState, useEffect } from "react";
+import { setCookie, parseCookies } from "nookies";
 
 export default function Setting() {
   const [email, setEmail] = useState<string>("");
 
-  // ログインボタン
+  useEffect(() => {
+    const fetchSessionData = async () => {
+      try {
+        const sessionData = await checkSession(); // checkSessionの結果を取得
+        setEmail(sessionData.data.email);
+        console.log(sessionData);
+      } catch (error) {
+        console.error("セッションチェックエラー", error);
+      }
+    };
+    fetchSessionData();
+  }, []);
+
+  // メールアドレス更新ボタン
   const handleUpdate = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    // railsAPI_メールアドレス更新
+    const cookies = parseCookies();
+    const accessToken = cookies["accessToken"];
+    const client = cookies["client"];
+    const uid = cookies["uid"];
+
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_in`,
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/users`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
           },
           body: JSON.stringify({
-            email: email,
+            user: {
+              email: email,
+              uid: email,
+            },
           }),
         }
       );
 
       if (!response.ok) {
-        throw new Error("更新に失敗しました");
-      }
-      const accessToken = response.headers.get("access-token");
-      const client = response.headers.get("client");
-      const uid = response.headers.get("uid");
-
-      const setAccessToken = (
-        accessToken: string,
-        client: string,
-        uid: string
-      ) => {
-        setCookie(null, "accessToken", accessToken, {
-          maxAge: 30 * 24 * 60 * 60,
-          path: "/",
-        }); // 30日間の有効期限
-        setCookie(null, "client", client, {
-          maxAge: 30 * 24 * 60 * 60,
-          path: "/",
-        });
-        setCookie(null, "uid", uid, { maxAge: 30 * 24 * 60 * 60, path: "/" });
-      };
-
-      if (accessToken && client && uid) {
-        // クッキーにアクセス・クライアント・ユーザーIDを格納
-        setAccessToken(accessToken, client, uid);
-
-        alert("更新しました");
-        setEmail("");
+        throw new Error("設定に失敗しました");
       }
 
-      // window.location.href = "/home";
+      // サーバーからの新しい uid を取得（メールアドレスが uid になる場合）
+      const updatedUid = email;
+
+      // クッキーに新しい uid を保存
+      setCookie(null, "uid", updatedUid, {
+        maxAge: 30 * 24 * 60 * 60,
+        path: "/",
+      });
+
+      alert("設定しました");
+      window.location.reload();
     } catch (error) {
       console.error(error);
     }
@@ -82,7 +89,7 @@ export default function Setting() {
               textAlign: "center",
             }}
           >
-            <h1>アカウント編集</h1>
+            <h1>アカウント設定</h1>
 
             <Stack
               spacing={2}
@@ -99,12 +106,13 @@ export default function Setting() {
                   id="input-with-sx"
                   label="メールアドレス"
                   variant="standard"
+                  value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   sx={{ width: "250px" }}
                 />
               </Box>
 
-              <Button type="submit" variant="outlined">
+              <Button type="submit" variant="outlined" onClick={handleUpdate}>
                 更新
               </Button>
             </Stack>
