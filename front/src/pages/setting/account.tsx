@@ -5,10 +5,12 @@ import TextField from "@mui/material/TextField";
 import { checkSession } from "@/utils/auth/checkSession";
 import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
 import React, { useState, useEffect } from "react";
-import { setCookie, parseCookies } from "nookies";
+import { setCookie, parseCookies, destroyCookie } from "nookies";
+import { useRouter } from "next/navigation";
 
 export default function Setting() {
   const [email, setEmail] = useState<string>("");
+  const router = useRouter();
 
   useEffect(() => {
     const fetchSessionData = async () => {
@@ -72,6 +74,65 @@ export default function Setting() {
     }
   };
 
+  // 退会ボタン
+  const handleDelete = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const cookies = parseCookies();
+    const accessToken = cookies["accessToken"];
+    const client = cookies["client"];
+    const uid = cookies["uid"];
+
+    try {
+      // 退会処理
+      const deleteResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/delete_user`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+        }
+      );
+
+      if (!deleteResponse.ok) {
+        throw new Error("退会処理に失敗しました");
+      }
+
+      // サインアウト処理
+      const signOutResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_out`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+        }
+      );
+
+      if (!signOutResponse.ok) {
+        throw new Error("サインアウト処理に失敗しました");
+      }
+
+      // クッキー削除
+      destroyCookie(null, "accessToken");
+      destroyCookie(null, "client");
+      destroyCookie(null, "uid");
+
+      alert("退会処理が完了しました");
+      router.push("/");
+    } catch (error) {
+      console.error(error);
+      alert("エラーが発生しました。再試行してください。");
+    }
+  };
+
   return (
     <>
       <Header />
@@ -116,6 +177,15 @@ export default function Setting() {
                 更新
               </Button>
             </Stack>
+            <Button
+              sx={{ mt: 5 }}
+              type="submit"
+              color="error"
+              variant="contained"
+              onClick={handleDelete}
+            >
+              退会する
+            </Button>
           </Box>
         </main>
         <FooterLogin />
