@@ -134,6 +134,7 @@ export default function InputAdornments() {
                   label="メールアドレス"
                   variant="standard"
                   onChange={(e) => setEmail(e.target.value)}
+                  sx={{ width: "100%" }}
                 />
               </Box>
 
@@ -147,6 +148,7 @@ export default function InputAdornments() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     onChange={(e) => setPassword(e.target.value)}
+                    sx={{ width: "110%" }}
                     endAdornment={
                       <InputAdornment position="end">
                         <IconButton
