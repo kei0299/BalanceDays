@@ -67,6 +67,7 @@ export default function InputAdornments() {
       );
 
       if (!response.ok) {
+        alert("ログインに失敗しました");
         throw new Error("ログインに失敗しました");
       }
       const accessToken = response.headers.get("access-token");

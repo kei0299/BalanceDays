@@ -32,5 +32,9 @@ class User < ActiveRecord::Base
     return set_chara_status,set_life
   
   end
+
+  def active_for_authentication?
+    super && delete_at.nil?
+  end
 end
 

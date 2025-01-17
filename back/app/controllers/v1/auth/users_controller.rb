@@ -21,6 +21,15 @@ class V1::Auth::UsersController < ApplicationController
     end
   end
 
+  def destroy
+    @user = current_v1_user
+    if @user.update(delete_at: Time.current)
+      render json: @user, status: :ok
+    else
+      render json: @user.errors, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def user_params

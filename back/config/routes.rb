@@ -37,6 +37,7 @@ Rails.application.routes.draw do
       resources :sessions, only: [:index]
       # resouceだとusers/:idになる
       put 'users', to: 'users#update'
+      delete 'delete_user', to: 'users#destroy'
     end
   end
   

@@ -106,9 +106,9 @@ export default function InputAdornments() {
           throw new Error("ログインに失敗しました");
         }
 
-        const accessToken = response.headers.get("access-token");
-        const client = response.headers.get("client");
-        const uid = response.headers.get("uid");
+        const accessToken = loginResponse.headers.get("access-token");
+        const client = loginResponse.headers.get("client");
+        const uid = loginResponse.headers.get("uid");
 
         const setAccessToken = (
           accessToken: string,
