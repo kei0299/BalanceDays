@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_25_111633) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_21_060459) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -63,6 +63,26 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_25_111633) do
     t.index ["user_id"], name: "index_income_logs_on_user_id"
   end
 
+  create_table "jobs", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.integer "hourly_wage", null: false
+    t.integer "night_wage", default: 0
+    t.integer "training_wage", default: 0
+    t.date "training_start"
+    t.date "training_end"
+    t.string "closing_day", null: false
+    t.string "payout_day", null: false
+    t.string "payout_month_type", null: false
+    t.bigint "income_category_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "training_time", default: 0
+    t.index ["income_category_id"], name: "index_jobs_on_income_category_id"
+    t.index ["user_id", "name"], name: "index_jobs_on_user_id_and_name", unique: true
+    t.index ["user_id"], name: "index_jobs_on_user_id"
+  end
+
   create_table "posts", force: :cascade do |t|
     t.string "title"
     t.datetime "created_at", null: false
@@ -103,4 +123,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_25_111633) do
   add_foreign_key "expense_logs", "users"
   add_foreign_key "income_logs", "income_categories"
   add_foreign_key "income_logs", "users"
+  add_foreign_key "jobs", "income_categories"
+  add_foreign_key "jobs", "users"
 end
