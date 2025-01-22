@@ -94,7 +94,7 @@ export default function Calender() {
   let formatFormDay: Date = new Date(); // フォーム受け渡し用の日付
   if (formDay) {
     // Dayjs型からDate型に変換
-    formatFormDay = dayjs(formDay.toDate()).add(9, 'hour').toDate();
+    formatFormDay = dayjs(formDay.toDate()).add(9, "hour").toDate();
   }
 
   // カテゴリセット
@@ -192,40 +192,42 @@ export default function Calender() {
   };
 
   // 金額をフォーマットする関数
-const formatAmountChange = <T extends HTMLInputElement | HTMLTextAreaElement>(
-  event: React.ChangeEvent<T>,
-  setAmount: React.Dispatch<React.SetStateAction<string>>
-) => {
-  const numericValue = event.target.value.replace(/[^0-9]/g, ""); // 数字以外を削除
-  const formattedValue = formatNum(numericValue); // フォーマット適用
-  setAmount(formattedValue); // カンマ区切りを適用して状態を更新
-};
+  const formatAmountChange = <T extends HTMLInputElement | HTMLTextAreaElement>(
+    event: React.ChangeEvent<T>,
+    setAmount: React.Dispatch<React.SetStateAction<string>>
+  ) => {
+    const numericValue = event.target.value.replace(/[^0-9]/g, ""); // 数字以外を削除
+    const formattedValue = formatNum(numericValue); // フォーマット適用
+    setAmount(formattedValue); // カンマ区切りを適用して状態を更新
+  };
 
-// 3桁ごとにカンマを挿入する関数
-const formatNum = (num: string | number): string => {
-  return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
+  // 3桁ごとにカンマを挿入する関数
+  const formatNum = (num: string | number): string => {
+    return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
 
-// 選択した取引データをフォームに反映
-const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) => {
-  logId = transaction.id;
-  if (transaction.type === "income") {
-    setTab(0);
-    setFormDay(selectedDate);
-    setIncomeCategory(transaction.categoryId); // APIのカテゴリ
-    setIncomeAmount(formatNum(transaction.amount)); // 金額
-    setIncomeMemo(transaction.memo); // メモ
-  } else {
-    setTab(1);
-    setFormDay(selectedDate);
-    setExpenseCategory(transaction.categoryId); // APIのカテゴリ
-    setExpenseAmount(formatNum(transaction.amount)); // 金額
-    setExpenseMemo(transaction.memo); // メモ
-  }
-  console.log(selectedDate);
-  setIsEditMode(true);
-};
-
+  // 選択した取引データをフォームに反映
+  const setEditTransaction = (
+    transaction: TransactionData,
+    selectedDate: Dayjs
+  ) => {
+    logId = transaction.id;
+    if (transaction.type === "income") {
+      setTab(0);
+      setFormDay(selectedDate);
+      setIncomeCategory(transaction.categoryId); // APIのカテゴリ
+      setIncomeAmount(formatNum(transaction.amount)); // 金額
+      setIncomeMemo(transaction.memo); // メモ
+    } else {
+      setTab(1);
+      setFormDay(selectedDate);
+      setExpenseCategory(transaction.categoryId); // APIのカテゴリ
+      setExpenseAmount(formatNum(transaction.amount)); // 金額
+      setExpenseMemo(transaction.memo); // メモ
+    }
+    console.log(selectedDate);
+    setIsEditMode(true);
+  };
 
   // railsAPI_支出の登録
   const expenseSave = async (event: React.FormEvent) => {
@@ -331,39 +333,39 @@ const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) =
     setIsEditMode(false);
   };
 
-    // railsAPI_収入の更新
-    const incomeEditSave = async (event: React.FormEvent) => {
-      event.preventDefault();
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/v1/income/income_log/${logId}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              "access-token": accessToken,
-              client: client,
-              uid: uid,
-            },
-            body: JSON.stringify({
-              amount: Number(incomeAmount.replace(/,/g, "")),
-              date: formatFormDay,
-              income_category_id: incomeCategory,
-              memo: incomeMemo,
-            }),
-          }
-        );
-  
-        if (!response.ok) {
-          throw new Error("収入ログの更新に失敗しました");
+  // railsAPI_収入の更新
+  const incomeEditSave = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/income/income_log/${logId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+          body: JSON.stringify({
+            amount: Number(incomeAmount.replace(/,/g, "")),
+            date: formatFormDay,
+            income_category_id: incomeCategory,
+            memo: incomeMemo,
+          }),
         }
-        alert("収入ログを更新しました");
-        window.location.reload();
-      } catch (error) {
-        console.error(error);
+      );
+
+      if (!response.ok) {
+        throw new Error("収入ログの更新に失敗しました");
       }
-      setIsEditMode(false);
-    };
+      alert("収入ログを更新しました");
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+    setIsEditMode(false);
+  };
 
   // railsAPI_削除
   const transactionDelete = async (
@@ -432,66 +434,63 @@ const setEditTransaction = (transaction: TransactionData, selectedDate: Dayjs) =
       <link rel="icon" href="/favicon.ico" />
       <div>
         <main style={{ minHeight: "115vh" }}>
-        {/* <main> */}
-        <div style={{ display: 'flex', marginTop: '80px' }}>
-                  <Box sx={{ mt: 0 }}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DateCalendar onChange={dateChange} />
-                    </LocalizationProvider>
-                  </Box>
+          {/* <main> */}
+          <div style={{ display: "flex", marginTop: "80px" }}>
+            <Box sx={{ mt: 0 }}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateCalendar onChange={dateChange} />
+              </LocalizationProvider>
+            </Box>
 
-                  {selectedDate && (
-                    <Box sx={{ mb: 20, ml: 5}}>
-                      <h2>{selectedDate.format("YYYY/MM/DD")}の収支データ</h2>
-                      {loading ? (
-                        <p>読み込み中...</p>
-                      ) : transactions.length > 0 ? (
-                        <ul>
-                          {transactions.map((transaction) => (
-                            <li key={transaction.id}>
-                              <strong>
-                                {transaction.type === "income"
-                                  ? "収入"
-                                  : "支出"}
-                              </strong>
-                              : ¥{transaction.amount.toLocaleString()} -{" "}
-                              {transaction.category} ({transaction.memo})
-                              <IconButton
-                                sx={{ ml: 1 }}
-                                aria-label="edit"
-                                size="small"
-                                onClick={() => setEditTransaction(transaction,selectedDate) } // 編集モードに切り替え
-                              >
-                                <EditIcon fontSize="inherit" />
-                              </IconButton>
-                              <IconButton
-                                aria-label="delete"
-                                size="small"
-                                onClick={() =>
-                                  transactionDelete(
-                                    transaction.id,
-                                    transaction.type
-                                  )
-                                }
-                              >
-                                <DeleteIcon fontSize="inherit" />
-                              </IconButton>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p>データがありません。</p>
-                      )}
-                    </Box>
-                  )}
-                  </div>
+            {selectedDate && (
+              <Box sx={{ mb: 20, ml: 5 }}>
+                <h2>{selectedDate.format("YYYY/MM/DD")}の収支データ</h2>
+                {loading ? (
+                  <p>読み込み中...</p>
+                ) : transactions.length > 0 ? (
+                  <ul>
+                    {transactions.map((transaction) => (
+                      <li key={transaction.id}>
+                        <strong>
+                          {transaction.type === "income" ? "収入" : "支出"}
+                        </strong>
+                        : ¥{transaction.amount.toLocaleString()} -{" "}
+                        {transaction.category} ({transaction.memo})
+                        <IconButton
+                          sx={{ ml: 1 }}
+                          aria-label="edit"
+                          size="small"
+                          onClick={() =>
+                            setEditTransaction(transaction, selectedDate)
+                          } // 編集モードに切り替え
+                        >
+                          <EditIcon fontSize="inherit" />
+                        </IconButton>
+                        <IconButton
+                          aria-label="delete"
+                          size="small"
+                          onClick={() =>
+                            transactionDelete(transaction.id, transaction.type)
+                          }
+                        >
+                          <DeleteIcon fontSize="inherit" />
+                        </IconButton>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>データがありません。</p>
+                )}
+              </Box>
+            )}
+          </div>
 
           <Box sx={{ width: "100%" }}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
               <Tabs value={tab} onChange={tabChange} aria-label="tabChanges">
                 <Tab label="収入" {...a11yProps(0)} />
                 <Tab label="支出" {...a11yProps(1)} />
-                <Tab label="シフト" {...a11yProps(1)} />
+                <Tab label="シフト" {...a11yProps(2)} />
               </Tabs>
             </Box>
 
