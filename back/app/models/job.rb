@@ -11,6 +11,12 @@ class Job < ApplicationRecord
 
   # validate :training_dates_valid?
 
+  enum training_settings: {
+    no_training: 0,        # 研修なし
+    training_period: 1,    # 研修期間
+    training_time: 2   # 研修時間
+  }
+
   private
 
   # トレーニング開始日と終了日がどちらか一方のみ設定されている場合は無効

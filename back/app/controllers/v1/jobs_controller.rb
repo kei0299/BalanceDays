@@ -18,6 +18,6 @@ class V1::JobsController < ApplicationController
   private
 
   def job_params
-    params.require(:job).permit(:user_id, :name, :hourly_wage, :night_wage, :training_wage, :training_start, :training_end, :closing_day, :payout_day, :payout_month_type, :income_category_id, :training_time)
+    params.require(:job).permit(:user_id, :name, :hourly_wage, :night_wage, :training_wage, :training_start, :training_end, :closing_day, :payout_day, :payout_month_type, :income_category_id, :training_time, :training_settings)
   end
 end

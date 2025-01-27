@@ -46,6 +46,7 @@ interface Company {
   created_at: Date;
   updated_at: Date;
   training_time: number;
+  training_settings: string;
 }
 
 // Tab関連
@@ -78,13 +79,18 @@ const client = cookies["client"];
 const uid = cookies["uid"];
 
 export default function Setting() {
-  const [closingDay, setClosingDay] = React.useState("15日");
+  const [closingDay, setClosingDay] = React.useState("5日");
   const [payoutMonth, setPayoutMonth] = React.useState("当月");
   const [payoutDay, setPayoutDay] = React.useState("25日");
   const [companies, setCompanies] = useState<Company[]>([]); // DBから取得した会社情報
 
-  const changeClosingDay = (event: SelectChangeEvent) => {
-    setClosingDay(event.target.value);
+  const changeCompanyName = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setCompanyName(event.target.value as string);
+  };
+
+  const changeClosingDay = (e: SelectChangeEvent<string>) => {
+    const newClosingDay = e.target.value; // 選ばれた値を取得
+    setClosingDay(newClosingDay); // 状態を更新
   };
 
   const changePayoutMonth = (event: SelectChangeEvent) => {
@@ -95,17 +101,24 @@ export default function Setting() {
     setPayoutDay(event.target.value);
   };
 
-  const changeCompanyName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCompanyName(event.target.value);
+    const changeTrainingTime = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.valueAsNumber;
+      setTrainingTime(value);
   };
 
-  const changeTrainingTime = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.valueAsNumber;
-    if (!isNaN(value)) {
-      setTrainingTime(value);
-    } else {
-      setTrainingTime(0);
-    }
+  const changeCompanyField = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+    index: number
+  ) => {
+    const { name, value } = e.target; // name 属性でプロパティ識別
+    const updatedCompanies = [...companies]; // 配列をコピー
+    updatedCompanies[index] = {
+      ...updatedCompanies[index], // 対象オブジェクトを展開
+      [name]: name === "name" ? value : Number(value), // nameの場合は文字列、他は数値
+    };
+    setCompanies(updatedCompanies); // 状態を更新
   };
 
   const [trainingStartDay, setTrainingStartDay] = React.useState<Dayjs | null>(
@@ -114,7 +127,7 @@ export default function Setting() {
   const [trainingEndDay, setTrainingEndDay] = React.useState<Dayjs | null>(
     dayjs()
   );
-  const [companyName, setCompanyName] = useState("");
+  const [companyName, setCompanyName] = React.useState("");
   const [hourlyWage, setHourlyWage] = React.useState("");
   const [nightWage, setNightWage] = React.useState("");
   const [trainingWage, setTrainingWage] = React.useState("");
@@ -125,28 +138,11 @@ export default function Setting() {
     setTab(newTab);
   };
 
-  const [selectedTraining, setSelectedTraining] = useState("研修なし");
+  const [selectedTraining, setSelectedTraining] = useState("no_training");
 
   // railsAPI_勤務先情報の登録
   const saveJobInfo = async (event: React.FormEvent) => {
     event.preventDefault();
-    let trainingData = {};
-
-    // ラジオボタンの値に応じてPOST内容を切り替え
-    if (selectedTraining === "研修なし") {
-      trainingData = { training_type: "none" };
-    } else if (selectedTraining === "研修期間で設定") {
-      trainingData = {
-        training_start: trainingStartDay,
-        training_end: trainingEndDay,
-        training_wage: trainingWage,
-      };
-    } else if (selectedTraining === "研修時間で設定") {
-      trainingData = {
-        training_time: trainingTime,
-        training_wage: trainingWage,
-      };
-    }
 
     try {
       const response = await fetch(
@@ -167,7 +163,11 @@ export default function Setting() {
             payout_month_type: payoutMonth,
             payout_day: payoutDay,
             income_category_id: 1,
-            ...trainingData,
+            training_start: trainingStartDay,
+            training_end: trainingEndDay,
+            training_wage: trainingWage,
+            training_time: trainingTime,
+            training_settings: selectedTraining
           }),
         }
       );
@@ -186,14 +186,59 @@ export default function Setting() {
     }
   };
 
+  // railsAPI_勤務先情報の更新
+  const updateJobInfo = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/jobs`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+          body: JSON.stringify({
+            name: companyName,
+            night_wage: Number(nightWage.replace(/,/g, "")),
+            hourly_wage: Number(hourlyWage.replace(/,/g, "")),
+            closing_day: closingDay,
+            payout_month_type: payoutMonth,
+            payout_day: payoutDay,
+            income_category_id: 1,
+            training_start: trainingStartDay,
+            training_end: trainingEndDay,
+            training_wage: Number(trainingWage.replace(/,/g, "")),
+            training_time: trainingTime,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json(); // エラー詳細を取得
+        const errorMessages = errorData.errors || [
+          "不明なエラーが発生しました",
+        ];
+        throw new Error(errorMessages.join("\n"));
+      }
+      alert("勤務先情報を更新しました");
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const fetchJobData = async () => {
       try {
         const data = await getJobInfo();
-         setCompanies(data);
+        setCompanies(data);
         console.log(data);
       } catch (error) {
-        console.error("セッションデータ取得エラー:", error);
+        console.error("勤務先情報データ取得エラー:", error);
       }
     };
     fetchJobData(); // 初回レンダリング時にセッション情報を取得
@@ -246,24 +291,27 @@ export default function Setting() {
                 {/* 勤務先 */}
                 <TextField
                   sx={{ m: 2 }}
-                  id="outlined-multiline-flexible"
+                  id={`company-name-${index}`}
                   label="勤務先名"
                   multiline
                   maxRows={4}
+                  name="name"
                   value={company.name}
-                  onChange={changeCompanyName}
+                  onChange={(e) => changeCompanyField(e, index)}
                 />
 
                 {/* 時給 */}
                 <FormControl sx={{ minWidth: 150, m: 2 }}>
                   <InputLabel htmlFor="outlined-hourlyWage">時給</InputLabel>
                   <OutlinedInput
-                    id="outlined-hourlyWage"
+                    id={`hourly-wage-${index}`}
                     label="時給"
+                    name="hourly_wage"
                     value={company.hourly_wage}
-                    onChange={(event) =>
-                      formatAmountChange(event, setHourlyWage)
-                    }
+                    // onChange={(e) =>
+                    //   formatAmountChange(e, setHourlyWage)
+                    // }
+                    onChange={(e) => changeCompanyField(e, index)}
                     startAdornment={
                       <InputAdornment position="start">¥</InputAdornment>
                     }
@@ -275,12 +323,14 @@ export default function Setting() {
                 <FormControl sx={{ minWidth: 150, m: 2 }}>
                   <InputLabel htmlFor="outlined-nightWage">深夜時給</InputLabel>
                   <OutlinedInput
-                    id="outlined-nightWage"
+                    id={`night-wage-${index}`}
                     label="深夜時給"
                     value={company.night_wage}
-                    onChange={(event) =>
-                      formatAmountChange(event, setNightWage)
-                    }
+                    name="night_wage"
+                    // onChange={(event) =>
+                    //   formatAmountChange(event, setNightWage)
+                    // }
+                    onChange={(e) => changeCompanyField(e, index)}
                     startAdornment={
                       <InputAdornment position="start">¥</InputAdornment>
                     }
@@ -290,9 +340,7 @@ export default function Setting() {
 
                 {/* 給料日設定 */}
                 <Box>
-                  <FormLabel id="demo-radio-buttons-group-label">
-                    給料日の設定
-                  </FormLabel>
+                  <FormLabel id="radio-group-label">給料日の設定</FormLabel>
                 </Box>
 
                 <Box sx={{ m: 2 }}>
@@ -300,8 +348,9 @@ export default function Setting() {
                     <InputLabel id="label-closingDay">締日</InputLabel>
                     <Select
                       labelId="label-closingDay"
-                      id="select-closingDay"
+                      id={`closing-day-${index}`}
                       value={company.closing_day}
+                      name="closing_day"
                       label="締日"
                       onChange={changeClosingDay}
                     >
@@ -313,11 +362,12 @@ export default function Setting() {
                   </FormControl>
 
                   <FormControl sx={{ minWidth: 120, ml: 2 }}>
-                    <InputLabel id="label-paymentMonth">支払月</InputLabel>
+                    <InputLabel id="label-payoutMonth">支払月</InputLabel>
                     <Select
                       labelId="label-paymentMonth"
-                      id="select-paymentMonth"
+                      id={`payout-month-${index}`}
                       value={company.payout_month_type}
+                      name="payout_month"
                       label="支払月"
                       onChange={changePayoutMonth}
                     >
@@ -328,11 +378,12 @@ export default function Setting() {
                   </FormControl>
 
                   <FormControl sx={{ minWidth: 120, ml: 2 }}>
-                    <InputLabel id="label-paymentDay">支払日</InputLabel>
+                    <InputLabel id="label-payoutDay">支払日</InputLabel>
                     <Select
-                      labelId="label-paymentDay"
-                      id="select-paymentDay"
+                      labelId="label-payoutDay"
+                      id={`payout-day-${index}`}
                       value={company.payout_day}
+                      name="payout_day"
                       label="支払日"
                       onChange={changePayoutDay}
                     >
@@ -348,28 +399,28 @@ export default function Setting() {
 
                 {/* 研修関連の設定 */}
                 <Box>
-                  <FormLabel id="demo-radio-buttons-group-label">
+                  <FormLabel id="radio-buttons-group-label">
                     研修期間の給与設定
                   </FormLabel>
                   <RadioGroup
                     sx={{ ml: 2 }}
-                    aria-labelledby="demo-radio-buttons-group-label"
-                    defaultValue="研修なし"
+                    aria-labelledby="radio-buttons-group-label"
+                    defaultValue={company.training_settings}
                     name="radio-buttons-group"
                     onChange={(e) => setSelectedTraining(e.target.value)}
                   >
                     <FormControlLabel
-                      value="研修なし"
+                      value="no_training"
                       control={<Radio />}
                       label="研修なし"
                     />
                     <FormControlLabel
-                      value="研修期間で設定"
+                      value="training_period"
                       control={<Radio />}
                       label="研修期間で設定"
                     />
                     <FormControlLabel
-                      value="研修時間で設定"
+                      value="training_time"
                       control={<Radio />}
                       label="研修時間で設定"
                     />
@@ -381,7 +432,11 @@ export default function Setting() {
                   <DatePicker
                     sx={{ minWidth: 150, m: 2 }}
                     label="研修開始日"
-                    value={company.training_start ? dayjs(company.training_start) : null} 
+                    value={
+                      company.training_start
+                        ? dayjs(company.training_start)
+                        : null
+                    }
                     onChange={(newDay) => setTrainingStartDay(newDay)}
                     format="YYYY/MM/DD"
                   />
@@ -392,7 +447,11 @@ export default function Setting() {
                   <DatePicker
                     sx={{ minWidth: 150, m: 2 }}
                     label="研修終了日"
-                    value={company.training_start ? dayjs(company.training_end) : null} 
+                    value={
+                      company.training_start
+                        ? dayjs(company.training_end)
+                        : null
+                    }
                     onChange={(newDay) => setTrainingEndDay(newDay)}
                     format="YYYY/MM/DD"
                   />
@@ -403,7 +462,8 @@ export default function Setting() {
                   id="outlined-number"
                   label="研修時間"
                   value={company.training_time}
-                  onChange={changeTrainingTime}
+                  name="training_time"
+                  onChange={(e) => changeCompanyField(e, index)}
                   type="number"
                   slotProps={{
                     inputLabel: {
@@ -435,7 +495,7 @@ export default function Setting() {
                   <Button
                     type="submit"
                     variant="outlined"
-                    onClick={saveJobInfo}
+                    onClick={updateJobInfo}
                   >
                     更新する
                   </Button>
@@ -445,203 +505,195 @@ export default function Setting() {
 
             {/* 新規作成用のタブパネル */}
             <CustomTabPanel value={tab} index={companies.length}>
-                {/* 勤務先 */}
-                <TextField
-                  sx={{ m: 2 }}
-                  id="outlined-multiline-flexible"
-                  label="勤務先名"
-                  multiline
-                  maxRows={4}
-                  value={companyName}
-                  onChange={changeCompanyName}
+              {/* 勤務先 */}
+              <TextField
+                sx={{ m: 2 }}
+                id="outlined-newCompanyName"
+                label="勤務先名"
+                multiline
+                maxRows={4}
+                value={companyName}
+                onChange={changeCompanyName}
+              />
+
+              {/* 時給 */}
+              <FormControl sx={{ minWidth: 150, m: 2 }}>
+                <InputLabel htmlFor="outlined-newHourlyWage">時給</InputLabel>
+                <OutlinedInput
+                  id="outlined-newHourlyWage"
+                  label="時給"
+                  value={hourlyWage}
+                  onChange={(event) => formatAmountChange(event, setHourlyWage)}
+                  startAdornment={
+                    <InputAdornment position="start">¥</InputAdornment>
+                  }
+                  inputProps={{ inputMode: "numeric" }} // モバイルのみ数字キーボードを表示
                 />
+              </FormControl>
 
-                {/* 時給 */}
-                <FormControl sx={{ minWidth: 150, m: 2 }}>
-                  <InputLabel htmlFor="outlined-hourlyWage">時給</InputLabel>
-                  <OutlinedInput
-                    id="outlined-hourlyWage"
-                    label="時給"
-                    value={hourlyWage}
-                    onChange={(event) =>
-                      formatAmountChange(event, setHourlyWage)
-                    }
-                    startAdornment={
-                      <InputAdornment position="start">¥</InputAdornment>
-                    }
-                    inputProps={{ inputMode: "numeric" }} // モバイルのみ数字キーボードを表示
-                  />
-                </FormControl>
+              {/* 深夜時給 */}
+              <FormControl sx={{ minWidth: 150, m: 2 }}>
+                <InputLabel htmlFor="outlined-newNightWage">
+                  深夜時給
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-newNightWage"
+                  label="深夜時給"
+                  value={nightWage}
+                  onChange={(event) => formatAmountChange(event, setNightWage)}
+                  startAdornment={
+                    <InputAdornment position="start">¥</InputAdornment>
+                  }
+                  inputProps={{ inputMode: "numeric" }} // モバイルのみ数字キーボードを表示
+                />
+              </FormControl>
 
-                {/* 深夜時給 */}
-                <FormControl sx={{ minWidth: 150, m: 2 }}>
-                  <InputLabel htmlFor="outlined-nightWage">深夜時給</InputLabel>
-                  <OutlinedInput
-                    id="outlined-nightWage"
-                    label="深夜時給"
-                    value={nightWage}
-                    onChange={(event) =>
-                      formatAmountChange(event, setNightWage)
-                    }
-                    startAdornment={
-                      <InputAdornment position="start">¥</InputAdornment>
-                    }
-                    inputProps={{ inputMode: "numeric" }} // モバイルのみ数字キーボードを表示
-                  />
-                </FormControl>
+              {/* 給料日設定 */}
+              <Box>
+                <FormLabel id="radio-group-newLabel">給料日の設定</FormLabel>
+              </Box>
 
-                {/* 給料日設定 */}
-                <Box>
-                  <FormLabel id="demo-radio-buttons-group-label">
-                    給料日の設定
-                  </FormLabel>
-                </Box>
-
-                <Box sx={{ m: 2 }}>
-                  <FormControl sx={{ minWidth: 120 }}>
-                    <InputLabel id="label-closingDay">締日</InputLabel>
-                    <Select
-                      labelId="label-closingDay"
-                      id="select-closingDay"
-                      value={closingDay}
-                      label="締日"
-                      onChange={changeClosingDay}
-                    >
-                      <MenuItem value={"5日"}>5日</MenuItem>
-                      <MenuItem value={"15日"}>15日</MenuItem>
-                      <MenuItem value={"25日"}>25日</MenuItem>
-                      <MenuItem value={"月末日"}>月末日</MenuItem>
-                    </Select>
-                  </FormControl>
-
-                  <FormControl sx={{ minWidth: 120, ml: 2 }}>
-                    <InputLabel id="label-paymentMonth">支払月</InputLabel>
-                    <Select
-                      labelId="label-paymentMonth"
-                      id="select-paymentMonth"
-                      value={payoutMonth}
-                      label="支払月"
-                      onChange={changePayoutMonth}
-                    >
-                      <MenuItem value={"当月"}>当月</MenuItem>
-                      <MenuItem value={"翌月"}>翌月</MenuItem>
-                      <MenuItem value={"翌々月"}>翌々月</MenuItem>
-                    </Select>
-                  </FormControl>
-
-                  <FormControl sx={{ minWidth: 120, ml: 2 }}>
-                    <InputLabel id="label-paymentDay">支払日</InputLabel>
-                    <Select
-                      labelId="label-paymentDay"
-                      id="select-paymentDay"
-                      value={payoutDay}
-                      label="支払日"
-                      onChange={changePayoutDay}
-                    >
-                      <MenuItem value={"5日"}>5日</MenuItem>
-                      <MenuItem value={"10日"}>10日</MenuItem>
-                      <MenuItem value={"15日"}>15日</MenuItem>
-                      <MenuItem value={"20日"}>20日</MenuItem>
-                      <MenuItem value={"25日"}>25日</MenuItem>
-                      <MenuItem value={"月末日"}>月末日</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Box>
-
-                {/* 研修関連の設定 */}
-                <Box>
-                  <FormLabel id="demo-radio-buttons-group-label">
-                    研修期間の給与設定
-                  </FormLabel>
-                  <RadioGroup
-                    sx={{ ml: 2 }}
-                    aria-labelledby="demo-radio-buttons-group-label"
-                    defaultValue="研修なし"
-                    name="radio-buttons-group"
-                    onChange={(e) => setSelectedTraining(e.target.value)}
+              <Box sx={{ m: 2 }}>
+                <FormControl sx={{ minWidth: 120 }}>
+                  <InputLabel id="label-newClosingDay">締日</InputLabel>
+                  <Select
+                    labelId="label-newClosingDay"
+                    id="select-newClosingDay"
+                    value={closingDay}
+                    label="締日"
+                    onChange={changeClosingDay}
                   >
-                    <FormControlLabel
-                      value="研修なし"
-                      control={<Radio />}
-                      label="研修なし"
-                    />
-                    <FormControlLabel
-                      value="研修期間で設定"
-                      control={<Radio />}
-                      label="研修期間で設定"
-                    />
-                    <FormControlLabel
-                      value="研修時間で設定"
-                      control={<Radio />}
-                      label="研修時間で設定"
-                    />
-                  </RadioGroup>
-                </Box>
+                    <MenuItem value={"5日"}>5日</MenuItem>
+                    <MenuItem value={"15日"}>15日</MenuItem>
+                    <MenuItem value={"25日"}>25日</MenuItem>
+                    <MenuItem value={"月末日"}>月末日</MenuItem>
+                  </Select>
+                </FormControl>
 
-                {/* 研修開始日入力フォーム */}
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    sx={{ minWidth: 150, m: 2 }}
-                    label="研修開始日"
-                    value={trainingStartDay} 
-                    onChange={(newDay) => setTrainingStartDay(newDay)}
-                    format="YYYY/MM/DD"
+                <FormControl sx={{ minWidth: 120, ml: 2 }}>
+                  <InputLabel id="label-newPaymentMonth">支払月</InputLabel>
+                  <Select
+                    labelId="label-newPaymentMonth"
+                    id="select-newPaymentMonth"
+                    value={payoutMonth}
+                    label="支払月"
+                    onChange={changePayoutMonth}
+                  >
+                    <MenuItem value={"当月"}>当月</MenuItem>
+                    <MenuItem value={"翌月"}>翌月</MenuItem>
+                    <MenuItem value={"翌々月"}>翌々月</MenuItem>
+                  </Select>
+                </FormControl>
+
+                <FormControl sx={{ minWidth: 120, ml: 2 }}>
+                  <InputLabel id="label-newPaymentDay">支払日</InputLabel>
+                  <Select
+                    labelId="label-newPaymentDay"
+                    id="select-newPaymentDay"
+                    value={payoutDay}
+                    label="支払日"
+                    onChange={changePayoutDay}
+                  >
+                    <MenuItem value={"5日"}>5日</MenuItem>
+                    <MenuItem value={"10日"}>10日</MenuItem>
+                    <MenuItem value={"15日"}>15日</MenuItem>
+                    <MenuItem value={"20日"}>20日</MenuItem>
+                    <MenuItem value={"25日"}>25日</MenuItem>
+                    <MenuItem value={"月末日"}>月末日</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+
+              {/* 研修関連の設定 */}
+              <Box>
+                <FormLabel id="radio-group-newLabel">
+                  研修期間の給与設定
+                </FormLabel>
+                <RadioGroup
+                  sx={{ ml: 2 }}
+                  aria-labelledby="radio-group-newLabel"
+                  defaultValue="no_training"
+                  name="radio-buttons-newGroup"
+                  onChange={(e) => setSelectedTraining(e.target.value)}
+                >
+                  <FormControlLabel
+                    value="no_training"
+                    control={<Radio />}
+                    label="研修なし"
                   />
-                </LocalizationProvider>
-
-                {/* 研修終了日入力フォーム */}
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    sx={{ minWidth: 150, m: 2 }}
-                    label="研修終了日"
-                    value={trainingEndDay} 
-                    onChange={(newDay) => setTrainingEndDay(newDay)}
-                    format="YYYY/MM/DD"
+                  <FormControlLabel
+                    value="training_period"
+                    control={<Radio />}
+                    label="研修期間で設定"
                   />
-                </LocalizationProvider>
+                  <FormControlLabel
+                    value="training_time"
+                    control={<Radio />}
+                    label="研修時間で設定"
+                  />
+                </RadioGroup>
+              </Box>
 
-                <TextField
+              {/* 研修開始日入力フォーム */}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
                   sx={{ minWidth: 150, m: 2 }}
-                  id="outlined-number"
-                  label="研修時間"
-                  value={trainingTime}
-                  onChange={changeTrainingTime}
-                  type="number"
-                  slotProps={{
-                    inputLabel: {
-                      shrink: true,
-                    },
-                  }}
+                  label="研修開始日"
+                  value={trainingStartDay}
+                  onChange={(newDay) => setTrainingStartDay(newDay)}
+                  format="YYYY/MM/DD"
                 />
+              </LocalizationProvider>
 
-                {/* 研修中時給 */}
-                <FormControl sx={{ minWidth: 150, m: 2 }}>
-                  <InputLabel htmlFor="outlined-trainingWage">
-                    研修中時給
-                  </InputLabel>
-                  <OutlinedInput
-                    id="outlined-trainingWage"
-                    label="研修中時給"
-                    value={trainingWage}
-                    onChange={(event) =>
-                      formatAmountChange(event, setTrainingWage)
-                    }
-                    startAdornment={
-                      <InputAdornment position="start">¥</InputAdornment>
-                    }
-                    inputProps={{ inputMode: "numeric" }} // モバイルのみ数字キーボードを表示
-                  />
-                </FormControl>
+              {/* 研修終了日入力フォーム */}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  sx={{ minWidth: 150, m: 2 }}
+                  label="研修終了日"
+                  value={trainingEndDay}
+                  onChange={(newDay) => setTrainingEndDay(newDay)}
+                  format="YYYY/MM/DD"
+                />
+              </LocalizationProvider>
 
-                <Box sx={{ display: "flex", mt: 2, textAlign: "center" }}>
-                  <Button
-                    type="submit"
-                    variant="outlined"
-                    onClick={saveJobInfo}
-                  >
-                    登録する
-                  </Button>
-                </Box>
+              <TextField
+                sx={{ minWidth: 150, m: 2 }}
+                id="outlined-number"
+                label="研修時間"
+                type="number"
+                value={trainingTime}
+                onChange={changeTrainingTime}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
+              />
+
+              {/* 研修中時給 */}
+              <FormControl sx={{ minWidth: 150, m: 2 }}>
+                <InputLabel htmlFor="outlined-trainingWage">
+                  研修中時給
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-newTrainingWage"
+                  label="研修中時給"
+                  value={trainingWage}
+                  onChange={(event) =>
+                    formatAmountChange(event, setTrainingWage)
+                  }
+                  startAdornment={
+                    <InputAdornment position="start">¥</InputAdornment>
+                  }
+                  inputProps={{ inputMode: "numeric" }} // モバイルのみ数字キーボードを表示
+                />
+              </FormControl>
+
+              <Box sx={{ display: "flex", mt: 2, textAlign: "center" }}>
+                <Button type="submit" variant="outlined" onClick={saveJobInfo}>
+                  登録する
+                </Button>
+              </Box>
             </CustomTabPanel>
           </Box>
         </main>
