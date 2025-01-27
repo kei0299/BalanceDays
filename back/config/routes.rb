@@ -19,7 +19,7 @@ Rails.application.routes.draw do
       end
     end
     resources :transactions, only: [:index, :update, :destroy]
-    resources :jobs, only: [:index, :create]
+    resources :jobs, only: [:index, :create, :update, :destroy]
     resources :characters, only: [:index]
 
     namespace :expense do

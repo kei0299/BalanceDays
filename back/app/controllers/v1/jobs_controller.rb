@@ -15,6 +15,32 @@ class V1::JobsController < ApplicationController
     end
   end
 
+  def update
+    job = Job.find_by(id: params[:id])
+
+    if job.nil?
+      render json: { error: "勤務先情報が見つかりません" }, status: :not_found
+      return
+    end
+  
+    # レコードの更新
+    job.update!(job_params)
+  
+    render json: { message: "勤務先情報を更新しました" }, status: :ok
+  rescue => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
+  def destroy
+    job = Job.find_by(id: params[:id])
+    if job
+      job.destroy
+      render json: { message: "勤務先情報を削除しました。" }, status: :ok
+    else
+      render json: { error: "勤務先情報がデータベースに見つかりませんでした。" }, status: :not_found
+    end
+  end
+
   private
 
   def job_params

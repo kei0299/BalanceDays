@@ -43,8 +43,6 @@ interface Company {
   payout_day: string;
   payout_month_type: string;
   income_category_id: number;
-  created_at: Date;
-  updated_at: Date;
   training_time: number;
   training_settings: string;
 }
@@ -84,8 +82,8 @@ export default function Setting() {
   const [payoutDay, setPayoutDay] = React.useState("25日");
   const [companies, setCompanies] = useState<Company[]>([]); // DBから取得した会社情報
 
-  const changeCompanyName = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setCompanyName(event.target.value as string);
+  const changeCompanyName = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setCompanyName(e.target.value as string);
   };
 
   const changeClosingDay = (e: SelectChangeEvent<string>) => {
@@ -106,7 +104,20 @@ export default function Setting() {
       setTrainingTime(value);
   };
 
-  const changeCompanyField = (
+  const changeCompanyFieldSelect = (
+    e: SelectChangeEvent,
+    index: number
+  ) => {
+    const { name, value } = e.target; // name 属性でプロパティ識別
+    const updatedCompanies = [...companies]; // 配列をコピー
+    updatedCompanies[index] = {
+      ...updatedCompanies[index], // 対象オブジェクトを展開
+      [name]: name === "closing_day" || "payout_day" || "payout_month_type"
+    };
+    setCompanies(updatedCompanies); // 状態を更新
+  };
+
+  const changeCompanyFieldInput = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
@@ -116,7 +127,7 @@ export default function Setting() {
     const updatedCompanies = [...companies]; // 配列をコピー
     updatedCompanies[index] = {
       ...updatedCompanies[index], // 対象オブジェクトを展開
-      [name]: name === "name" ? value : Number(value), // nameの場合は文字列、他は数値
+      [name]: name === "name"  ? value : Number(value), // nameの場合は文字列、他は数値
     };
     setCompanies(updatedCompanies); // 状態を更新
   };
@@ -131,7 +142,7 @@ export default function Setting() {
   const [hourlyWage, setHourlyWage] = React.useState("");
   const [nightWage, setNightWage] = React.useState("");
   const [trainingWage, setTrainingWage] = React.useState("");
-  const [trainingTime, setTrainingTime] = React.useState<number>(0);
+  const [trainingTime, setTrainingTime] = React.useState<number>();
 
   const [tab, setTab] = React.useState(0);
   const tabChange = (event: React.SyntheticEvent, newTab: number) => {
@@ -187,35 +198,18 @@ export default function Setting() {
   };
 
   // railsAPI_勤務先情報の更新
-  const updateJobInfo = async (event: React.FormEvent) => {
-    event.preventDefault();
-
+  const updateJobInfo = async (jobId: number, updatedData: any) => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/jobs`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "access-token": accessToken,
-            client: client,
-            uid: uid,
-          },
-          body: JSON.stringify({
-            name: companyName,
-            night_wage: Number(nightWage.replace(/,/g, "")),
-            hourly_wage: Number(hourlyWage.replace(/,/g, "")),
-            closing_day: closingDay,
-            payout_month_type: payoutMonth,
-            payout_day: payoutDay,
-            income_category_id: 1,
-            training_start: trainingStartDay,
-            training_end: trainingEndDay,
-            training_wage: Number(trainingWage.replace(/,/g, "")),
-            training_time: trainingTime,
-          }),
-        }
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/jobs/${jobId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "access-token": accessToken,
+          client: client,
+          uid: uid,
+        },
+        body: JSON.stringify({job: updatedData}), // 現在のタブのデータだけ送信
+      });
 
       if (!response.ok) {
         const errorData = await response.json(); // エラー詳細を取得
@@ -230,6 +224,47 @@ export default function Setting() {
       console.error(error);
     }
   };
+
+    // railsAPI_勤務先情報の削除
+    const deleteJobInfo = async (
+      jobId: number
+    ) => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/v1/jobs/${jobId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              "access-token": accessToken,
+              client: client,
+              uid: uid,
+            },
+            body: JSON.stringify({
+              id: jobId,
+            }),
+          }
+        );
+        if (!response.ok) {
+          // 失敗した場合、エラーメッセージを表示
+          const errorData = await response.json();
+          console.error("Error:", errorData);
+          alert(`削除に失敗しました: ${errorData.error || "不明なエラー"}`);
+          return;
+        }
+  
+        // 成功した場合、通知
+        const data = await response.json();
+        alert(data.message || "削除完了");
+  
+        // ページをリロードして反映
+        window.location.reload();
+      } catch (error) {
+        // ネットワークエラーやその他のエラーをキャッチ
+        console.error("Network Error:", error);
+        alert("エラーが発生しました。再度お試しください。");
+      }
+    };
 
   useEffect(() => {
     const fetchJobData = async () => {
@@ -297,7 +332,7 @@ export default function Setting() {
                   maxRows={4}
                   name="name"
                   value={company.name}
-                  onChange={(e) => changeCompanyField(e, index)}
+                  onChange={(e) => changeCompanyFieldInput(e, index)}
                 />
 
                 {/* 時給 */}
@@ -311,7 +346,7 @@ export default function Setting() {
                     // onChange={(e) =>
                     //   formatAmountChange(e, setHourlyWage)
                     // }
-                    onChange={(e) => changeCompanyField(e, index)}
+                    onChange={(e) => changeCompanyFieldInput(e, index)}
                     startAdornment={
                       <InputAdornment position="start">¥</InputAdornment>
                     }
@@ -330,7 +365,7 @@ export default function Setting() {
                     // onChange={(event) =>
                     //   formatAmountChange(event, setNightWage)
                     // }
-                    onChange={(e) => changeCompanyField(e, index)}
+                    onChange={(e) => changeCompanyFieldInput(e, index)}
                     startAdornment={
                       <InputAdornment position="start">¥</InputAdornment>
                     }
@@ -352,7 +387,8 @@ export default function Setting() {
                       value={company.closing_day}
                       name="closing_day"
                       label="締日"
-                      onChange={changeClosingDay}
+                      onChange={(e) => changeCompanyFieldSelect(e, index)}
+                      // onChange={changeClosingDay}
                     >
                       <MenuItem value={"5日"}>5日</MenuItem>
                       <MenuItem value={"15日"}>15日</MenuItem>
@@ -367,9 +403,10 @@ export default function Setting() {
                       labelId="label-paymentMonth"
                       id={`payout-month-${index}`}
                       value={company.payout_month_type}
-                      name="payout_month"
+                      name="payout_month_type"
                       label="支払月"
-                      onChange={changePayoutMonth}
+                      onChange={(e) => changeCompanyFieldSelect(e, index)}
+                      // onChange={changePayoutMonth}
                     >
                       <MenuItem value={"当月"}>当月</MenuItem>
                       <MenuItem value={"翌月"}>翌月</MenuItem>
@@ -385,7 +422,8 @@ export default function Setting() {
                       value={company.payout_day}
                       name="payout_day"
                       label="支払日"
-                      onChange={changePayoutDay}
+                      onChange={(e) => changeCompanyFieldSelect(e, index)}
+                      // onChange={changePayoutDay}
                     >
                       <MenuItem value={"5日"}>5日</MenuItem>
                       <MenuItem value={"10日"}>10日</MenuItem>
@@ -406,7 +444,7 @@ export default function Setting() {
                     sx={{ ml: 2 }}
                     aria-labelledby="radio-buttons-group-label"
                     defaultValue={company.training_settings}
-                    name="radio-buttons-group"
+                    name="training_settings"
                     onChange={(e) => setSelectedTraining(e.target.value)}
                   >
                     <FormControlLabel
@@ -463,7 +501,7 @@ export default function Setting() {
                   label="研修時間"
                   value={company.training_time}
                   name="training_time"
-                  onChange={(e) => changeCompanyField(e, index)}
+                  onChange={(e) => changeCompanyFieldInput(e, index)}
                   type="number"
                   slotProps={{
                     inputLabel: {
@@ -481,9 +519,11 @@ export default function Setting() {
                     id="outlined-trainingWage"
                     label="研修中時給"
                     value={company.training_wage}
-                    onChange={(event) =>
-                      formatAmountChange(event, setTrainingWage)
-                    }
+                    name="training_wage"
+                    onChange={(e) => changeCompanyFieldInput(e, index)}
+                    // onChange={(event) =>
+                    //   formatAmountChange(event, setTrainingWage)
+                    // }
                     startAdornment={
                       <InputAdornment position="start">¥</InputAdornment>
                     }
@@ -495,10 +535,31 @@ export default function Setting() {
                   <Button
                     type="submit"
                     variant="outlined"
-                    onClick={updateJobInfo}
+                    onClick={async () => {
+                      try {
+                        await updateJobInfo(company.id,company); // 非同期関数をラップして呼び出し
+                      } catch (error) {
+                        console.error("エラー:", error);
+                      }
+                    }}
                   >
                     更新する
                   </Button>
+
+                  <Button
+                    type="submit"
+                    variant="outlined"
+                    onClick={async () => {
+                      try {
+                        await deleteJobInfo(company.id); // 非同期関数をラップして呼び出し
+                      } catch (error) {
+                        console.error("エラー:", error);
+                      }
+                    }}
+                  >
+                    削除
+                  </Button>
+
                 </Box>
               </CustomTabPanel>
             ))}
