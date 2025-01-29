@@ -112,10 +112,25 @@ export default function Setting() {
     const updatedCompanies = [...companies]; // 配列をコピー
     updatedCompanies[index] = {
       ...updatedCompanies[index], // 対象オブジェクトを展開
-      [name]: name === "closing_day" || "payout_day" || "payout_month_type"
+      [name]: name === "closing_day" || "payout_day" || "payout_month_type" ? value : Number(value)
     };
     setCompanies(updatedCompanies); // 状態を更新
   };
+
+  // const changeCompanyFieldInput = (
+  //   e: React.ChangeEvent<
+  //     HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+  //   >,
+  //   index: number
+  // ) => {
+  //   const { name, value } = e.target; // name 属性でプロパティ識別
+  //   const updatedCompanies = [...companies]; // 配列をコピー
+  //   updatedCompanies[index] = {
+  //     ...updatedCompanies[index], // 対象オブジェクトを展開
+  //     [name]: name === "name" || "training_settings"  ? value : Number(value), // nameの場合は文字列、他は数値
+  //   };
+  //   setCompanies(updatedCompanies); // 状態を更新
+  // };
 
   const changeCompanyFieldInput = (
     e: React.ChangeEvent<
@@ -124,12 +139,21 @@ export default function Setting() {
     index: number
   ) => {
     const { name, value } = e.target; // name 属性でプロパティ識別
+  
+    let newValue = value;
+  
+    // 数値フィールドの場合
+    if (name !== "name" && name !== "training_settings") {
+      newValue = newValue.replace(/^0+(\d)/, "$1"); // 先頭の 0 を削除（"0" 単体は許可）
+      newValue = newValue.replace(/[^0-9]/g, ""); // 数字以外を削除
+    }
+  
     const updatedCompanies = [...companies]; // 配列をコピー
     updatedCompanies[index] = {
       ...updatedCompanies[index], // 対象オブジェクトを展開
-      [name]: name === "name"  ? value : Number(value), // nameの場合は文字列、他は数値
+      [name]: name === "name" || name === "training_settings" ? newValue : Number(newValue),
     };
-    setCompanies(updatedCompanies); // 状態を更新
+    setCompanies(updatedCompanies);
   };
 
   const [trainingStartDay, setTrainingStartDay] = React.useState<Dayjs | null>(
@@ -445,7 +469,7 @@ export default function Setting() {
                     aria-labelledby="radio-buttons-group-label"
                     defaultValue={company.training_settings}
                     name="training_settings"
-                    onChange={(e) => setSelectedTraining(e.target.value)}
+                    onChange={(e) => changeCompanyFieldInput(e,index)}
                   >
                     <FormControlLabel
                       value="no_training"
@@ -498,11 +522,10 @@ export default function Setting() {
                 <TextField
                   sx={{ minWidth: 150, m: 2 }}
                   id="outlined-number"
-                  label="研修時間"
+                  label="研修時間(h)"
                   value={company.training_time}
                   name="training_time"
                   onChange={(e) => changeCompanyFieldInput(e, index)}
-                  type="number"
                   slotProps={{
                     inputLabel: {
                       shrink: true,
@@ -720,8 +743,7 @@ export default function Setting() {
               <TextField
                 sx={{ minWidth: 150, m: 2 }}
                 id="outlined-number"
-                label="研修時間"
-                type="number"
+                label="研修時間(h)"
                 value={trainingTime}
                 onChange={changeTrainingTime}
                 slotProps={{
