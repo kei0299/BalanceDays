@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
   has_many :budgets, dependent: :destroy
   has_many :expense_logs, dependent: :destroy
   has_many :income_logs, dependent: :destroy
+  has_many :jobs, dependent: :destroy
 
   def update_character_status!(avg_budget,user)
     balance = user.balance

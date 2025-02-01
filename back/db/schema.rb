@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_21_060459) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_26_111216) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -78,6 +78,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_21_060459) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "training_time", default: 0
+    t.integer "training_settings", default: 0, null: false
     t.index ["income_category_id"], name: "index_jobs_on_income_category_id"
     t.index ["user_id", "name"], name: "index_jobs_on_user_id_and_name", unique: true
     t.index ["user_id"], name: "index_jobs_on_user_id"
