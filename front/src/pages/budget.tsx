@@ -46,11 +46,6 @@ export default function Budget() {
   const [sumBudget, setSumBudget] = useState<string>("");
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
-  // API用のフォーマットを "YYYY-MM-DD" 形式で作成
-  const apiFormattedDate = `${currentMonth.getFullYear()}-${String(
-    currentMonth.getMonth() + 1
-  ).padStart(2, "0")}-01`; // 1日を固定で追加
-
   useEffect(() => {
     // Rails APIからカテゴリを取得
     const fetchBudgetData = async () => {
@@ -89,6 +84,11 @@ export default function Budget() {
   const formattedMonth = `${currentMonth.getFullYear()}年${String(
     currentMonth.getMonth() + 1
   ).padStart(2, "0")}月`;
+
+  // API用のフォーマットを "YYYY-MM-DD" 形式で作成
+  const apiFormattedDate = `${currentMonth.getFullYear()}-${String(
+    currentMonth.getMonth() + 1
+  ).padStart(2, "0")}-01`; // 1日を固定で追加
 
   const budgetChange = (index: number, newValue: string) => {
     // 指定されたindex番目の要素を取り出し、そのbudgetプロパティにnewValue（新しい値）をセット

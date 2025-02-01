@@ -45,6 +45,8 @@ interface Company {
   income_category_id: number;
   training_time: number;
   training_settings: string;
+  created_at: Date;
+  updated_at :Date;
 }
 
 // Tab関連
@@ -222,7 +224,7 @@ export default function Setting() {
   };
 
   // railsAPI_勤務先情報の更新
-  const updateJobInfo = async (jobId: number, updatedData: any) => {
+  const updateJobInfo = async (jobId: number, updatedData: Company) => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/jobs/${jobId}`, {
         method: "PATCH",
