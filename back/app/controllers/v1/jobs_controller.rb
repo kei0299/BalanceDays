@@ -6,6 +6,11 @@ class V1::JobsController < ApplicationController
     render json: jobs
   end
 
+  def company_index
+    jobs = Job.where(user_id: current_v1_user).as_json(only: [:id, :name])
+    render json: jobs
+  end
+
   def create
     job = current_v1_user.jobs.build(job_params) 
     if job.save

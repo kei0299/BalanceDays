@@ -12,15 +12,20 @@ Rails.application.routes.draw do
     end
   end
 
-
     resources :budgets, only: [:index, :create] do
       collection do
         get :sum_month_budget
       end
     end
     resources :transactions, only: [:index, :update, :destroy]
-    resources :jobs, only: [:index, :create, :update, :destroy]
     resources :characters, only: [:index]
+    resources :shifts, only: [:index, :create, :update, :destroy]
+
+    resources :jobs, only: [:index, :create, :update, :destroy] do
+      collection do
+        get 'company_index', to: 'jobs#company_index'
+      end
+    end
 
     namespace :expense do
       resources :expense_categories, only: [:index]

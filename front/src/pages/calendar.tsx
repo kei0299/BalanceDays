@@ -17,12 +17,15 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import { fetchIncomeCategory } from "@/utils/auth/fetchIncomeCategory";
 import { fetchExpenseCategory } from "@/utils/auth/fetchExpenseCategory";
+import { fetchCompanyName } from "@/utils/auth/fetchCompanyName";
 import InputAdornment from "@mui/material/InputAdornment";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import TextField from "@mui/material/TextField";
 import { parseCookies } from "nookies";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -50,6 +53,12 @@ interface TransactionData {
   categoryId: number;
   category: string;
   memo: string;
+}
+
+// 勤務先データの型定義
+interface companyData {
+  id: number;
+  name: string;
 }
 
 const cookies = parseCookies();
@@ -102,10 +111,19 @@ export default function Calender() {
   const [expenseCategory, setExpenseCategory] = useState<number | "">("");
   const [incomeCategories, setIncomeCategories] = useState<
     incomeCategoryData[]
-  >([]); // カテゴリデータ用のstate
+  >([]);
   const [expenseCategories, setExpenseCategories] = useState<
     expenseCategoryData[]
-  >([]); // カテゴリデータ用のstate
+  >([]);
+
+  // シフト関連
+  const [startTime, setStartTime] = React.useState<Dayjs | null>(dayjs('2022-04-17T10:00'));
+  const [endTime, setEndTime] = React.useState<Dayjs | null>(dayjs('2022-04-17T20:00'));
+  const [companyName, setCompanyName] = useState<number | "">("");
+  const [company, setCompany] = useState<companyData[]>([]); // 勤務先データ用のstate
+  const [breakTime, setBreakTime] = React.useState<number>(0);
+  const [workStartDay, setWorkStartDay] = React.useState<Dayjs | null>();
+  const [workEndDay, setWorkEndDay] = React.useState<Dayjs | null>();
 
   const selectIncomeCategory = (event: SelectChangeEvent<number>) => {
     setIncomeCategory(Number(event.target.value));
@@ -115,9 +133,22 @@ export default function Calender() {
     setExpenseCategory(Number(event.target.value));
   };
 
+  const selectCompany = (event: SelectChangeEvent<number>) => {
+    setCompanyName(Number(event.target.value));
+  };
+
+  const changeBreakTime = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBreakTime(Number(event.target.value));
+  };
+
   // メモ
   const [incomeMemo, setIncomeMemo] = React.useState<string>("");
   const [expenseMemo, setExpenseMemo] = React.useState<string>("");
+  const [shiftMemo, setShiftMemo] = React.useState<string>("");
+
+  const shiftMemoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setShiftMemo(event.target.value);
+  };
 
   const expenseMemoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setExpenseMemo(event.target.value);
@@ -367,7 +398,7 @@ export default function Calender() {
     setIsEditMode(false);
   };
 
-  // railsAPI_削除
+  // railsAPI_収支の削除
   const transactionDelete = async (
     transactionId: number,
     transactionType: string
@@ -410,6 +441,92 @@ export default function Calender() {
     }
   };
 
+  // railsAPI_シフトの登録
+  const shiftSave = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    // 勤務終了日が入力されていない場合、勤務開始日を適用
+    const finalEndDay = workEndDay || workStartDay;
+
+    // 日付と時間を結合して "YYYY-MM-DDTHH:MM:00" の形式にする
+    const startDateTime = `${dayjs(workStartDay).format("YYYY-MM-DD")}T${dayjs(
+      startTime,
+      "HH:mm"
+    ).format("HH:mm")}:00`;
+
+    const endDateTime = `${dayjs(finalEndDay).format("YYYY-MM-DD")}T${dayjs(
+      endTime,
+      "HH:mm"
+    ).format("HH:mm")}:00`;
+
+    const shiftData = {
+      job_id: companyName,
+      start_time: startDateTime,
+      end_time: endDateTime,
+      break_time: breakTime,
+      memo: shiftMemo,
+    };
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/v1/shifts`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "access-token": accessToken,
+              client: client,
+              uid: uid,
+            },
+            body: JSON.stringify({ shift: shiftData }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("シフトの登録に失敗しました");
+        }
+        alert("シフトを登録しました");
+        window.location.reload();
+      } catch (error) {
+        console.error(error);
+      }
+      setIsEditMode(false);
+  };
+
+  // railsAPI_シフトの更新
+  const shiftEditSave = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/shift/${logId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+          body: JSON.stringify({
+            amount: Number(expenseAmount.replace(/,/g, "")),
+            date: formatFormDay,
+            expense_category_id: expenseCategory,
+            memo: expenseMemo,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("支出ログの更新に失敗しました");
+      }
+      alert("支出ログを更新しました");
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+    setIsEditMode(false);
+  };
+
   useEffect(() => {
     // Rails APIからカテゴリを取得
     const fetchCategoryData = async () => {
@@ -423,6 +540,17 @@ export default function Calender() {
         console.error("取得失敗", error);
       }
     };
+
+    // Rails APIから勤務先データを取得
+    const fetchCompanyData = async () => {
+      try {
+        const companyData: companyData[] = await fetchCompanyName();
+        setCompany(companyData);
+      } catch (error) {
+        console.error("取得失敗", error);
+      }
+    };
+    fetchCompanyData();
     fetchCategoryData();
     dateChange(dayjs());
   }, []);
@@ -633,7 +761,100 @@ export default function Calender() {
 
             {/* // シフト */}
             <CustomTabPanel value={tab} index={2}>
-              シフト
+              <FormControl sx={{ minWidth: 200, m: 2 }}>
+                <InputLabel id="label-CompanyName">勤務先</InputLabel>
+                <Select
+                  labelId="label-CompanyName"
+                  id="company-name"
+                  value={companyName}
+                  label="勤務先"
+                  onChange={selectCompany}
+                >
+                  {company.map((company) => (
+                    <MenuItem key={company.id} value={company.id}>
+                      {company.name} {/* APIから取得したカテゴリ名 */}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {/* 勤務開始日入力フォーム */}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  sx={{ minWidth: 130, m: 2 }}
+                  label="勤務開始日"
+                  value={workStartDay}
+                  onChange={(newDay) => setWorkStartDay(newDay)}
+                  format="YYYY/MM/DD"
+                />
+              </LocalizationProvider>
+
+              {/* 勤務終了日入力フォーム */}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  sx={{ minWidth: 130, m: 2 }}
+                  label="勤務終了日"
+                  value={workEndDay}
+                  onChange={(newDay) => setWorkEndDay(newDay)}
+                  format="YYYY/MM/DD"
+                />
+              </LocalizationProvider>
+
+              {/* シフト開始入力フォーム */}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <TimePicker
+                  sx={{ minWidth: 130, m: 2 }}
+                  label="勤務開始時間"
+                  value={startTime}
+                  onChange={(newValue) => setStartTime(newValue)}
+                />
+              </LocalizationProvider>
+
+              {/* シフト終了入力フォーム */}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <TimePicker
+                  sx={{ minWidth: 130, m: 2 }}
+                  label="勤務終了時間"
+                  value={endTime}
+                  onChange={(newValue) => setEndTime(newValue)}
+                />
+              </LocalizationProvider>
+
+              {/* 休憩時間 */}
+              <TextField
+                sx={{ minWidth: 150, m: 2 }}
+                id="break-time"
+                label="休憩時間(h)"
+                value={breakTime}
+                onChange={changeBreakTime}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
+              />
+
+              {/* メモ */}
+              <TextField
+                sx={{ m: 2 }}
+                id="shift-memo"
+                label="メモ"
+                multiline
+                maxRows={4}
+                value={shiftMemo}
+                onChange={shiftMemoChange}
+              />
+
+              {/* ボタン */}
+              <Box sx={{ display: "flex", m: 2 }}>
+                <Button
+                  type="submit"
+                  variant="outlined"
+                  onClick={isEditMode ? shiftEditSave : shiftSave}
+                >
+                  {isEditMode ? "更新する" : "登録する"}
+                </Button>
+              </Box>
             </CustomTabPanel>
           </Box>
         </main>
