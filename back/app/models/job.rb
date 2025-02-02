@@ -1,6 +1,7 @@
 class Job < ApplicationRecord
   belongs_to :user
   belongs_to :income_category
+  has_many :shifts, dependent: :destroy
 
   # バリデーション
   validates :name, presence: true
