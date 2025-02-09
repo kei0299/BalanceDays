@@ -18,12 +18,4 @@ class Job < ApplicationRecord
     training_time: 2   # 研修時間
   }
 
-  private
-
-  # トレーニング開始日と終了日がどちらか一方のみ設定されている場合は無効
-  # def training_dates_valid?
-  #   if training_start.present? ^ training_end.present?
-  #     errors.add(:training_start, "と training_end の両方を設定する必要があります")
-  #   end
-  # end
 end
