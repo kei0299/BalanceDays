@@ -1,7 +1,7 @@
 module MetaTagsHelper
   def default_meta_tags
     {
-      site: 'あなたのサイト名',
+      site: 'BalanceDays',
       title: 'デフォルトタイトル',
       reverse: true,
       description: 'サイトの説明',

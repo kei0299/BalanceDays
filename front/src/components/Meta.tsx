@@ -1,32 +1,15 @@
 import Head from "next/head";
 
-type MetaProps = {
-  title?: string;
-  description?: string;
-  image?: string;
-  url?: string;
-};
-
-const Meta = ({
-  title = "デフォルトタイトル",
-  description = "サイトの説明",
-  image = "/ogp_default.png",
-  url = "https://あなたのサイト.com",
-}: MetaProps) => {
+const Meta = () => {
   return (
     <Head>
-      <title>{title}</title>
-      <meta name="description" content={description} />
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={image} />
-      <meta property="og:url" content={url} />
+      <title>サイト名</title>
+      <meta name="description" content="このサイトの説明" />
+      <meta property="og:title" content="サイト名" />
+      <meta property="og:description" content="このサイトの説明" />
+      <meta property="og:image" content="/image/stable.png" />
       <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="あなたのサイト名" />
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={image} />
+      <meta property="og:url" content="https://myapp-three-rho.vercel.app/" />
     </Head>
   );
 };
