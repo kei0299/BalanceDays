@@ -23,25 +23,35 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
     AuthCheck(); // 初期ロード時のチェック
 
-    router.beforePopState(({ url }) => {
+    const handlePopState = ({ url }: { url: string }) => {
       const publicPages = ["/", "/_error", "/signin", "/signup"];
       if (!publicPages.includes(url)) {
         AuthCheck();
         return false;
       }
       return true;
-    });
+    };
+
+    router.beforePopState(handlePopState);
+
+    return () => {
+      router.beforePopState(() => true); // beforePopStateを解除
+    };
   }, [router]);
-  
-  <Meta />;
-  return <Component {...pageProps} />;
+
+  return (
+    <>
+      <Meta />
+      <Component {...pageProps} />
+    </>
+  );
 };
 
 MyApp.getInitialProps = async (appContext: AppContext) => {
   const publicPages = ["/", "/_error", "/signin", "/signup"];
   const cookies = parseCookies(appContext.ctx);
 
-  if (!publicPages.includes(appContext.ctx.pathname)) {
+  if (!publicPages.includes(appContext.ctx.pathname ?? "")) {
     if (!cookies.accessToken) {
       if (appContext.ctx.res) {
         appContext.ctx.res.statusCode = 302;
