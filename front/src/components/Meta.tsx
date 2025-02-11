@@ -10,6 +10,9 @@ const Meta = () => {
       <meta property="og:image" content="https://myapp-three-rho.vercel.app/image/stable.png" />
       <meta property="og:type" content="website" />
       <meta property="og:url" content="https://myapp-three-rho.vercel.app/" />
+
+      <link rel="icon" href="/favicon.ico" />
+      <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
     </Head>
   );
 };
