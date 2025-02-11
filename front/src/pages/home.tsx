@@ -2,7 +2,7 @@ import { Box, Stack } from "@mui/material";
 import Header from "@/components/header";
 import FooterLogin from "@/components/footerLogin";
 import { useState, useEffect } from "react";
-// import { checkSession } from "@/utils/auth/checkSession";　// セッション情報確認用
+// import { checkSession } from "@/utils/auth/checkSession"; // セッション情報確認用
 import Image from "next/image";
 import { fetchCharacter } from "@/utils/auth/fetchCharacter";
 import * as React from "react";
