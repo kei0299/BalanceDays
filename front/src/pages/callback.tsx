@@ -55,7 +55,8 @@ export default function OAuthRedirect() {
 
         if (accessToken && client && uidFromResponse) {
           setAccessToken(accessToken, client, uidFromResponse);
-          router.push("/home");
+          console.log(accessToken, client, uidFromResponse);
+          // router.push("/home");
         } else {
           console.error("必要な認証情報が取得できませんでした");
         }
