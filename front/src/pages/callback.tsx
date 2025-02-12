@@ -6,23 +6,24 @@ export default function OAuthRedirect() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!router.isReady) return; // クエリパラメータが準備できるまで待つ
-
-    const { accessToken, client, uid } = router.query; // URLからパラメータを取得
-
+    if (!router.isReady) return;
+  
+    const accessToken = String(router.query.accessToken ?? "");
+    const client = String(router.query.client ?? "");
+    const uid = String(router.query.uid ?? "");
+  
     if (accessToken && client && uid) {
-      // クッキーに保存
-      setCookie(null, "accessToken", accessToken as string, { maxAge: 30 * 24 * 60 * 60, path: "/" });
-      setCookie(null, "client", client as string, { maxAge: 30 * 24 * 60 * 60, path: "/" });
-      setCookie(null, "uid", uid as string, { maxAge: 30 * 24 * 60 * 60, path: "/" });
-
+      setCookie(null, "accessToken", accessToken, { maxAge: 30 * 24 * 60 * 60, path: "/" });
+      setCookie(null, "client", client, { maxAge: 30 * 24 * 60 * 60, path: "/" });
+      setCookie(null, "uid", uid, { maxAge: 30 * 24 * 60 * 60, path: "/" });
+  
       console.log(accessToken, client, uid);
-      // ホームページへリダイレクト
-      // router.push("/home");
+      router.push("/home");
     } else {
       console.error("必要な認証情報が取得できませんでした");
     }
-  }, [router.isReady, router.query]); // クエリパラメータが変わったら実行
+  }, [router.isReady, router.query]);
+  
 
   return <div>ログイン処理中...</div>;
 }
