@@ -31,7 +31,7 @@ class V1::Auth::OmniauthCallbacksController < DeviseTokenAuth::OmniauthCallbacks
   def render_data_or_redirect(message, data, user_data = {})
     # 許可するホストやURLのホワイトリストを定義
     allowed_hosts = ["myapp-three-rho.vercel.app", "localhost", "127.0.0.1"]
-    allowed_paths = ["/home"]
+    allowed_paths = ["/"]
 
     if ['inAppBrowser', 'newWindow'].include?(omniauth_window_type)
       render_data(message, user_data.merge(data))
