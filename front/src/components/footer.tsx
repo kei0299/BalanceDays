@@ -13,7 +13,7 @@ export default function BottomAppBar() {
       >
         <Toolbar>
           <Box sx={{ flexGrow: 1 }} />
-          <Link href="/" style={{ marginRight: "20px" }}>
+          <Link href="/terms/terms" style={{ marginRight: "20px" }}>
             <Typography 
               variant="body2" 
               sx={{ color: "#ffffff", fontSize: { xs: '0.8rem', sm: '1rem' } }}
@@ -21,12 +21,20 @@ export default function BottomAppBar() {
               利用規約
             </Typography>
           </Link>
-          <Link href="/">
+          <Link href="/terms/privacyPolicy" style={{ marginRight: "20px" }}>
             <Typography 
               variant="body2" 
               sx={{ color: "#ffffff", fontSize: { xs: '0.8rem', sm: '1rem' } }}
             >
               プライバシーポリシー
+            </Typography>
+          </Link>
+          <Link href="https://docs.google.com/forms/d/e/1FAIpQLSeOHpYIQ8qItHvE5J4raMXjFZzbcCsH3RjSQ8iJRcPrsnFY7Q/viewform?usp=header">
+            <Typography 
+              variant="body2" 
+              sx={{ color: "#ffffff", fontSize: { xs: '0.8rem', sm: '1rem' } }}
+            >
+              お問い合わせ
             </Typography>
           </Link>
         </Toolbar>

@@ -86,6 +86,7 @@ export default function Index() {
 
             <Button
               variant="outlined"
+              sx={{mt: "10px", maxWidth: "230px"}}
               startIcon={<GoogleIcon />}
               fullWidth
               onClick={signInWithGoogle}
