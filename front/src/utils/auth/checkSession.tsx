@@ -9,6 +9,8 @@ export const checkSession = async () => {
     const client = cookies["client"];
     const uid = cookies["uid"];
 
+console.log(accessToken,client,uid);
+
     // APIリクエスト
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sessions`,
