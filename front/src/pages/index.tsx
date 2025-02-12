@@ -27,7 +27,7 @@ export default function Index() {
         originUrl
       )}`;
       window.location.href = redirectUrl;
-    } catch (error: any) {
+    } catch (error) {
       console.error("Google認証中にエラーが発生しました:", error);
       alert("Google認証に失敗しました。再度お試しください。");
     }
