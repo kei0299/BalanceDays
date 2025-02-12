@@ -19,6 +19,7 @@ export default function Index() {
           : `${process.env.NEXT_PUBLIC_FRONT_URL}/v1/auth/google_callback`;
       console.log(`Frontのパス${process.env.NEXT_PUBLIC_FRONT_URL}`);
       console.log(`APIのパス${process.env.NEXT_PUBLIC_API_URL}`);
+      console.log(backendAuthUrl);
       if (!originUrl) {
         console.error("OriginUrlが見つかりません");
         return;
