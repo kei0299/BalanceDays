@@ -20,6 +20,7 @@ export default function OAuthRedirect() {
       // ホームページへリダイレクト
       // router.push("/home");
     } else {
+      console.log(accessToken, client, uid);
       console.error("必要な認証情報が取得できませんでした");
     }
   }, [router.isReady, router.query]); // クエリパラメータが変わったら実行
