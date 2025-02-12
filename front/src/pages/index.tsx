@@ -24,7 +24,7 @@ export default function Index() {
         return;
       }
       const redirectUrl = `${backendAuthUrl}?auth_origin_url=${encodeURIComponent(
-        originUrl
+        `${process.env.NEXT_PUBLIC_FRONT_URL}/v1/auth/google_callback`
       )}`;
       window.location.href = redirectUrl;
     } catch (error) {
