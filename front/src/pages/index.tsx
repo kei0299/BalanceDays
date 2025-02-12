@@ -27,6 +27,7 @@ export default function Index() {
       const redirectUrl = `${backendAuthUrl}?auth_origin_url=${encodeURIComponent(
         `${process.env.NEXT_PUBLIC_FRONT_URL}v1/auth/google_callback`
       )}`;
+      console.log(redirectUrl);
       window.location.href = redirectUrl;
     } catch (error) {
       console.error("Google認証中にエラーが発生しました:", error);
