@@ -97,10 +97,21 @@ GEM
       bcrypt (~> 3.0)
       devise (> 3.5.2, < 5)
       rails (>= 4.2.0, < 7.3)
+    dotenv (3.1.7)
+    dotenv-rails (3.1.7)
+      dotenv (= 3.1.7)
+      railties (>= 6.1)
     drb (2.2.1)
     erubi (1.13.0)
+    faraday (2.12.2)
+      faraday-net_http (>= 2.0, < 3.5)
+      json
+      logger
+    faraday-net_http (3.4.0)
+      net-http (>= 0.5.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    hashie (5.0.0)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     io-console (0.7.2)
@@ -110,6 +121,8 @@ GEM
     json (2.7.2)
     jsonapi-serializer (2.2.0)
       activesupport (>= 4.2)
+    jwt (2.10.1)
+      base64
     language_server-protocol (3.17.0.3)
     logger (1.6.1)
     loofah (2.22.0)
@@ -124,6 +137,10 @@ GEM
     mini_mime (1.1.5)
     minitest (5.25.1)
     msgpack (1.7.3)
+    multi_xml (0.7.1)
+      bigdecimal (~> 3.1)
+    net-http (0.6.0)
+      uri
     net-imap (0.5.0)
       date
       net-protocol
@@ -138,6 +155,25 @@ GEM
       racc (~> 1.4)
     nokogiri (1.16.7-x86_64-linux)
       racc (~> 1.4)
+    oauth2 (2.0.9)
+      faraday (>= 0.17.3, < 3.0)
+      jwt (>= 1.0, < 3.0)
+      multi_xml (~> 0.5)
+      rack (>= 1.2, < 4)
+      snaky_hash (~> 2.0)
+      version_gem (~> 1.1)
+    omniauth (2.1.2)
+      hashie (>= 3.4.6)
+      rack (>= 2.2.3)
+      rack-protection
+    omniauth-google-oauth2 (1.2.1)
+      jwt (>= 2.9.2)
+      oauth2 (~> 2.0)
+      omniauth (~> 2.0)
+      omniauth-oauth2 (~> 1.8)
+    omniauth-oauth2 (1.8.0)
+      oauth2 (>= 1.4, < 3)
+      omniauth (~> 2.0)
     orm_adapter (0.5.0)
     parallel (1.26.3)
     parser (3.3.5.0)
@@ -152,6 +188,10 @@ GEM
     rack (3.1.8)
     rack-cors (2.0.2)
       rack (>= 2.0.0)
+    rack-protection (4.1.1)
+      base64 (>= 0.1.0)
+      logger (>= 1.6.0)
+      rack (>= 3.0.0, < 4)
     rack-session (2.0.0)
       rack (>= 3.0.0)
     rack-test (2.1.0)
@@ -228,13 +268,18 @@ GEM
       rubocop-rails
     ruby-progressbar (1.13.0)
     securerandom (0.3.1)
+    snaky_hash (2.0.1)
+      hashie
+      version_gem (~> 1.1, >= 1.1.1)
     stringio (3.1.1)
     thor (1.3.2)
     timeout (0.4.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.6.0)
+    uri (1.0.2)
     useragent (0.16.10)
+    version_gem (1.1.4)
     warden (1.2.9)
       rack (>= 2.0.9)
     webrick (1.8.2)
@@ -253,7 +298,10 @@ DEPENDENCIES
   debug
   devise
   devise_token_auth
+  dotenv-rails
   jsonapi-serializer
+  omniauth
+  omniauth-google-oauth2
   pg (~> 1.1)
   puma (>= 5.0)
   rack-cors
