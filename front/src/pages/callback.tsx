@@ -1,45 +1,71 @@
-import { useEffect, useState } from "react";
 import { setCookie } from "nookies";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
-export default function Index() {
-  const [loading, setLoading] = useState(true);
+const setAccessToken = (accessToken: string, client: string, uid: string) => {
+  setCookie(null, "accessToken", accessToken, {
+    maxAge: 30 * 24 * 60 * 60,
+    path: "/",
+  });
+  setCookie(null, "client", client, {
+    maxAge: 30 * 24 * 60 * 60,
+    path: "/",
+  });
+  setCookie(null, "uid", uid, {
+    maxAge: 30 * 24 * 60 * 60,
+    path: "/",
+  });
+};
+
+export default function OAuthRedirect() {
+  const router = useRouter();
 
   useEffect(() => {
-    const fetchSessionData = async () => {
+    const handleOAuthCallback = async () => {
+      const { auth_token, client_id, uid } = router.query; // URLからパラメータを取得
+
+      if (!auth_token || !client_id || !uid) {
+        console.error("認証情報が不足しています");
+        return;
+      }
+
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/google/callback`, {
-          method: "GET",
-          credentials: "include", // 必要に応じてクッキーを送る
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/google_oauth2/callback`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              auth_token,
+              client_id,
+              uid,
+            }),
+          }
+        );
 
         if (!response.ok) {
-          throw new Error("Googleログインに失敗しました");
+          throw new Error("Google OAuth ログインに失敗しました");
         }
 
-        // レスポンスヘッダーからトークンを取得
         const accessToken = response.headers.get("access-token");
         const client = response.headers.get("client");
-        const uid = response.headers.get("uid");
+        const uidFromResponse = response.headers.get("uid");
 
-        if (accessToken && client && uid) {
-          // クッキーに保存（認証情報を保持するため）
-          setCookie(null, "accessToken", accessToken, { maxAge: 30 * 24 * 60 * 60, path: "/" });
-          setCookie(null, "client", client, { maxAge: 30 * 24 * 60 * 60, path: "/" });
-          setCookie(null, "uid", uid, { maxAge: 30 * 24 * 60 * 60, path: "/" });
-
-          console.log("Googleログイン成功:", { accessToken, client, uid });
+        if (accessToken && client && uidFromResponse) {
+          setAccessToken(accessToken, client, uidFromResponse);
+          router.push("/home");
         } else {
-          throw new Error("認証情報が取得できませんでした");
+          console.error("必要な認証情報が取得できませんでした");
         }
       } catch (error) {
-        console.error("セッションチェックエラー:", error);
-      } finally {
-        setLoading(false);
+        console.error("OAuth 処理中にエラー:", error);
       }
     };
 
-    fetchSessionData();
-  }, []);
+    handleOAuthCallback();
+  }, [router]);
 
-  return <div>{loading ? "ログイン処理中..." : "ログイン完了"}</div>;
+  return <div>ログイン処理中...</div>;
 }
