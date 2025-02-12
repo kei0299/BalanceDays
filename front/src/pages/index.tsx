@@ -23,7 +23,7 @@ export default function Index() {
         console.error("OriginUrlが見つかりません");
         return;
       }
-      const redirectUrl = `${backendAuthUrl}?auth_origin_url=${encodeURIComponent(
+      const redirectUrl = `${process.env.NEXT_PUBLIC_API_URL}?auth_origin_url=${encodeURIComponent(
         `${process.env.NEXT_PUBLIC_FRONT_URL}/v1/auth/google_callback`
       )}`;
       window.location.href = redirectUrl;
