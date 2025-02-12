@@ -55,6 +55,19 @@ interface TransactionData {
   memo: string;
 }
 
+// シフト取得の型定義
+interface shiftData {
+  id: number;
+  job_id: number;
+  name: string;
+  start_time: string;
+  end_time: string;
+  break_time: number;
+  memo: string;
+  total_salary: string;
+  work_time: number;
+}
+
 // 勤務先データの型定義
 interface companyData {
   id: number;
@@ -117,9 +130,13 @@ export default function Calender() {
   >([]);
 
   // シフト関連
-  const [startTime, setStartTime] = React.useState<Dayjs | null>(dayjs('2022-04-17T10:00'));
-  const [endTime, setEndTime] = React.useState<Dayjs | null>(dayjs('2022-04-17T20:00'));
-  const [companyName, setCompanyName] = useState<number | "">("");
+  const [startTime, setStartTime] = React.useState<Dayjs | null>(
+    dayjs("2022-04-17T10:00")
+  );
+  const [endTime, setEndTime] = React.useState<Dayjs | null>(
+    dayjs("2022-04-17T20:00")
+  );
+  const [companyName, setCompanyName] = useState<number | "" >("");
   const [company, setCompany] = useState<companyData[]>([]); // 勤務先データ用のstate
   const [breakTime, setBreakTime] = React.useState<number>(0);
   const [workStartDay, setWorkStartDay] = React.useState<Dayjs | null>();
@@ -145,6 +162,7 @@ export default function Calender() {
   const [incomeMemo, setIncomeMemo] = React.useState<string>("");
   const [expenseMemo, setExpenseMemo] = React.useState<string>("");
   const [shiftMemo, setShiftMemo] = React.useState<string>("");
+  const [shifts, setShifts] = useState<shiftData[]>([]);
 
   const shiftMemoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setShiftMemo(event.target.value);
@@ -172,7 +190,7 @@ export default function Calender() {
     setLoading(true);
 
     try {
-      const response = await fetch(
+      const transactionResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/v1/transactions?date=${date.format(
           "YYYY-MM-DD"
         )}`,
@@ -187,12 +205,42 @@ export default function Calender() {
         }
       );
 
-      if (!response.ok) {
+      const shiftResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/shifts?date=${date.format(
+          "YYYY-MM-DD"
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+        }
+      );
+
+      const shiftData: shiftData[] = await shiftResponse.json();
+
+      // 必要なデータだけを取り出す
+      // const filteredShifts = shiftData.map((shift: any) => ({
+      //   workplace: shift.workplace, // 勤務先
+      //   startTime: shift.start_time, // 勤務開始時間
+      //   endTime: shift.end_time, // 勤務終了時間
+      //   breakTime: shift.break_time, // 休憩時間
+      //   memo: shift.memo, // メモ
+      // }));
+
+      setShifts(shiftData);
+      console.log(shiftData);
+
+      if (!transactionResponse.ok) {
         throw new Error("データ取得に失敗しました");
       }
 
-      const data: TransactionData[] = await response.json();
-      setTransactions(data); // 取得したデータをstateに保存
+      const transactionData: TransactionData[] =
+        await transactionResponse.json();
+      setTransactions(transactionData); // 取得したデータをstateに保存
     } catch (error) {
       console.error("エラー:", error);
     } finally {
@@ -237,7 +285,7 @@ export default function Calender() {
     return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  // 選択した取引データをフォームに反映
+  // 選択した支出取引データをフォームに反映
   const setEditTransaction = (
     transaction: TransactionData,
     selectedDate: Dayjs
@@ -441,6 +489,21 @@ export default function Calender() {
     }
   };
 
+  // 選択した取引データをフォームに反映
+  const setEditShift = (shift: shiftData) => {
+    logId = shift.id;
+    setTab(2);
+    setCompanyName(shift.job_id)
+    setWorkStartDay(dayjs(shift.start_time));
+    setWorkEndDay(dayjs(shift.end_time));
+    setStartTime(dayjs(shift.start_time));
+    setEndTime(dayjs(shift.end_time));
+    setBreakTime(shift.break_time);
+    setShiftMemo(shift.memo);
+    console.log(shift.start_time);
+    setIsEditMode(true);
+  };
+
   // railsAPI_シフトの登録
   const shiftSave = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -467,38 +530,53 @@ export default function Calender() {
       memo: shiftMemo,
     };
 
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/v1/shifts`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "access-token": accessToken,
-              client: client,
-              uid: uid,
-            },
-            body: JSON.stringify({ shift: shiftData }),
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("シフトの登録に失敗しました");
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/shifts`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+          body: JSON.stringify({ shift: shiftData }),
         }
-        alert("シフトを登録しました");
-        window.location.reload();
-      } catch (error) {
-        console.error(error);
+      );
+
+      if (!response.ok) {
+        throw new Error("シフトの登録に失敗しました");
       }
-      setIsEditMode(false);
+      alert("シフトを登録しました");
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+    setIsEditMode(false);
   };
 
   // railsAPI_シフトの更新
   const shiftEditSave = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    // 勤務終了日が入力されていない場合、勤務開始日を適用
+    const finalEndDay = workEndDay || workStartDay;
+
+    // 日付と時間を結合して "YYYY-MM-DDTHH:MM:00" の形式にする
+    const startDateTime = `${dayjs(workStartDay).format("YYYY-MM-DD")}T${dayjs(
+      startTime,
+      "HH:mm"
+    ).format("HH:mm")}:00`;
+
+    const endDateTime = `${dayjs(finalEndDay).format("YYYY-MM-DD")}T${dayjs(
+      endTime,
+      "HH:mm"
+    ).format("HH:mm")}:00`;
+
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/shift/${logId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/shifts/${logId}`,
         {
           method: "PUT",
           headers: {
@@ -508,10 +586,11 @@ export default function Calender() {
             uid: uid,
           },
           body: JSON.stringify({
-            amount: Number(expenseAmount.replace(/,/g, "")),
-            date: formatFormDay,
-            expense_category_id: expenseCategory,
-            memo: expenseMemo,
+            job_id: companyName,
+            start_time: startDateTime,
+            end_time: endDateTime,
+            break_time: breakTime,
+            memo: shiftMemo,
           }),
         }
       );
@@ -524,7 +603,45 @@ export default function Calender() {
     } catch (error) {
       console.error(error);
     }
-    setIsEditMode(false);
+  };
+
+  // railsAPI_収支の削除
+  const shiftDelete = async (logId: number) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/shifts/${logId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+          body: JSON.stringify({
+            id: logId,
+          }),
+        }
+      );
+      if (!response.ok) {
+        // 失敗した場合、エラーメッセージを表示
+        const errorData = await response.json();
+        console.error("Error:", errorData);
+        alert(`削除に失敗しました: ${errorData.error || "不明なエラー"}`);
+        return;
+      }
+
+      // 成功した場合、通知
+      const data = await response.json();
+      alert(data.message || "削除完了");
+
+      // ページをリロードして反映
+      window.location.reload();
+    } catch (error) {
+      // ネットワークエラーやその他のエラーをキャッチ
+      console.error("Network Error:", error);
+      alert("エラーが発生しました。再度お試しください。");
+    }
   };
 
   useEffect(() => {
@@ -570,6 +687,7 @@ export default function Calender() {
               </LocalizationProvider>
             </Box>
 
+            {/* 収支の表示 */}
             {selectedDate && (
               <Box sx={{ mb: 20, ml: 5 }}>
                 <h2>{selectedDate.format("YYYY/MM/DD")}の収支データ</h2>
@@ -600,6 +718,49 @@ export default function Calender() {
                           onClick={() =>
                             transactionDelete(transaction.id, transaction.type)
                           }
+                        >
+                          <DeleteIcon fontSize="inherit" />
+                        </IconButton>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>データがありません。</p>
+                )}
+              </Box>
+            )}
+
+            {/* シフトの表示 */}
+            {selectedDate && (
+              <Box sx={{ mb: 20, ml: 5 }}>
+                <h2>{selectedDate.format("YYYY/MM/DD")}のシフトデータ</h2>
+                {loading ? (
+                  <p>読み込み中...</p>
+                ) : shifts.length > 0 ? (
+                  <ul>
+                    {shifts.map((shift) => (
+                      <li key={shift.id}>
+                        <strong>{shift.name}</strong>:{" "}
+                        {dayjs(shift.start_time).format("HH:mm")} -{" "}
+                        {dayjs(shift.end_time).format("HH:mm")}{" "}
+                        <br />
+                        【労働：{shift.work_time} h 休憩 : {shift.break_time} h 】
+                        日給 :¥{shift.total_salary}
+                        ({shift.memo})
+                        <IconButton
+                          sx={{ ml: 1 }}
+                          aria-label="edit"
+                          size="small"
+                          onClick={() =>
+                            setEditShift(shift)
+                          }
+                        >
+                          <EditIcon fontSize="inherit" />
+                        </IconButton>
+                        <IconButton
+                          aria-label="delete"
+                          size="small"
+                          onClick={() => shiftDelete(shift.id)}
                         >
                           <DeleteIcon fontSize="inherit" />
                         </IconButton>

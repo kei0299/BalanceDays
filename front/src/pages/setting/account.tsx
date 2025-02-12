@@ -86,7 +86,7 @@ export default function Setting() {
     try {
       // 退会処理
       const deleteResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/delete_user`,
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/delete_user`,
         {
           method: "DELETE",
           headers: {

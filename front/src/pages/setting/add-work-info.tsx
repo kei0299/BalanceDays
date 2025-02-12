@@ -101,9 +101,11 @@ export default function Setting() {
     setPayoutDay(event.target.value);
   };
 
-    const changeTrainingTime = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.valueAsNumber;
-      setTrainingTime(value);
+  const changeTrainingTime = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value; // `value` は文字列として取得
+  
+    // 数字以外の入力を防ぎつつ、空の場合は "" にする
+    setTrainingTime(value === "" ? "" : Number(value));
   };
 
   const changeCompanyFieldSelect = (
@@ -118,21 +120,6 @@ export default function Setting() {
     };
     setCompanies(updatedCompanies); // 状態を更新
   };
-
-  // const changeCompanyFieldInput = (
-  //   e: React.ChangeEvent<
-  //     HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-  //   >,
-  //   index: number
-  // ) => {
-  //   const { name, value } = e.target; // name 属性でプロパティ識別
-  //   const updatedCompanies = [...companies]; // 配列をコピー
-  //   updatedCompanies[index] = {
-  //     ...updatedCompanies[index], // 対象オブジェクトを展開
-  //     [name]: name === "name" || "training_settings"  ? value : Number(value), // nameの場合は文字列、他は数値
-  //   };
-  //   setCompanies(updatedCompanies); // 状態を更新
-  // };
 
   const changeCompanyFieldInput = (
     e: React.ChangeEvent<
@@ -158,6 +145,19 @@ export default function Setting() {
     setCompanies(updatedCompanies);
   };
 
+  const changeCompanyDateFieldInput = (newDate: dayjs.Dayjs | null, index: number, fieldName: string) => {
+    if (!newDate) return; // 選択されていない場合は処理しない
+  
+    const updatedCompanies = [...companies];
+    updatedCompanies[index] = {
+      ...updatedCompanies[index],
+      [fieldName]: newDate.format("YYYY-MM-DD"), // 日付を "YYYY-MM-DD" 形式で保存
+    };
+  
+    setCompanies(updatedCompanies);
+  };
+  
+
   const [trainingStartDay, setTrainingStartDay] = React.useState<Dayjs | null>(
     dayjs()
   );
@@ -168,7 +168,7 @@ export default function Setting() {
   const [hourlyWage, setHourlyWage] = React.useState("");
   const [nightWage, setNightWage] = React.useState("");
   const [trainingWage, setTrainingWage] = React.useState("");
-  const [trainingTime, setTrainingTime] = React.useState<number>();
+  const [trainingTime, setTrainingTime] = React.useState<string | number>("");
 
   const [tab, setTab] = React.useState(0);
   const tabChange = (event: React.SyntheticEvent, newTab: number) => {
@@ -202,7 +202,7 @@ export default function Setting() {
             income_category_id: 1,
             training_start: trainingStartDay,
             training_end: trainingEndDay,
-            training_wage: trainingWage,
+            training_wage: Number(trainingWage.replace(/,/g, "")),
             training_time: trainingTime,
             training_settings: selectedTraining
           }),
@@ -501,7 +501,7 @@ export default function Setting() {
                         ? dayjs(company.training_start)
                         : null
                     }
-                    onChange={(newDay) => setTrainingStartDay(newDay)}
+                    onChange={(newDay) => changeCompanyDateFieldInput(newDay, index, "training_start")}
                     format="YYYY/MM/DD"
                   />
                 </LocalizationProvider>
@@ -516,7 +516,7 @@ export default function Setting() {
                         ? dayjs(company.training_end)
                         : null
                     }
-                    onChange={(newDay) => setTrainingEndDay(newDay)}
+                    onChange={(newDay) => changeCompanyDateFieldInput(newDay, index, "training_end")}
                     format="YYYY/MM/DD"
                   />
                 </LocalizationProvider>
