@@ -1,10 +1,11 @@
 Rails.application.routes.draw do
-  namespace :v1 do
-    mount_devise_token_auth_for "User", at: "auth", controllers: {
+
+  mount_devise_token_auth_for "User", at: "auth", controllers: {
     registrations: 'v1/auth/registrations',
     omniauth_callbacks: 'v1/auth/omniauth_callbacks'
   }
 
+  namespace :v1 do
   resources :reports, only: [] do
     collection do
       get 'pie_chart', to: 'reports#pie_chart'

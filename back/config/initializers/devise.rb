@@ -315,5 +315,6 @@ Devise.setup do |config|
     scope: 'email,profile',
     prompt: 'select_account',
     access_type: 'offline',
+    redirect_uri: 'https://myapp-7eck.onrender.com/v1/omniauth/google_oauth2/callback'
   }
 end
