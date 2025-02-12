@@ -19,7 +19,7 @@ export default function Index() {
           : `${process.env.NEXT_PUBLIC_FRONT_URL}/v1/auth/google_callback`;
       console.log(`Frontのパス${process.env.NEXT_PUBLIC_FRONT_URL}`);
       console.log(`APIのパス${process.env.NEXT_PUBLIC_API_URL}`);
-      console.log(backendAuthUrl);
+      console.log(`バックエンドオースのパス${backendAuthUrl}`);
       if (!originUrl) {
         console.error("OriginUrlが見つかりません");
         return;
@@ -27,7 +27,7 @@ export default function Index() {
       const redirectUrl = `${backendAuthUrl}?auth_origin_url=${encodeURIComponent(
         `${process.env.NEXT_PUBLIC_FRONT_URL}v1/auth/google_callback`
       )}`;
-      console.log(redirectUrl);
+      console.log(`リダイレクト${redirectUrl}`);
       window.location.href = redirectUrl;
     } catch (error) {
       console.error("Google認証中にエラーが発生しました:", error);
