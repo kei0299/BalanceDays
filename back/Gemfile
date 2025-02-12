@@ -40,6 +40,10 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+  gem 'jsonapi-serializer'
+  gem 'omniauth'
+  gem 'omniauth-google-oauth2'
+  gem 'dotenv-rails', groups: [:development, :test]
 end
 
 
