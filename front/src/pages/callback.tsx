@@ -24,6 +24,8 @@ export default function OAuthRedirect() {
     const handleOAuthCallback = async () => {
       const { auth_token, client_id, uid } = router.query; // URLからパラメータを取得
 
+      console.log(auth_token);
+      
       if (!auth_token || !client_id || !uid) {
         console.error("認証情報が不足しています");
         return;
@@ -52,7 +54,7 @@ export default function OAuthRedirect() {
         const accessToken = response.headers.get("access-token");
         const client = response.headers.get("client");
         const uidFromResponse = response.headers.get("uid");
-
+        console.log(accessToken);
         if (accessToken && client && uidFromResponse) {
           setAccessToken(accessToken, client, uidFromResponse);
           router.push("/home");
