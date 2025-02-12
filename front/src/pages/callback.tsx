@@ -10,11 +10,11 @@ export default function OAuthRedirect() {
 
     const { auth_token, client_id, uid } = router.query; // URLからパラメータを取得
 
-    if (typeof auth_token === "string" && typeof client_id === "string" && typeof uid === "string") {
+    if (auth_token && client_id && uid) {
       // クッキーに保存
-      setCookie(null, "accessToken", auth_token, { maxAge: 30 * 24 * 60 * 60, path: "/" });
-      setCookie(null, "client", client_id, { maxAge: 30 * 24 * 60 * 60, path: "/" });
-      setCookie(null, "uid", uid, { maxAge: 30 * 24 * 60 * 60, path: "/" });
+      setCookie(null, "accessToken", auth_token as string, { maxAge: 30 * 24 * 60 * 60, path: "/" });
+      setCookie(null, "client", client_id as string, { maxAge: 30 * 24 * 60 * 60, path: "/" });
+      setCookie(null, "uid", uid as string, { maxAge: 30 * 24 * 60 * 60, path: "/" });
 
       console.log(auth_token, client_id, uid);
       // ホームページへリダイレクト
