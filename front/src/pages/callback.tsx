@@ -8,15 +8,15 @@ export default function OAuthRedirect() {
   useEffect(() => {
     if (!router.isReady) return; // クエリパラメータが準備できるまで待つ
 
-    const { accessToken, client_id, uid } = router.query; // URLからパラメータを取得
+    const { accessToken, client, uid } = router.query; // URLからパラメータを取得
 
-    if (accessToken && client_id && uid) {
+    if (accessToken && client && uid) {
       // クッキーに保存
       setCookie(null, "accessToken", accessToken as string, { maxAge: 30 * 24 * 60 * 60, path: "/" });
-      setCookie(null, "client", client_id as string, { maxAge: 30 * 24 * 60 * 60, path: "/" });
+      setCookie(null, "client", client as string, { maxAge: 30 * 24 * 60 * 60, path: "/" });
       setCookie(null, "uid", uid as string, { maxAge: 30 * 24 * 60 * 60, path: "/" });
 
-      console.log(accessToken, client_id, uid);
+      console.log(accessToken, client, uid);
       // ホームページへリダイレクト
       // router.push("/home");
     } else {
