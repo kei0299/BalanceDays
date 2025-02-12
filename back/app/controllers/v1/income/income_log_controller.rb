@@ -4,7 +4,7 @@ class V1::Income::IncomeLogController < ApplicationController
   def create
     IncomeLog.create!(
       amount: income_logs_params[:amount],
-      user_id: current_v1_user.id,
+      user_id: current_user.id,
       income_category_id: income_logs_params[:income_category_id],
       date: income_logs_params[:date],
       memo: income_logs_params[:memo]

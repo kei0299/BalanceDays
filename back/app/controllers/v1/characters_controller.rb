@@ -17,7 +17,7 @@ class V1::CharactersController < ApplicationController
       LEFT OUTER JOIN budgets 
       ON expense_categories.id = budgets.expense_category_id
       AND budgets.month BETWEEN '#{first_month}' AND '#{date}'
-      AND budgets.user_id = #{current_v1_user.id}
+      AND budgets.user_id = #{current_user.id}
     SQL
     )
     .group('budgets.month')
@@ -27,7 +27,7 @@ class V1::CharactersController < ApplicationController
       avg_budget = avg_budgets.sum { |b| b.total_budget.to_i } / avg_budgets.size.to_i
 
       # キャラクターをユーザーテーブルに登録
-      user = User.find_by(id: current_v1_user)
+      user = User.find_by(id: current_user)
 
       if user && user.balance && user.warning_lv && user.caution_lv && avg_budget.present? && avg_budget != 0
         character_status, set_life = user.update_character_status!(avg_budget,user)

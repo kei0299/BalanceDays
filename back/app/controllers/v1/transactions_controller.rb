@@ -6,7 +6,7 @@ class V1::TransactionsController < ApplicationController
     date = params[:date]
 
     # ログイン中のユーザーの収入ログを取得
-    income_logs = current_v1_user.income_logs
+    income_logs = current_user.income_logs
                     .where(date: date) # 該当の日付でフィルタリング
                     .includes(:income_category) # カテゴリの情報も取得
                     .select(:id, :amount, :income_category_id, :memo, :created_at)
@@ -24,7 +24,7 @@ class V1::TransactionsController < ApplicationController
 
     # ログイン中のユーザーの支出ログを取得
     expense_logs = ExpenseLog
-                    .where(user_id: current_v1_user.id, date: date) # ユーザーIDと日付でフィルタリング
+                    .where(user_id: current_user.id, date: date) # ユーザーIDと日付でフィルタリング
                     .includes(:expense_category) # カテゴリの情報も取得
                     .select(:id, :amount, :expense_category_id, :memo, :created_at)
                     .map do |expense|

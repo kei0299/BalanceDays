@@ -2,12 +2,12 @@ class V1::ShiftsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    shifts = Shift.where(user_id: current_v1_user)
+    shifts = Shift.where(user_id: current_user)
     render json: shifts
   end
 
   def create
-    shift = current_v1_user.shifts.new(shift_params)
+    shift = current_user.shifts.new(shift_params)
     if shift.save
       render json: { message: "shift created successfully", job: shift }, status: :created
     else

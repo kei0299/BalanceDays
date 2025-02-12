@@ -21,7 +21,7 @@ class V1::ReportsController < ApplicationController
           <<~SQL
             LEFT OUTER JOIN income_logs 
             ON income_categories.id = income_logs.income_category_id 
-            AND income_logs.user_id = #{current_v1_user.id}
+            AND income_logs.user_id = #{current_user.id}
             AND income_logs.date BETWEEN '#{month}' AND '#{end_month}'
           SQL
         )
@@ -46,7 +46,7 @@ class V1::ReportsController < ApplicationController
           <<~SQL
             LEFT OUTER JOIN expense_logs 
             ON expense_categories.id = expense_logs.expense_category_id 
-            AND expense_logs.user_id = #{current_v1_user.id}
+            AND expense_logs.user_id = #{current_user.id}
             AND expense_logs.date BETWEEN '#{month}' AND '#{end_month}'
           SQL
         )
@@ -81,7 +81,7 @@ class V1::ReportsController < ApplicationController
       <<~SQL
         LEFT OUTER JOIN budgets 
         ON expense_categories.id = budgets.expense_category_id 
-        AND budgets.user_id = #{current_v1_user.id}
+        AND budgets.user_id = #{current_user.id}
         AND budgets.month = '#{set_month}'
       SQL
     )
@@ -89,7 +89,7 @@ class V1::ReportsController < ApplicationController
       <<~SQL
         LEFT OUTER JOIN expense_logs 
         ON expense_categories.id = expense_logs.expense_category_id 
-        AND expense_logs.user_id = #{current_v1_user.id}
+        AND expense_logs.user_id = #{current_user.id}
         AND expense_logs.date BETWEEN '#{first_month}' AND '#{end_month}'
       SQL
     )
@@ -144,7 +144,7 @@ class V1::ReportsController < ApplicationController
       <<~SQL
         LEFT OUTER JOIN budgets 
         ON expense_categories.id = budgets.expense_category_id 
-        AND budgets.user_id = #{current_v1_user.id}
+        AND budgets.user_id = #{current_user.id}
         AND budgets.month = '#{set_month}'
       SQL
     )
@@ -152,7 +152,7 @@ class V1::ReportsController < ApplicationController
       <<~SQL
         LEFT OUTER JOIN expense_logs 
         ON expense_categories.id = expense_logs.expense_category_id 
-        AND expense_logs.user_id = #{current_v1_user.id}
+        AND expense_logs.user_id = #{current_user.id}
         AND expense_logs.date BETWEEN '#{first_month}' AND '#{end_month}'
       SQL
     )

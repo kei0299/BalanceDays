@@ -2,17 +2,17 @@ class V1::JobsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    jobs = Job.where(user_id: current_v1_user)
+    jobs = Job.where(user_id: current_user)
     render json: jobs
   end
 
   def company_index
-    jobs = Job.where(user_id: current_v1_user).as_json(only: [:id, :name])
+    jobs = Job.where(user_id: current_user).as_json(only: [:id, :name])
     render json: jobs
   end
 
   def create
-    job = current_v1_user.jobs.build(job_params) 
+    job = current_user.jobs.build(job_params) 
     if job.save
       render json: { message: "Job created successfully", job: job }, status: :created
     else

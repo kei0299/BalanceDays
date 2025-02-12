@@ -4,7 +4,7 @@ class V1::Expense::ExpenseLogController < ApplicationController
   def create
     ExpenseLog.create!(
       amount: expense_logs_params[:amount],
-      user_id: current_v1_user.id,
+      user_id: current_user.id,
       expense_category_id: expense_logs_params[:expense_category_id],
       date: expense_logs_params[:date],
       memo: expense_logs_params[:memo]

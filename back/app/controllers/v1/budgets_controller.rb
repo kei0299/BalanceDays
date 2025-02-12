@@ -21,7 +21,7 @@ class V1::BudgetsController < ApplicationController
       <<~SQL
         LEFT OUTER JOIN budgets 
         ON expense_categories.id = budgets.expense_category_id 
-        AND budgets.user_id = #{current_v1_user.id}
+        AND budgets.user_id = #{current_user.id}
         AND budgets.month = '#{set_month}'
       SQL
     )
@@ -29,7 +29,7 @@ class V1::BudgetsController < ApplicationController
       <<~SQL
         LEFT OUTER JOIN expense_logs 
         ON expense_categories.id = expense_logs.expense_category_id 
-        AND expense_logs.user_id = #{current_v1_user.id}
+        AND expense_logs.user_id = #{current_user.id}
         AND expense_logs.date BETWEEN '#{first_month}' AND '#{end_month}'
       SQL
     )
@@ -53,7 +53,7 @@ class V1::BudgetsController < ApplicationController
     budgets.each do |budget_params|
       # 条件に一致するレコードを探す
       budget = Budget.find_by(
-        user_id: current_v1_user.id,
+        user_id: current_user.id,
         month: budget_params[:month],
         expense_category_id: budget_params[:expense_category_id]
       )
@@ -61,7 +61,7 @@ class V1::BudgetsController < ApplicationController
       # レコードが見つからない場合、新規作成
       if budget.nil?
         budget = Budget.create!(
-          user_id: current_v1_user.id,
+          user_id: current_user.id,
           month: budget_params[:month],
           expense_category_id: budget_params[:expense_category_id],
           budget: budget_params[:budget]
