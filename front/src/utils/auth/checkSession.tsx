@@ -9,11 +9,9 @@ export const checkSession = async () => {
     const client = cookies["client"];
     const uid = cookies["uid"];
 
-console.log(accessToken,client,uid);
-
     // APIリクエスト
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/sessions`,
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/validate_token`,
       {
         method: "GET",
         headers: {
@@ -24,6 +22,8 @@ console.log(accessToken,client,uid);
         },
       }
     );
+
+    console.log(accessToken,client,uid);
 
     // レスポンスが正常でない場合エラーをスロー
     if (!response.ok) {
