@@ -25,7 +25,7 @@ export default function Index() {
         return;
       }
       const redirectUrl = `${backendAuthUrl}?auth_origin_url=${encodeURIComponent(
-        `${process.env.NEXT_PUBLIC_FRONT_URL}`
+        `${process.env.NEXT_PUBLIC_FRONT_URL}/callback`
       )}`;
       console.log(`リダイレクト${redirectUrl}`);
       window.location.href = redirectUrl;
