@@ -53,7 +53,7 @@ export default function InputAdornments() {
     // railsAPI_ログイン
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_in`,
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/sign_in`,
         {
           method: "POST",
           headers: {

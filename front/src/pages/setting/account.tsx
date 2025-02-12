@@ -36,7 +36,7 @@ export default function Setting() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/users`,
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/users`,
         {
           method: "PUT",
           headers: {
@@ -86,7 +86,7 @@ export default function Setting() {
     try {
       // 退会処理
       const deleteResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/delete_user`,
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/delete_user`,
         {
           method: "DELETE",
           headers: {
@@ -104,7 +104,7 @@ export default function Setting() {
 
       // サインアウト処理
       const signOutResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_out`,
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/sign_out`,
         {
           method: "DELETE",
           headers: {

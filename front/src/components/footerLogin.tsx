@@ -38,7 +38,7 @@ export default function FooterLogin() {
       // railsAPIログアウト
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_out`,
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/sign_out`,
           {
             method: "DELETE",
             headers: {

@@ -13,7 +13,7 @@ console.log(accessToken,client,uid);
 
     // APIリクエスト
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sessions`,
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/sessions`,
       {
         method: "GET",
         headers: {
