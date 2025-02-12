@@ -12,7 +12,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
   useEffect(() => {
     const AuthCheck = async () => {
-      const publicPages = ["/", "/_error", "/signin", "/signup"];
+      const publicPages = ["/", "/_error", "/signin", "/signup", "/callback"];
       if (!publicPages.includes(router.pathname)) {
         const result = await checkSession();
         if (!result) {
@@ -24,7 +24,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     AuthCheck(); // 初期ロード時のチェック
 
     const handlePopState = ({ url }: { url: string }) => {
-      const publicPages = ["/", "/_error", "/signin", "/signup"];
+      const publicPages = ["/", "/_error", "/signin", "/signup", "/callback"];
       if (!publicPages.includes(url)) {
         AuthCheck();
         return false;
@@ -48,7 +48,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 };
 
 MyApp.getInitialProps = async (appContext: AppContext) => {
-  const publicPages = ["/", "/_error", "/signin", "/signup"];
+  const publicPages = ["/", "/_error", "/signin", "/signup", "/callback"];
   const cookies = parseCookies(appContext.ctx);
 
   if (!publicPages.includes(appContext.ctx.pathname ?? "")) {
