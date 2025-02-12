@@ -11,7 +11,7 @@ export default function Index() {
     try {
       // バックエンドのエンドポイントにリクエストを送る
       //Google認証開始のエンドポイント
-      // const backendAuthUrl = `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/google_oauth2`;
+      const backendAuthUrl = `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/google_oauth2`;
       //認証終了後の遷移先
       const originUrl =
         process.env.NODE_ENV === "development"
@@ -23,7 +23,7 @@ export default function Index() {
         console.error("OriginUrlが見つかりません");
         return;
       }
-      const redirectUrl = `${process.env.NEXT_PUBLIC_API_URL}?auth_origin_url=${encodeURIComponent(
+      const redirectUrl = `${backendAuthUrl}?auth_origin_url=${encodeURIComponent(
         `${process.env.NEXT_PUBLIC_FRONT_URL}/v1/auth/google_callback`
       )}`;
       window.location.href = redirectUrl;
