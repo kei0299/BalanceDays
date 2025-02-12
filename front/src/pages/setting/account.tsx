@@ -36,7 +36,7 @@ export default function Setting() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/users`,
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/users`,
         {
           method: "PUT",
           headers: {

@@ -16,11 +16,10 @@ export default function OAuthRedirect() {
       setCookie(null, "client", client_id as string, { maxAge: 30 * 24 * 60 * 60, path: "/" });
       setCookie(null, "uid", uid as string, { maxAge: 30 * 24 * 60 * 60, path: "/" });
 
-      console.log(auth_token, client_id, uid);
       // ホームページへリダイレクト
       router.push("/home");
     } else {
-      console.log(auth_token, client_id, uid);
+
       console.error("必要な認証情報が取得できませんでした");
     }
   }, [router.isReady, router.query]); // クエリパラメータが変わったら実行

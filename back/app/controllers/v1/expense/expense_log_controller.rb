@@ -1,5 +1,5 @@
 class V1::Expense::ExpenseLogController < ApplicationController
-  before_action :authenticate_v1_user!
+  before_action :authenticate_user!
 
   def create
     ExpenseLog.create!(
