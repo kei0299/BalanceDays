@@ -1,5 +1,5 @@
 class V1::BudgetsController < ApplicationController
-  before_action :authenticate_v1_user!
+  before_action :authenticate_user!
 
   def index
     # yyyy-mm-ddの形でフロントから取得

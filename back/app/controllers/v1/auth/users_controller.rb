@@ -1,6 +1,6 @@
 # 貯金残高、注意/警告レベルの設定用コントローラー
 class V1::Auth::UsersController < ApplicationController
-  before_action :authenticate_v1_user!
+  before_action :authenticate_user!
 
   # ログイン確認用
   def index

@@ -1,5 +1,5 @@
 class V1::Income::IncomeLogController < ApplicationController
-  before_action :authenticate_v1_user!
+  before_action :authenticate_user!
   
   def create
     IncomeLog.create!(

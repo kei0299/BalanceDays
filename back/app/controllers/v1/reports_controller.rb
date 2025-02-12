@@ -1,5 +1,5 @@
 class V1::ReportsController < ApplicationController
-  before_action :authenticate_v1_user!
+  before_action :authenticate_user!
 
   def pie_chart
     month_param = params[:month]

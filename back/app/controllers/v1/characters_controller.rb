@@ -1,5 +1,5 @@
 class V1::CharactersController < ApplicationController
-  before_action :authenticate_v1_user!
+  before_action :authenticate_user!
 
   def index
     set_month = request.headers['currentMonth'] # フロントから取得（例: "2024-12-01"）

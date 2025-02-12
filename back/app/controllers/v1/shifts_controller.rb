@@ -1,5 +1,5 @@
 class V1::ShiftsController < ApplicationController
-  before_action :authenticate_v1_user!
+  before_action :authenticate_user!
 
   def index
     shifts = Shift.where(user_id: current_v1_user)

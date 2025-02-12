@@ -1,5 +1,5 @@
 class V1::TransactionsController < ApplicationController
-  before_action :authenticate_v1_user!
+  before_action :authenticate_user!
 
   def index
     # クエリパラメータから日付を取得
