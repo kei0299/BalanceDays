@@ -62,7 +62,7 @@ export default function InputAdornments() {
     // railsAPI_新規登録
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth`,
+        `${process.env.NEXT_PUBLIC_API_URL}/auth`,
         {
           method: "POST",
           headers: {
@@ -89,7 +89,7 @@ export default function InputAdornments() {
       //　登録後の自動ログイン
       try {
         const loginResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/sign_in`,
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/sign_in`,
           {
             method: "POST",
             headers: {
