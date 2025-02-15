@@ -12,7 +12,15 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
   useEffect(() => {
     const AuthCheck = async () => {
-      const publicPages = ["/", "/_error", "/signin", "/signup", "/callback"];
+      const publicPages = [
+        "/",
+        "/_error",
+        "/signin",
+        "/signup",
+        "/callback",
+        "/terms/privacyPolicy",
+        "/terms/terms",
+      ];
       if (!publicPages.includes(router.pathname)) {
         const result = await checkSession();
         if (!result) {

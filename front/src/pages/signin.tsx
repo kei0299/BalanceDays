@@ -67,7 +67,7 @@ export default function InputAdornments() {
       );
 
       if (!response.ok) {
-        alert("ログインにしました");
+        alert("ログインに失敗しました");
         throw new Error("ログインに失敗しました");
       }
       const accessToken = response.headers.get("access-token");
@@ -91,7 +91,6 @@ export default function InputAdornments() {
       };
 
       if (accessToken && client && uid) {
-        // クッキーにアクセス・クライアント・ユーザーIDを格納
         setAccessToken(accessToken, client, uid);
         
         alert("ログインに成功しました");

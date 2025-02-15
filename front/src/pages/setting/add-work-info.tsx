@@ -46,7 +46,7 @@ interface Company {
   training_time: number;
   training_settings: string;
   created_at: Date;
-  updated_at :Date;
+  updated_at: Date;
 }
 
 // Tab関連
@@ -82,15 +82,17 @@ export default function Setting() {
   const [closingDay, setClosingDay] = React.useState("5日");
   const [payoutMonth, setPayoutMonth] = React.useState("当月");
   const [payoutDay, setPayoutDay] = React.useState("25日");
-  const [companies, setCompanies] = useState<Company[]>([]); // DBから取得した会社情報
+  const [companies, setCompanies] = useState<Company[]>([]);
 
-  const changeCompanyName = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const changeCompanyName = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setCompanyName(e.target.value as string);
   };
 
   const changeClosingDay = (e: SelectChangeEvent<string>) => {
-    const newClosingDay = e.target.value; // 選ばれた値を取得
-    setClosingDay(newClosingDay); // 状態を更新
+    const newClosingDay = e.target.value;
+    setClosingDay(newClosingDay);
   };
 
   const changePayoutMonth = (event: SelectChangeEvent) => {
@@ -102,23 +104,21 @@ export default function Setting() {
   };
 
   const changeTrainingTime = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value; // `value` は文字列として取得
-  
-    // 数字以外の入力を防ぎつつ、空の場合は "" にする
+    const value = event.target.value;
     setTrainingTime(value === "" ? "" : Number(value));
   };
 
-  const changeCompanyFieldSelect = (
-    e: SelectChangeEvent,
-    index: number
-  ) => {
-    const { name, value } = e.target; // name 属性でプロパティ識別
-    const updatedCompanies = [...companies]; // 配列をコピー
+  const changeCompanyFieldSelect = (e: SelectChangeEvent, index: number) => {
+    const { name, value } = e.target;
+    const updatedCompanies = [...companies];
     updatedCompanies[index] = {
-      ...updatedCompanies[index], // 対象オブジェクトを展開
-      [name]: name === "closing_day" || "payout_day" || "payout_month_type" ? value : Number(value)
+      ...updatedCompanies[index],
+      [name]:
+        name === "closing_day" || "payout_day" || "payout_month_type"
+          ? value
+          : Number(value),
     };
-    setCompanies(updatedCompanies); // 状態を更新
+    setCompanies(updatedCompanies);
   };
 
   const changeCompanyFieldInput = (
@@ -127,36 +127,41 @@ export default function Setting() {
     >,
     index: number
   ) => {
-    const { name, value } = e.target; // name 属性でプロパティ識別
-  
+    const { name, value } = e.target;
+
     let newValue = value;
-  
+
     // 数値フィールドの場合
     if (name !== "name" && name !== "training_settings") {
-      newValue = newValue.replace(/^0+(\d)/, "$1"); // 先頭の 0 を削除（"0" 単体は許可）
-      newValue = newValue.replace(/[^0-9]/g, ""); // 数字以外を削除
+      newValue = newValue.replace(/^0+(\d)/, "$1");
+      newValue = newValue.replace(/[^0-9]/g, "");
     }
-  
-    const updatedCompanies = [...companies]; // 配列をコピー
+
+    const updatedCompanies = [...companies];
     updatedCompanies[index] = {
-      ...updatedCompanies[index], // 対象オブジェクトを展開
-      [name]: name === "name" || name === "training_settings" ? newValue : Number(newValue),
+      ...updatedCompanies[index],
+      [name]:
+        name === "name" || name === "training_settings"
+          ? newValue
+          : Number(newValue),
     };
     setCompanies(updatedCompanies);
   };
 
-  const changeCompanyDateFieldInput = (newDate: dayjs.Dayjs | null, index: number, fieldName: string) => {
-    if (!newDate) return; // 選択されていない場合は処理しない
-  
+  const changeCompanyDateFieldInput = (
+    newDate: dayjs.Dayjs | null,
+    index: number,
+    fieldName: string
+  ) => {
+    if (!newDate) return;
+
     const updatedCompanies = [...companies];
     updatedCompanies[index] = {
       ...updatedCompanies[index],
-      [fieldName]: newDate.format("YYYY-MM-DD"), // 日付を "YYYY-MM-DD" 形式で保存
+      [fieldName]: newDate.format("YYYY-MM-DD"),
     };
-  
     setCompanies(updatedCompanies);
   };
-  
 
   const [trainingStartDay, setTrainingStartDay] = React.useState<Dayjs | null>(
     dayjs()
@@ -204,13 +209,13 @@ export default function Setting() {
             training_end: trainingEndDay,
             training_wage: Number(trainingWage.replace(/,/g, "")),
             training_time: trainingTime,
-            training_settings: selectedTraining
+            training_settings: selectedTraining,
           }),
         }
       );
 
       if (!response.ok) {
-        const errorData = await response.json(); // エラー詳細を取得
+        const errorData = await response.json();
         const errorMessages = errorData.errors || [
           "不明なエラーが発生しました",
         ];
@@ -226,19 +231,22 @@ export default function Setting() {
   // railsAPI_勤務先情報の更新
   const updateJobInfo = async (jobId: number, updatedData: Company) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/jobs/${jobId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "access-token": accessToken,
-          client: client,
-          uid: uid,
-        },
-        body: JSON.stringify({job: updatedData}), // 現在のタブのデータだけ送信
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/jobs/${jobId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+          body: JSON.stringify({ job: updatedData }), // 現在のタブのデータだけ送信
+        }
+      );
 
       if (!response.ok) {
-        const errorData = await response.json(); // エラー詳細を取得
+        const errorData = await response.json();
         const errorMessages = errorData.errors || [
           "不明なエラーが発生しました",
         ];
@@ -251,46 +259,38 @@ export default function Setting() {
     }
   };
 
-    // railsAPI_勤務先情報の削除
-    const deleteJobInfo = async (
-      jobId: number
-    ) => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/v1/jobs/${jobId}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              "access-token": accessToken,
-              client: client,
-              uid: uid,
-            },
-            body: JSON.stringify({
-              id: jobId,
-            }),
-          }
-        );
-        if (!response.ok) {
-          // 失敗した場合、エラーメッセージを表示
-          const errorData = await response.json();
-          console.error("Error:", errorData);
-          alert(`削除に失敗しました: ${errorData.error || "不明なエラー"}`);
-          return;
+  // railsAPI_勤務先情報の削除
+  const deleteJobInfo = async (jobId: number) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/jobs/${jobId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "access-token": accessToken,
+            client: client,
+            uid: uid,
+          },
+          body: JSON.stringify({
+            id: jobId,
+          }),
         }
-  
-        // 成功した場合、通知
-        const data = await response.json();
-        alert(data.message || "削除完了");
-  
-        // ページをリロードして反映
-        window.location.reload();
-      } catch (error) {
-        // ネットワークエラーやその他のエラーをキャッチ
-        console.error("Network Error:", error);
-        alert("エラーが発生しました。再度お試しください。");
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error:", errorData);
+        alert(`削除に失敗しました: ${errorData.error || "不明なエラー"}`);
+        return;
       }
-    };
+      const data = await response.json();
+      alert(data.message || "削除完了");
+      window.location.reload();
+    } catch (error) {
+      console.error("Network Error:", error);
+      alert("エラーが発生しました。再度お試しください。");
+    }
+  };
 
   useEffect(() => {
     const fetchJobData = async () => {
@@ -302,7 +302,7 @@ export default function Setting() {
         console.error("勤務先情報データ取得エラー:", error);
       }
     };
-    fetchJobData(); // 初回レンダリング時にセッション情報を取得
+    fetchJobData();
   }, []);
 
   // 金額をフォーマットする関数
@@ -310,9 +310,9 @@ export default function Setting() {
     event: React.ChangeEvent<T>,
     setAmount: React.Dispatch<React.SetStateAction<string>>
   ) => {
-    const numericValue = event.target.value.replace(/[^0-9]/g, ""); // 数字以外を削除
-    const formattedValue = formatNum(numericValue); // フォーマット適用
-    setAmount(formattedValue); // カンマ区切りを適用して状態を更新
+    const numericValue = event.target.value.replace(/[^0-9]/g, "");
+    const formattedValue = formatNum(numericValue);
+    setAmount(formattedValue);
   };
 
   // 3桁ごとにカンマを挿入する関数
@@ -369,14 +369,11 @@ export default function Setting() {
                     label="時給"
                     name="hourly_wage"
                     value={company.hourly_wage}
-                    // onChange={(e) =>
-                    //   formatAmountChange(e, setHourlyWage)
-                    // }
                     onChange={(e) => changeCompanyFieldInput(e, index)}
                     startAdornment={
                       <InputAdornment position="start">¥</InputAdornment>
                     }
-                    inputProps={{ inputMode: "numeric" }} // モバイルのみ数字キーボードを表示
+                    inputProps={{ inputMode: "numeric" }}
                   />
                 </FormControl>
 
@@ -388,14 +385,11 @@ export default function Setting() {
                     label="深夜時給"
                     value={company.night_wage}
                     name="night_wage"
-                    // onChange={(event) =>
-                    //   formatAmountChange(event, setNightWage)
-                    // }
                     onChange={(e) => changeCompanyFieldInput(e, index)}
                     startAdornment={
                       <InputAdornment position="start">¥</InputAdornment>
                     }
-                    inputProps={{ inputMode: "numeric" }} // モバイルのみ数字キーボードを表示
+                    inputProps={{ inputMode: "numeric" }}
                   />
                 </FormControl>
 
@@ -414,7 +408,6 @@ export default function Setting() {
                       name="closing_day"
                       label="締日"
                       onChange={(e) => changeCompanyFieldSelect(e, index)}
-                      // onChange={changeClosingDay}
                     >
                       <MenuItem value={"5日"}>5日</MenuItem>
                       <MenuItem value={"15日"}>15日</MenuItem>
@@ -432,7 +425,6 @@ export default function Setting() {
                       name="payout_month_type"
                       label="支払月"
                       onChange={(e) => changeCompanyFieldSelect(e, index)}
-                      // onChange={changePayoutMonth}
                     >
                       <MenuItem value={"当月"}>当月</MenuItem>
                       <MenuItem value={"翌月"}>翌月</MenuItem>
@@ -449,7 +441,6 @@ export default function Setting() {
                       name="payout_day"
                       label="支払日"
                       onChange={(e) => changeCompanyFieldSelect(e, index)}
-                      // onChange={changePayoutDay}
                     >
                       <MenuItem value={"5日"}>5日</MenuItem>
                       <MenuItem value={"10日"}>10日</MenuItem>
@@ -471,7 +462,7 @@ export default function Setting() {
                     aria-labelledby="radio-buttons-group-label"
                     defaultValue={company.training_settings}
                     name="training_settings"
-                    onChange={(e) => changeCompanyFieldInput(e,index)}
+                    onChange={(e) => changeCompanyFieldInput(e, index)}
                   >
                     <FormControlLabel
                       value="no_training"
@@ -501,7 +492,13 @@ export default function Setting() {
                         ? dayjs(company.training_start)
                         : null
                     }
-                    onChange={(newDay) => changeCompanyDateFieldInput(newDay, index, "training_start")}
+                    onChange={(newDay) =>
+                      changeCompanyDateFieldInput(
+                        newDay,
+                        index,
+                        "training_start"
+                      )
+                    }
                     format="YYYY/MM/DD"
                   />
                 </LocalizationProvider>
@@ -516,7 +513,9 @@ export default function Setting() {
                         ? dayjs(company.training_end)
                         : null
                     }
-                    onChange={(newDay) => changeCompanyDateFieldInput(newDay, index, "training_end")}
+                    onChange={(newDay) =>
+                      changeCompanyDateFieldInput(newDay, index, "training_end")
+                    }
                     format="YYYY/MM/DD"
                   />
                 </LocalizationProvider>
@@ -546,23 +545,20 @@ export default function Setting() {
                     value={company.training_wage}
                     name="training_wage"
                     onChange={(e) => changeCompanyFieldInput(e, index)}
-                    // onChange={(event) =>
-                    //   formatAmountChange(event, setTrainingWage)
-                    // }
                     startAdornment={
                       <InputAdornment position="start">¥</InputAdornment>
                     }
-                    inputProps={{ inputMode: "numeric" }} // モバイルのみ数字キーボードを表示
+                    inputProps={{ inputMode: "numeric" }}
                   />
                 </FormControl>
 
-                <Box sx={{ display: "flex", mt: 2, textAlign: "center" }}>
+                <Box sx={{ display: "flex", m: 2, textAlign: "center" }}>
                   <Button
                     type="submit"
                     variant="outlined"
                     onClick={async () => {
                       try {
-                        await updateJobInfo(company.id,company); // 非同期関数をラップして呼び出し
+                        await updateJobInfo(company.id, company);
                       } catch (error) {
                         console.error("エラー:", error);
                       }
@@ -572,11 +568,13 @@ export default function Setting() {
                   </Button>
 
                   <Button
+                    color="error"
+                    sx={{ ml: 2 }}
                     type="submit"
                     variant="outlined"
                     onClick={async () => {
                       try {
-                        await deleteJobInfo(company.id); // 非同期関数をラップして呼び出し
+                        await deleteJobInfo(company.id);
                       } catch (error) {
                         console.error("エラー:", error);
                       }
@@ -584,7 +582,6 @@ export default function Setting() {
                   >
                     削除
                   </Button>
-
                 </Box>
               </CustomTabPanel>
             ))}
@@ -613,7 +610,7 @@ export default function Setting() {
                   startAdornment={
                     <InputAdornment position="start">¥</InputAdornment>
                   }
-                  inputProps={{ inputMode: "numeric" }} // モバイルのみ数字キーボードを表示
+                  inputProps={{ inputMode: "numeric" }}
                 />
               </FormControl>
 
@@ -630,7 +627,7 @@ export default function Setting() {
                   startAdornment={
                     <InputAdornment position="start">¥</InputAdornment>
                   }
-                  inputProps={{ inputMode: "numeric" }} // モバイルのみ数字キーボードを表示
+                  inputProps={{ inputMode: "numeric" }}
                 />
               </FormControl>
 
@@ -770,11 +767,11 @@ export default function Setting() {
                   startAdornment={
                     <InputAdornment position="start">¥</InputAdornment>
                   }
-                  inputProps={{ inputMode: "numeric" }} // モバイルのみ数字キーボードを表示
+                  inputProps={{ inputMode: "numeric" }}
                 />
               </FormControl>
 
-              <Box sx={{ display: "flex", mt: 2, textAlign: "center" }}>
+              <Box sx={{ display: "flex", m: 2, textAlign: "center" }}>
                 <Button type="submit" variant="outlined" onClick={saveJobInfo}>
                   登録する
                 </Button>

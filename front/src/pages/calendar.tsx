@@ -136,7 +136,7 @@ export default function Calender() {
   const [endTime, setEndTime] = React.useState<Dayjs | null>(
     dayjs("2022-04-17T20:00")
   );
-  const [companyName, setCompanyName] = useState<number | "" >("");
+  const [companyName, setCompanyName] = useState<number | "">("");
   const [company, setCompany] = useState<companyData[]>([]); // 勤務先データ用のstate
   const [breakTime, setBreakTime] = React.useState<number>(0);
   const [workStartDay, setWorkStartDay] = React.useState<Dayjs | null>();
@@ -221,18 +221,7 @@ export default function Calender() {
       );
 
       const shiftData: shiftData[] = await shiftResponse.json();
-
-      // 必要なデータだけを取り出す
-      // const filteredShifts = shiftData.map((shift: any) => ({
-      //   workplace: shift.workplace, // 勤務先
-      //   startTime: shift.start_time, // 勤務開始時間
-      //   endTime: shift.end_time, // 勤務終了時間
-      //   breakTime: shift.break_time, // 休憩時間
-      //   memo: shift.memo, // メモ
-      // }));
-
       setShifts(shiftData);
-      console.log(shiftData);
 
       if (!transactionResponse.ok) {
         throw new Error("データ取得に失敗しました");
@@ -240,7 +229,7 @@ export default function Calender() {
 
       const transactionData: TransactionData[] =
         await transactionResponse.json();
-      setTransactions(transactionData); // 取得したデータをstateに保存
+      setTransactions(transactionData);
     } catch (error) {
       console.error("エラー:", error);
     } finally {
@@ -275,9 +264,9 @@ export default function Calender() {
     event: React.ChangeEvent<T>,
     setAmount: React.Dispatch<React.SetStateAction<string>>
   ) => {
-    const numericValue = event.target.value.replace(/[^0-9]/g, ""); // 数字以外を削除
-    const formattedValue = formatNum(numericValue); // フォーマット適用
-    setAmount(formattedValue); // カンマ区切りを適用して状態を更新
+    const numericValue = event.target.value.replace(/[^0-9]/g, "");
+    const formattedValue = formatNum(numericValue);
+    setAmount(formattedValue);
   };
 
   // 3桁ごとにカンマを挿入する関数
@@ -294,17 +283,16 @@ export default function Calender() {
     if (transaction.type === "income") {
       setTab(0);
       setFormDay(selectedDate);
-      setIncomeCategory(transaction.categoryId); // APIのカテゴリ
-      setIncomeAmount(formatNum(transaction.amount)); // 金額
-      setIncomeMemo(transaction.memo); // メモ
+      setIncomeCategory(transaction.categoryId);
+      setIncomeAmount(formatNum(transaction.amount));
+      setIncomeMemo(transaction.memo);
     } else {
       setTab(1);
       setFormDay(selectedDate);
-      setExpenseCategory(transaction.categoryId); // APIのカテゴリ
-      setExpenseAmount(formatNum(transaction.amount)); // 金額
-      setExpenseMemo(transaction.memo); // メモ
+      setExpenseCategory(transaction.categoryId);
+      setExpenseAmount(formatNum(transaction.amount));
+      setExpenseMemo(transaction.memo);
     }
-    console.log(selectedDate);
     setIsEditMode(true);
   };
 
@@ -469,21 +457,16 @@ export default function Calender() {
         }
       );
       if (!response.ok) {
-        // 失敗した場合、エラーメッセージを表示
         const errorData = await response.json();
         console.error("Error:", errorData);
         alert(`削除に失敗しました: ${errorData.error || "不明なエラー"}`);
         return;
       }
 
-      // 成功した場合、通知
       const data = await response.json();
       alert(data.message || "削除完了");
-
-      // ページをリロードして反映
       window.location.reload();
     } catch (error) {
-      // ネットワークエラーやその他のエラーをキャッチ
       console.error("Network Error:", error);
       alert("エラーが発生しました。再度お試しください。");
     }
@@ -493,7 +476,7 @@ export default function Calender() {
   const setEditShift = (shift: shiftData) => {
     logId = shift.id;
     setTab(2);
-    setCompanyName(shift.job_id)
+    setCompanyName(shift.job_id);
     setWorkStartDay(dayjs(shift.start_time));
     setWorkEndDay(dayjs(shift.end_time));
     setStartTime(dayjs(shift.start_time));
@@ -624,21 +607,15 @@ export default function Calender() {
         }
       );
       if (!response.ok) {
-        // 失敗した場合、エラーメッセージを表示
         const errorData = await response.json();
         console.error("Error:", errorData);
         alert(`削除に失敗しました: ${errorData.error || "不明なエラー"}`);
         return;
       }
-
-      // 成功した場合、通知
       const data = await response.json();
       alert(data.message || "削除完了");
-
-      // ページをリロードして反映
       window.location.reload();
     } catch (error) {
-      // ネットワークエラーやその他のエラーをキャッチ
       console.error("Network Error:", error);
       alert("エラーが発生しました。再度お試しください。");
     }
@@ -679,7 +656,6 @@ export default function Calender() {
       <link rel="icon" href="/favicon.ico" />
       <div>
         <main style={{ minHeight: "115vh" }}>
-          {/* <main> */}
           <div style={{ display: "flex", marginTop: "80px" }}>
             <Box sx={{ mt: 0 }}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -708,7 +684,7 @@ export default function Calender() {
                           size="small"
                           onClick={() =>
                             setEditTransaction(transaction, selectedDate)
-                          } // 編集モードに切り替え
+                          }
                         >
                           <EditIcon fontSize="inherit" />
                         </IconButton>
@@ -742,18 +718,14 @@ export default function Calender() {
                       <li key={shift.id}>
                         <strong>{shift.name}</strong>:{" "}
                         {dayjs(shift.start_time).format("HH:mm")} -{" "}
-                        {dayjs(shift.end_time).format("HH:mm")}{" "}
-                        <br />
-                        【労働：{shift.work_time} h 休憩 : {shift.break_time} h 】
-                        日給 :¥{shift.total_salary}
-                        ({shift.memo})
+                        {dayjs(shift.end_time).format("HH:mm")} <br />
+                        【労働：{shift.work_time} h 休憩 : {shift.break_time} h
+                        】 日給 :¥{shift.total_salary}({shift.memo})
                         <IconButton
                           sx={{ ml: 1 }}
                           aria-label="edit"
                           size="small"
-                          onClick={() =>
-                            setEditShift(shift)
-                          }
+                          onClick={() => setEditShift(shift)}
                         >
                           <EditIcon fontSize="inherit" />
                         </IconButton>
@@ -805,7 +777,7 @@ export default function Calender() {
                 >
                   {incomeCategories.map((category) => (
                     <MenuItem key={category.id} value={category.id}>
-                      {category.name} {/* APIから取得したカテゴリ名 */}
+                      {category.name}
                     </MenuItem>
                   ))}
                 </Select>
@@ -824,7 +796,7 @@ export default function Calender() {
                   startAdornment={
                     <InputAdornment position="start">¥</InputAdornment>
                   }
-                  inputProps={{ inputMode: "numeric" }} // モバイルのみ数字キーボードを表示
+                  inputProps={{ inputMode: "numeric" }}
                 />
               </FormControl>
 
@@ -874,7 +846,7 @@ export default function Calender() {
                 >
                   {expenseCategories.map((category) => (
                     <MenuItem key={category.id} value={category.id}>
-                      {category.name} {/* APIから取得したカテゴリ名 */}
+                      {category.name}
                     </MenuItem>
                   ))}
                 </Select>
@@ -893,7 +865,7 @@ export default function Calender() {
                   startAdornment={
                     <InputAdornment position="start">¥</InputAdornment>
                   }
-                  inputProps={{ inputMode: "numeric" }} // モバイルのみ数字キーボードを表示
+                  inputProps={{ inputMode: "numeric" }}
                 />
               </FormControl>
 
@@ -933,7 +905,7 @@ export default function Calender() {
                 >
                   {company.map((company) => (
                     <MenuItem key={company.id} value={company.id}>
-                      {company.name} {/* APIから取得したカテゴリ名 */}
+                      {company.name}
                     </MenuItem>
                   ))}
                 </Select>

@@ -1,6 +1,6 @@
 import { parseCookies } from "nookies";
 
-// セッション情報を取得する関数
+// 収支の合計
 export const fetchBudgetSum = async (currentMonth: string) => {
   try {
     // クッキーからトークンを取得
@@ -24,18 +24,14 @@ export const fetchBudgetSum = async (currentMonth: string) => {
       }
     );
 
-    // レスポンスが正常でない場合エラーをスロー
     if (!response.ok) {
       throw new Error("セッション情報がありません");
     }
 
-    // レスポンスのJSONデータを取得
     const { total_budget } = await response.json();
     return total_budget;
  
-
-    // セッションチェックの結果を利用して、必要に応じて状態を更新する処理を追加できます
   } catch (error) {
-    console.error(error); // エラー処理
+    console.error(error);
   }
 };

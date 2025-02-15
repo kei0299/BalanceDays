@@ -50,7 +50,7 @@ export default function Budget() {
     // Rails APIからカテゴリを取得
     const fetchBudgetData = async () => {
       try {
-        const data: expenseData[] = await fetchBudget(apiFormattedDate); // APIから取得したデータが BudgetRowData[] に対応
+        const data: expenseData[] = await fetchBudget(apiFormattedDate);
         const formattedData: BudgetRowData[] = data.map((item) => ({
           id: item.id,
           category: item.name,
@@ -59,7 +59,6 @@ export default function Budget() {
           currentMonth: String(item.currentMonth),
         }));
         const sumData: string = await fetchBudgetSum(apiFormattedDate);
-        // console.log(data);
         setBudgets(formattedData);
         setSumBudget(sumData);
       } catch (error) {
@@ -91,7 +90,6 @@ export default function Budget() {
   ).padStart(2, "0")}-01`; // 1日を固定で追加
 
   const budgetChange = (index: number, newValue: string) => {
-    // 指定されたindex番目の要素を取り出し、そのbudgetプロパティにnewValue（新しい値）をセット
     const updatedRows = [...budgets];
     updatedRows[index].budget = newValue;
     setBudgets(updatedRows);
@@ -102,8 +100,8 @@ export default function Budget() {
 
     // railsAPI_予算の登録
     const budgetsToSave = budgets.map((row, index) => ({
-      expense_category_id: budgets[index].id, // カテゴリID
-      budget: Number(row.budget.replace(/[^0-9]/g, "")), // 数字のみを抽出
+      expense_category_id: budgets[index].id,
+      budget: Number(row.budget.replace(/[^0-9]/g, "")),
       month: apiFormattedDate,
     }));
 

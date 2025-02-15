@@ -127,7 +127,6 @@ export default function InputAdornments() {
         };
 
         if (accessToken && client && uid) {
-          // クッキーにアクセス・クライアント・ユーザーIDを格納
           setAccessToken(accessToken, client, uid);
         }
 

@@ -15,7 +15,7 @@ export default function Setting() {
   useEffect(() => {
     const fetchSessionData = async () => {
       try {
-        const sessionData = await checkSession(); // checkSessionの結果を取得
+        const sessionData = await checkSession();
         setEmail(sessionData.data.email);
         console.log(sessionData);
       } catch (error) {
@@ -58,7 +58,7 @@ export default function Setting() {
         throw new Error("設定に失敗しました");
       }
 
-      // サーバーからの新しい uid を取得（メールアドレスが uid になる場合）
+      // サーバーからの新しいuidを取得
       const updatedUid = email;
 
       // クッキーに新しい uid を保存
@@ -156,7 +156,7 @@ export default function Setting() {
               spacing={2}
               direction="row"
               sx={{
-                alignItems: "center", // 水平方向で中央揃え
+                alignItems: "center",
               }}
             >
               <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>

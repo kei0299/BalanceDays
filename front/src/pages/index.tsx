@@ -9,7 +9,6 @@ import GoogleIcon from "@mui/icons-material/Google";
 export default function Index() {
   const signInWithGoogle = async (): Promise<void> => {
     try {
-      // バックエンドのエンドポイントにリクエストを送る
       //Google認証開始のエンドポイント
       const backendAuthUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/google_oauth2`;
       //認証終了後の遷移先
@@ -86,7 +85,7 @@ export default function Index() {
 
             <Button
               variant="outlined"
-              sx={{mt: "10px", maxWidth: "230px"}}
+              sx={{ mt: "10px", maxWidth: "230px" }}
               startIcon={<GoogleIcon />}
               fullWidth
               onClick={signInWithGoogle}

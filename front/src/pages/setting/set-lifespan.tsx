@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Header from "@/components/header";
 import FooterLogin from "@/components/footerLogin";
-
-// MUI
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
@@ -52,12 +50,12 @@ const BalanceInput = () => {
 
   // 金額をフォーマットする関数
   const formatBalance = (value: string) => {
-    const numericValue = value.replace(/[^0-9]/g, ""); // 数字以外を削除
-    return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // 3桁ごとにカンマを挿入
+    const numericValue = value.replace(/[^0-9]/g, "");
+    return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
   const addComma = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setBalance(formatBalance(event.target.value)); // カンマ区切りを適用して状態を更新
+    setBalance(formatBalance(event.target.value));
   };
 
   // railsAPI_生存確認設定の登録
@@ -104,11 +102,10 @@ const BalanceInput = () => {
   };
 
   useEffect(() => {
-    // 非同期関数を定義してセッション情報を取得
     const fetchSessionData = async () => {
       try {
-        const data = await checkSession(); // checkSessionの結果を取得
-        setSessionData(data); // セッション情報を状態に保存
+        const data = await checkSession();
+        setSessionData(data);
 
         //　初期値の設定
         if (data.data?.balance)
@@ -119,8 +116,7 @@ const BalanceInput = () => {
         console.error("セッションデータ取得エラー:", error);
       }
     };
-
-    fetchSessionData(); // 初回レンダリング時にセッション情報を取得
+    fetchSessionData();
   }, []);
 
   return (
@@ -177,7 +173,7 @@ const BalanceInput = () => {
                   startAdornment={
                     <InputAdornment position="start">¥</InputAdornment>
                   }
-                  inputProps={{ inputMode: "numeric" }} // モバイルのみ数字キーボードを表示
+                  inputProps={{ inputMode: "numeric" }}
                 />
               </FormControl>
             </Box>

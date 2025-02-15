@@ -24,16 +24,14 @@ export const fetchBudget = async (currentMonth: string) => {
       }
     );
 
-    // レスポンスが正常でない場合エラーをスロー
     if (!response.ok) {
       throw new Error("セッション情報がありません");
     }
 
-    // レスポンスのJSONデータを取得
     const { budgets } = await response.json();
     return budgets;
  
   } catch (error) {
-    console.error(error); // エラー処理
+    console.error(error);
   }
 };

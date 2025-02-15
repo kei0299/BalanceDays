@@ -45,12 +45,12 @@ export default function Home() {
 
     fetchCharacterData();
     // fetchSessionData(); // HOMEでのセッション確認用
-  }, []); // 初回レンダリング時のみ実行されるように空の依存配列を指定
+  }, []);
 
   // API用のフォーマットを "YYYY-MM-DD" 形式で作成
   const apiFormattedDate = `${currentMonth.getFullYear()}-${String(
     currentMonth.getMonth() + 1
-  ).padStart(2, "0")}-01`; // 1日を固定で追加
+  ).padStart(2, "0")}-01`;
 
   return (
     <>
@@ -100,7 +100,7 @@ export default function Home() {
                           label: "円",
                           labelFontSize: 14,
                           labelStyle: {
-                            transform: "translateX(-50px)", // ラベルを左に10pxずらす
+                            transform: "translateX(-50px)",
                           },
                           min: 0
                         },
@@ -145,7 +145,7 @@ export default function Home() {
                           label: "円",
                           labelFontSize: 14,
                           labelStyle: {
-                            transform: "translateX(-50px)", // ラベルを左に10pxずらす
+                            transform: "translateX(-50px)",
                           },
                           min: 0
                         },
@@ -190,7 +190,7 @@ export default function Home() {
                           label: "円",
                           labelFontSize: 14,
                           labelStyle: {
-                            transform: "translateX(-50px)", // ラベルを左に10pxずらす
+                            transform: "translateX(-50px)",
                           },
                           min: 0
                         },
