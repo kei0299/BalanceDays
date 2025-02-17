@@ -5,6 +5,7 @@ import Head from "next/head";
 import Script from "next/script";
 import * as gtag from "@/lib/gtag";
 import GoogleIcon from "@mui/icons-material/Google";
+import Image from "next/image";
 
 export default function Index() {
   const signInWithGoogle = async (): Promise<void> => {
@@ -84,13 +85,33 @@ export default function Index() {
             </Stack>
 
             <Button
-              variant="outlined"
-              sx={{ mt: "10px", maxWidth: "230px" }}
-              startIcon={<GoogleIcon />}
-              fullWidth
+              sx={{
+                mt: "10px",
+                maxWidth: "240px",
+                height: "40px",
+                backgroundColor: "#4285F4",
+                color: "white",
+                textTransform: "none",
+                boxShadow: "0 3px 4px 0 rgba(0, 0, 0, 0.25)",
+                paddingLeft: "5px",
+                paddingRight: "12px",
+                "&:hover": {
+                  backgroundColor: "#357ae8",
+                },
+              }}
               onClick={signInWithGoogle}
             >
-              SIGN UP WITH GOOGLE
+              <img
+                src="/image/google_logo.png"
+                alt="Google Logo"
+                style={{
+                  width: "30px", // ロゴのサイズを調整
+                  height: "30px", // 高さを小さくして余白を減らす
+                  borderRadius: "4px",
+                  marginRight: "6px",
+                }}
+              />
+              <span>Googleでログイン</span>
             </Button>
           </Box>
         </main>

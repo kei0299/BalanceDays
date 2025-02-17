@@ -84,7 +84,6 @@ export default function InputAdornments() {
         console.log(errorData);
         throw new Error("登録に失敗しました");
       }
-      alert("登録が成功しました");
 
       //　登録後の自動ログイン
       try {
@@ -130,7 +129,7 @@ export default function InputAdornments() {
           setAccessToken(accessToken, client, uid);
         }
 
-        alert("ログインしました");
+        alert("新規作成しました");
         setEmail("");
         setPassword("");
         setPasswordConfirmation("");
@@ -220,7 +219,7 @@ export default function InputAdornments() {
                           onMouseDown={handleMouseDownPassword}
                           onMouseUp={handleMouseUpPassword}
                         >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
                         </IconButton>
                       </InputAdornment>
                     }

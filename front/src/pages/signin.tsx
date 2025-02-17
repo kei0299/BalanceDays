@@ -161,7 +161,7 @@ export default function InputAdornments() {
                           onMouseDown={handleMouseDownPassword}
                           onMouseUp={handleMouseUpPassword}
                         >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
                         </IconButton>
                       </InputAdornment>
                     }

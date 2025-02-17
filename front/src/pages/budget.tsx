@@ -156,7 +156,7 @@ export default function Budget() {
             sx={{
               justifyContent: "center",
               textAlign: "center",
-              minHeight: "150vh",
+              minHeight: "125vh",
             }}
           >
             <TableContainer component={Paper}>
@@ -189,6 +189,7 @@ export default function Budget() {
                       <TableCell align="right">
                         <Input
                           sx={{ maxWidth: 100, ml: "auto" }}
+                          placeholder="¥10,000"
                           value={row.budget === "0" ? "" : row.budget}
                           onChange={(event) =>
                             budgetChange(index, event.target.value)
@@ -215,7 +216,7 @@ export default function Budget() {
               variant="outlined"
               onClick={handleSave}
             >
-              登録する
+              予算を登録する
             </Button>
           </Box>
         </main>
