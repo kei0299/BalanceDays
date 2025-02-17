@@ -4,8 +4,6 @@ import { Button, Stack, Box } from "@mui/material";
 import Head from "next/head";
 import Script from "next/script";
 import * as gtag from "@/lib/gtag";
-import GoogleIcon from "@mui/icons-material/Google";
-import Image from "next/image";
 
 export default function Index() {
   const signInWithGoogle = async (): Promise<void> => {
