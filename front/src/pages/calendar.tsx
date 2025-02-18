@@ -1,4 +1,4 @@
-import Header from "@/components/header";
+import Header from "@/components/headerLogin";
 import FooterLogin from "@/components/footerLogin";
 import { useEffect, useState } from "react";
 

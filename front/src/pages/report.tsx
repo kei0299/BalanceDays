@@ -1,4 +1,4 @@
-import Header from "@/components/header";
+import Header from "@/components/headerLogin";
 import FooterLogin from "@/components/footerLogin";
 import { Box } from "@mui/material";
 import { PieChart } from "@mui/x-charts/PieChart";

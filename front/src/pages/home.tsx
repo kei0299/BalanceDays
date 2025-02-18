@@ -1,5 +1,5 @@
 import { Box, Stack } from "@mui/material";
-import Header from "@/components/header";
+import Header from "@/components/headerLogin";
 import FooterLogin from "@/components/footerLogin";
 import { useState, useEffect } from "react";
 // import { checkSession } from "@/utils/auth/checkSession"; // セッション情報確認用

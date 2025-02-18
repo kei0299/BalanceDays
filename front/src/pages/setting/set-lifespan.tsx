@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Header from "@/components/header";
+import Header from "@/components/headerLogin";
 import FooterLogin from "@/components/footerLogin";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";

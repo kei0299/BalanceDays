@@ -1,4 +1,4 @@
-import Header from "@/components/header";
+import Header from "@/components/headerLogin";
 import FooterLogin from "@/components/footerLogin";
 import { Box, Button } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
@@ -337,10 +337,10 @@ export default function Setting() {
           >
             <h1>勤務先登録画面</h1>
             <Box sx={{ width: "100%" }}>
-              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+              <Box sx={{ borderBottom: 1, borderColor: "divider"}}>
                 <Tabs value={tab} onChange={tabChange} aria-label="tabChanges">
                   {companies.map((company, index) => (
-                    <Tab key={index} label={company.name} />
+                    <Tab key={index} label={company.name}  sx={{textTransform: "none"}}/>
                   ))}
                   <Tab label="新規作成" {...a11yProps(companies.length)} />
                 </Tabs>
