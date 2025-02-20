@@ -192,7 +192,8 @@ export default function Home() {
                           labelStyle: {
                             transform: "translateX(-50px)",
                           },
-                          min: 0
+                          min: 0,
+                          tickInterval: "auto" // 目盛りの間隔を増やす
                         },
                       ]}
                       series={[

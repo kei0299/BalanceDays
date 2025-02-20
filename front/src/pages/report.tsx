@@ -307,7 +307,7 @@ export default function Report() {
                     </Typography>
                   </Stack>
                   {/* カテゴリ選択 */}
-                  <FormControl variant="standard" sx={{ minWidth: 150, ml: 2 }}>
+                  <FormControl sx={{ minWidth: 150, ml: 2 }}>
                     <InputLabel>カテゴリ</InputLabel>
                     <Select
                       value={expenseCategory}

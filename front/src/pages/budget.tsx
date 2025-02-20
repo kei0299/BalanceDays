@@ -17,6 +17,7 @@ import { fetchBudget } from "@/utils/auth/fetchBudget";
 import { fetchBudgetSum } from "@/utils/auth/fetchBudgetSum";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import { useAlert } from "@/components/AlertContext";
 
 // API用の型定義
 interface expenseData {
@@ -42,6 +43,7 @@ const client = cookies["client"];
 const uid = cookies["uid"];
 
 export default function Budget() {
+  const { showAlert } = useAlert();
   const [budgets, setBudgets] = useState<BudgetRowData[]>([]);
   const [sumBudget, setSumBudget] = useState<string>("");
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
@@ -67,7 +69,6 @@ export default function Budget() {
     };
     fetchBudgetData();
   }, [currentMonth]);
-  
 
   const monthChange = (direction: "previous" | "next") => {
     const newMonth = new Date(currentMonth);
@@ -121,9 +122,10 @@ export default function Budget() {
       );
 
       if (!response.ok) {
+        showAlert("予算の登録に失敗しました。", "warning");
         throw new Error("予算の登録に失敗しました");
       }
-      alert("予算を登録しました");
+      showAlert("予算を登録しました。", "success");
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -148,9 +150,9 @@ export default function Budget() {
             {formattedMonth}
             <KeyboardArrowRightIcon onClick={() => monthChange("next")} />
           </Box>
-          <Box sx={{mr:10, textAlign: "right"}}>
-              <h2>今月の予算合計：￥{sumBudget}</h2>
-            </Box>
+          <Box sx={{ mr: 10, textAlign: "right" }}>
+            <h2>今月の予算合計：￥{sumBudget}</h2>
+          </Box>
 
           <Box
             sx={{

@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { checkSession } from "@/utils/auth/checkSession";
 import { AppContext } from "next/app";
 import Meta from "../components/Meta";
+import { AlertProvider } from "@/components/AlertContext";
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -50,7 +51,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <Meta />
-      <Component {...pageProps} />
+      <AlertProvider>
+        <Component {...pageProps} />
+      </AlertProvider>
     </>
   );
 };

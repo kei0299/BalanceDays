@@ -26,6 +26,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { useAlert } from "@/components/AlertContext";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -106,6 +107,7 @@ function a11yProps(index: number) {
 }
 
 export default function Calender() {
+    const { showAlert } = useAlert();
   // 金額入力フォーム
   const [incomeAmount, setIncomeAmount] = React.useState("");
   const [expenseAmount, setExpenseAmount] = React.useState("");
@@ -224,6 +226,7 @@ export default function Calender() {
       setShifts(shiftData);
 
       if (!transactionResponse.ok) {
+        showAlert("データ取得に失敗しました。", "warning");
         throw new Error("データ取得に失敗しました");
       }
 
@@ -321,9 +324,10 @@ export default function Calender() {
       );
 
       if (!response.ok) {
+        showAlert("支出の記録に失敗しました。", "warning");
         throw new Error("支出の記録に失敗しました");
       }
-      alert("支出を記録しました");
+      showAlert("支出を記録しました。", "success");
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -355,9 +359,10 @@ export default function Calender() {
       );
 
       if (!response.ok) {
+        showAlert("支出ログの更新に失敗しました。", "warning");
         throw new Error("支出ログの更新に失敗しました");
       }
-      alert("支出ログを更新しました");
+      showAlert("支出ログを更新しました。", "success");
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -390,9 +395,10 @@ export default function Calender() {
       );
 
       if (!response.ok) {
+        showAlert("収入の記録に失敗しました。", "warning");
         throw new Error("収入の記録に失敗しました");
       }
-      alert("収入を記録しました");
+      showAlert("収入を記録しました。", "success");
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -424,9 +430,10 @@ export default function Calender() {
       );
 
       if (!response.ok) {
+        showAlert("収入ログの更新に失敗しました。", "warning");
         throw new Error("収入ログの更新に失敗しました");
       }
-      alert("収入ログを更新しました");
+      showAlert("収入ログを更新しました。", "success");
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -459,16 +466,16 @@ export default function Calender() {
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error:", errorData);
-        alert(`削除に失敗しました: ${errorData.error || "不明なエラー"}`);
+        showAlert("収支ログの削除に失敗しました。", "warning");
         return;
       }
 
       const data = await response.json();
-      alert(data.message || "削除完了");
+      showAlert(data.message, "success");
       window.location.reload();
     } catch (error) {
       console.error("Network Error:", error);
-      alert("エラーが発生しました。再度お試しください。");
+      showAlert("エラーが発生しました。再度お試しください。", "warning");
     }
   };
 
@@ -483,7 +490,6 @@ export default function Calender() {
     setEndTime(dayjs(shift.end_time));
     setBreakTime(shift.break_time);
     setShiftMemo(shift.memo);
-    console.log(shift.start_time);
     setIsEditMode(true);
   };
 
@@ -529,9 +535,10 @@ export default function Calender() {
       );
 
       if (!response.ok) {
+        showAlert("シフトの登録に失敗しました。", "error");
         throw new Error("シフトの登録に失敗しました");
       }
-      alert("シフトを登録しました");
+      showAlert("シフトを登録しました。", "success");
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -579,9 +586,10 @@ export default function Calender() {
       );
 
       if (!response.ok) {
-        throw new Error("支出ログの更新に失敗しました");
+        showAlert("シフトの更新に失敗しました。", "error");
+        throw new Error("シフトの更新に失敗しました");
       }
-      alert("支出ログを更新しました");
+      showAlert("シフトを更新しました。", "success");
       window.location.reload();
     } catch (error) {
       console.error(error);

@@ -14,8 +14,10 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LockIcon from "@mui/icons-material/Lock";
 import CheckIcon from "@mui/icons-material/Check";
 import { setCookie } from "nookies";
+import { useAlert } from "@/components/AlertContext";
 
 export default function InputAdornments() {
+  const { showAlert } = useAlert();
   // 目のアイコンクリックイベント（パスワードの表示、非表示）
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -41,40 +43,35 @@ export default function InputAdornments() {
 
     // 必須フィールドチェック
     if (!email || !password || !passwordConfirmation) {
-      alert("すべてのフィールドを入力してください");
+      showAlert("すべてのフィールドを入力してください。", "warning");
       return;
     }
 
     // パスワード一致チェック
     if (password !== passwordConfirmation) {
-      alert("パスワードが一致しません");
-      console.log("入力されたパスワード:", password);
-      console.log("確認用パスワード:", passwordConfirmation);
+      showAlert("パスワードが一致しません。", "warning");
       return;
     }
 
     // パスワードの長さチェック
     if (password.length < 6) {
-      alert("パスワードは6文字以上で入力してください。");
+      showAlert("パスワードは6文字以上で入力してください。", "warning");
       return;
     }
 
     // railsAPI_新規登録
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email,
-            password: password,
-            password_confirmation: passwordConfirmation,
-          }),
-        }
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          password_confirmation: passwordConfirmation,
+        }),
+      });
       if (!response.ok) {
         const errorData = await response.json();
 
@@ -82,6 +79,7 @@ export default function InputAdornments() {
           return;
         }
         console.log(errorData);
+        showAlert("登録に失敗しました。", "error");
         throw new Error("登録に失敗しました");
       }
 
@@ -102,9 +100,9 @@ export default function InputAdornments() {
         );
 
         if (!loginResponse.ok) {
+          showAlert("ログインに失敗しました。", "error");
           throw new Error("ログインに失敗しました");
         }
-
         const accessToken = loginResponse.headers.get("access-token");
         const client = loginResponse.headers.get("client");
         const uid = loginResponse.headers.get("uid");
@@ -129,18 +127,19 @@ export default function InputAdornments() {
           setAccessToken(accessToken, client, uid);
         }
 
-        alert("新規作成しました");
+        showAlert("新規作成しました。", "success");
+
         setEmail("");
         setPassword("");
         setPasswordConfirmation("");
         window.location.href = "/home";
       } catch (error) {
         console.error(error);
-        alert("自動ログイン処理でエラーが発生しました");
+        showAlert("ログインエラーが発生しました。", "error");
       }
     } catch (error) {
       console.error(error);
-      alert("登録処理でエラーが発生しました");
+      showAlert("登録エラーが発生しました。", "error");
     }
   };
 
