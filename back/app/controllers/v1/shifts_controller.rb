@@ -29,40 +29,40 @@ class V1::ShiftsController < ApplicationController
   
     shifts_with_salary = shifts.map do |shift|
       work_time = hours_between(shift.start_time, shift.end_time) - shift.break_time
+      training_hours = 0
+      normal_hours = work_time
   
-      past_training_hours = total_past_training_hours(current_user, shift.job_id, shift.start_time)
+      case shift.training_settings
+      when 1  # **研修期間中なら研修時給**
+        if shift.training_start <= shift.start_time && shift.start_time <= shift.training_end
+          training_hours = work_time
+          normal_hours = 0
+        end
   
-      remaining_training_hours = shift.training_time - past_training_hours
-      if shift.training_settings == Job.training_settings[:training_time] && remaining_training_hours > 0
-        training_hours = [work_time, remaining_training_hours].min
-        normal_hours = work_time - training_hours
-      else
-        training_hours = 0
-        normal_hours = work_time
+      when 2  # **研修時間が終わっていなければ研修時給**
+        past_training_hours = total_past_training_hours(current_user, shift.job_id, shift.start_time)
+        remaining_training_hours = shift.training_time - past_training_hours
+  
+        if remaining_training_hours > 0
+          training_hours = [work_time, remaining_training_hours].min
+          normal_hours = work_time - training_hours
+        end
       end
   
-      # 深夜時間を計算
+      # **深夜時間の計算**
       night_hours = calculate_night_hours(shift.start_time, shift.end_time)
-  
-      # 深夜時間の中で研修に該当する部分を抽出
       training_night_hours = [night_hours, training_hours].min
       normal_night_hours = night_hours - training_night_hours
   
-      # **研修期間または研修時間中なら研修給料適用**
-      if shift.training_start <= shift.start_time && shift.start_time <= shift.training_end
-        training_hours += normal_hours
-        normal_hours = 0
-      end
-  
       # **給与計算**
       total_salary = (training_hours - training_night_hours) * shift.training_wage +
-                     training_night_hours * shift.training_wage +  # 研修時間内は深夜でも `training_wage`
+                     training_night_hours * shift.training_wage +  # 研修時間内の深夜給
                      (normal_hours - normal_night_hours) * shift.hourly_wage +
                      normal_night_hours * shift.night_wage
   
       shift.as_json.merge(
         total_salary: total_salary.to_i,
-        past_training_hours: past_training_hours,
+        past_training_hours: past_training_hours || 0,
         training_hours: training_hours,
         normal_hours: normal_hours,
         night_hours: night_hours,
@@ -71,7 +71,8 @@ class V1::ShiftsController < ApplicationController
     end
   
     render json: shifts_with_salary
-  end  
+  end
+  
   
   def create
     shift = current_user.shifts.new(shift_params)

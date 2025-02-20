@@ -107,7 +107,7 @@ function a11yProps(index: number) {
 }
 
 export default function Calender() {
-    const { showAlert } = useAlert();
+  const { showAlert } = useAlert();
   // 金額入力フォーム
   const [incomeAmount, setIncomeAmount] = React.useState("");
   const [expenseAmount, setExpenseAmount] = React.useState("");
@@ -226,7 +226,7 @@ export default function Calender() {
       setShifts(shiftData);
 
       if (!transactionResponse.ok) {
-        showAlert("データ取得に失敗しました。", "warning");
+        showAlert("データ取得に失敗しました。", "error");
         throw new Error("データ取得に失敗しました");
       }
 
@@ -324,7 +324,7 @@ export default function Calender() {
       );
 
       if (!response.ok) {
-        showAlert("支出の記録に失敗しました。", "warning");
+        showAlert("支出の記録に失敗しました。", "error");
         throw new Error("支出の記録に失敗しました");
       }
       showAlert("支出を記録しました。", "success");
@@ -359,7 +359,7 @@ export default function Calender() {
       );
 
       if (!response.ok) {
-        showAlert("支出ログの更新に失敗しました。", "warning");
+        showAlert("支出ログの更新に失敗しました。", "error");
         throw new Error("支出ログの更新に失敗しました");
       }
       showAlert("支出ログを更新しました。", "success");
@@ -395,7 +395,7 @@ export default function Calender() {
       );
 
       if (!response.ok) {
-        showAlert("収入の記録に失敗しました。", "warning");
+        showAlert("収入の記録に失敗しました。", "error");
         throw new Error("収入の記録に失敗しました");
       }
       showAlert("収入を記録しました。", "success");
@@ -430,7 +430,7 @@ export default function Calender() {
       );
 
       if (!response.ok) {
-        showAlert("収入ログの更新に失敗しました。", "warning");
+        showAlert("収入ログの更新に失敗しました。", "error");
         throw new Error("収入ログの更新に失敗しました");
       }
       showAlert("収入ログを更新しました。", "success");
@@ -466,7 +466,7 @@ export default function Calender() {
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error:", errorData);
-        showAlert("収支ログの削除に失敗しました。", "warning");
+        showAlert("収支ログの削除に失敗しました。", "error");
         return;
       }
 
@@ -475,7 +475,7 @@ export default function Calender() {
       window.location.reload();
     } catch (error) {
       console.error("Network Error:", error);
-      showAlert("エラーが発生しました。再度お試しください。", "warning");
+      showAlert("エラーが発生しました。再度お試しください。", "error");
     }
   };
 
@@ -596,7 +596,7 @@ export default function Calender() {
     }
   };
 
-  // railsAPI_収支の削除
+  // railsAPI_シフトの削除
   const shiftDelete = async (logId: number) => {
     try {
       const response = await fetch(
@@ -617,15 +617,14 @@ export default function Calender() {
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error:", errorData);
-        alert(`削除に失敗しました: ${errorData.error || "不明なエラー"}`);
+        showAlert("シフトの削除に失敗しました。", "error");
         return;
       }
-      const data = await response.json();
-      alert(data.message || "削除完了");
+      showAlert("シフトを削除しました。", "success");
       window.location.reload();
     } catch (error) {
       console.error("Network Error:", error);
-      alert("エラーが発生しました。再度お試しください。");
+      showAlert("エラーが発生しました。再度お試しください。", "error");
     }
   };
 

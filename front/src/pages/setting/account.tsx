@@ -7,8 +7,10 @@ import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
 import React, { useState, useEffect } from "react";
 import { setCookie, parseCookies, destroyCookie } from "nookies";
 import { useRouter } from "next/navigation";
+import { useAlert } from "@/components/AlertContext";
 
 export default function Setting() {
+  const { showAlert } = useAlert();
   const [email, setEmail] = useState<string>("");
   const router = useRouter();
 
@@ -55,7 +57,8 @@ export default function Setting() {
       );
 
       if (!response.ok) {
-        throw new Error("設定に失敗しました");
+        showAlert("メールアドレスの更新に失敗しました。", "error");
+        throw new Error("メールアドレスの更新に失敗しました");
       }
 
       // サーバーからの新しいuidを取得
@@ -67,7 +70,7 @@ export default function Setting() {
         path: "/",
       });
 
-      alert("設定しました");
+      showAlert("メールアドレスを更新しました。", "success");
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -99,6 +102,7 @@ export default function Setting() {
       );
 
       if (!deleteResponse.ok) {
+        showAlert("退会処理に失敗しました。", "error");
         throw new Error("退会処理に失敗しました");
       }
 
@@ -117,7 +121,8 @@ export default function Setting() {
       );
 
       if (!signOutResponse.ok) {
-        throw new Error("サインアウト処理に失敗しました");
+        showAlert("退会処理に失敗しました。", "error");
+        throw new Error("退会処理に失敗しました");
       }
 
       // クッキー削除
@@ -125,11 +130,11 @@ export default function Setting() {
       destroyCookie(null, "client");
       destroyCookie(null, "uid");
 
-      alert("退会処理が完了しました");
+      showAlert("退会処理が完了しました。", "success");
       router.push("/");
     } catch (error) {
       console.error(error);
-      alert("エラーが発生しました。再試行してください。");
+      showAlert("エラーが発生しました。再試行してください。", "error");
     }
   };
 

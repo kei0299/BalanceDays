@@ -23,6 +23,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 
 import { getJobInfo } from "@/utils/api/getJobInfo";
+import { useAlert } from "@/components/AlertContext";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -79,6 +80,7 @@ const client = cookies["client"];
 const uid = cookies["uid"];
 
 export default function Setting() {
+  const { showAlert } = useAlert();
   const [closingDay, setClosingDay] = React.useState("5日");
   const [payoutMonth, setPayoutMonth] = React.useState("当月");
   const [payoutDay, setPayoutDay] = React.useState("25日");
@@ -221,7 +223,7 @@ export default function Setting() {
         ];
         throw new Error(errorMessages.join("\n"));
       }
-      alert("勤務先情報を登録しました");
+      showAlert("勤務先情報を登録しました。", "success");
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -252,7 +254,7 @@ export default function Setting() {
         ];
         throw new Error(errorMessages.join("\n"));
       }
-      alert("勤務先情報を更新しました");
+      showAlert("勤務先情報を更新しました。", "success");
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -280,15 +282,14 @@ export default function Setting() {
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error:", errorData);
-        alert(`削除に失敗しました: ${errorData.error || "不明なエラー"}`);
+        showAlert("勤務先情報の削除に失敗しました。", "error");
         return;
       }
-      const data = await response.json();
-      alert(data.message || "削除完了");
+      showAlert("勤務先情報を削除しました","success");
       window.location.reload();
     } catch (error) {
       console.error("Network Error:", error);
-      alert("エラーが発生しました。再度お試しください。");
+      showAlert("エラーが発生しました。再度お試しください。", "error");
     }
   };
 
@@ -337,10 +338,14 @@ export default function Setting() {
           >
             <h1>勤務先登録画面</h1>
             <Box sx={{ width: "100%" }}>
-              <Box sx={{ borderBottom: 1, borderColor: "divider"}}>
+              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                 <Tabs value={tab} onChange={tabChange} aria-label="tabChanges">
                   {companies.map((company, index) => (
-                    <Tab key={index} label={company.name}  sx={{textTransform: "none"}}/>
+                    <Tab
+                      key={index}
+                      label={company.name}
+                      sx={{ textTransform: "none" }}
+                    />
                   ))}
                   <Tab label="新規作成" {...a11yProps(companies.length)} />
                 </Tabs>

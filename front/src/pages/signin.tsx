@@ -13,8 +13,10 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LockIcon from "@mui/icons-material/Lock";
 import { setCookie } from "nookies";
+import { useAlert } from "@/components/AlertContext";
 
 export default function InputAdornments() {
+  const { showAlert } = useAlert();
   // 目のアイコンクリックイベント（パスワードの表示、非表示）
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -40,13 +42,13 @@ export default function InputAdornments() {
 
     // 必須フィールドチェック
     if (!email || !password) {
-      alert("すべてのフィールドを入力してください");
+      showAlert("すべてのフィールドを入力してください。", "warning");
       return;
     }
 
     // パスワードの長さチェック
     if (password.length < 6) {
-      alert("パスワードは6文字以上で入力してください。");
+      showAlert("パスワードは6文字以上で入力してください。", "warning");
       return;
     }
 
@@ -67,7 +69,7 @@ export default function InputAdornments() {
       );
 
       if (!response.ok) {
-        alert("ログインに失敗しました");
+        showAlert("ログインに失敗しました。", "error");
         throw new Error("ログインに失敗しました");
       }
       const accessToken = response.headers.get("access-token");
@@ -92,8 +94,8 @@ export default function InputAdornments() {
 
       if (accessToken && client && uid) {
         setAccessToken(accessToken, client, uid);
-        
-        alert("ログインに成功しました");
+
+        showAlert("ログインに成功しました。", "error");
         setEmail("");
         setPassword("");
       }

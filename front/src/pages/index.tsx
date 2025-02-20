@@ -4,8 +4,10 @@ import { Button, Stack, Box } from "@mui/material";
 import Head from "next/head";
 import Script from "next/script";
 import * as gtag from "@/lib/gtag";
+import { useAlert } from "@/components/AlertContext";
 
 export default function Index() {
+  const { showAlert } = useAlert();
   const signInWithGoogle = async (): Promise<void> => {
     try {
       //Google認証開始のエンドポイント
@@ -25,11 +27,10 @@ export default function Index() {
       const redirectUrl = `${backendAuthUrl}?auth_origin_url=${encodeURIComponent(
         `${process.env.NEXT_PUBLIC_FRONT_URL}/callback`
       )}`;
-      console.log(`リダイレクト${redirectUrl}`);
       window.location.href = redirectUrl;
     } catch (error) {
       console.error("Google認証中にエラーが発生しました:", error);
-      alert("Google認証に失敗しました。再度お試しください。");
+      showAlert("Google認証に失敗しました。再度お試しください。", "warning");
     }
   };
 

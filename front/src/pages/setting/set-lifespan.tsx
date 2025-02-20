@@ -14,6 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 
 import { parseCookies } from "nookies";
 import { checkSession } from "@/utils/auth/checkSession";
+import { useAlert } from "@/components/AlertContext";
 
 // sessionの型を定義
 type SessionData = {
@@ -25,6 +26,7 @@ type SessionData = {
 };
 
 const BalanceInput = () => {
+  const { showAlert } = useAlert();
   const [balance, setBalance] = useState(""); // 貯金残高
   const [caution, setCaution] = useState<number>(1); // 注意レベル
   const [warning, setWarning] = useState<number>(1); // 警告レベル
@@ -92,9 +94,10 @@ const BalanceInput = () => {
       );
 
       if (!response.ok) {
-        throw new Error("設定に失敗しました");
+        showAlert("生存確認設定の登録に失敗しました。", "error");
+        throw new Error("生存確認設定に失敗しました");
       }
-      alert("設定しました");
+      showAlert("生存確認設定を登録しました。", "success");
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -251,7 +254,7 @@ const BalanceInput = () => {
               variant="outlined"
               onClick={lifeSave}
             >
-              登録する
+              生存確認設定を登録する
             </Button>
           </Box>
         </main>
