@@ -1,6 +1,15 @@
 import Header from "@/components/headerLogin";
 import FooterLogin from "@/components/footerLogin";
-import { Box, Button, Stack } from "@mui/material";
+import {
+  Box,
+  Button,
+  Stack,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { checkSession } from "@/utils/auth/checkSession";
 import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
@@ -11,6 +20,7 @@ import { useAlert } from "@/components/AlertContext";
 
 export default function Setting() {
   const { showAlert } = useAlert();
+  const [open, setOpen] = useState(false); // 退会確認ダイアログの状態
   const [email, setEmail] = useState<string>("");
   const router = useRouter();
 
@@ -78,7 +88,7 @@ export default function Setting() {
   };
 
   // 退会ボタン
-  const handleDelete = async (event: React.FormEvent) => {
+  const userDelete = async (event: React.FormEvent) => {
     event.preventDefault();
 
     const cookies = parseCookies();
@@ -187,10 +197,28 @@ export default function Setting() {
               type="submit"
               color="error"
               variant="contained"
-              onClick={handleDelete}
+              onClick={() => setOpen(true)}
             >
               退会する
             </Button>
+
+            {/* 退会確認ダイアログ */}
+            <Dialog open={open} onClose={() => setOpen(false)}>
+              <DialogTitle>本当に退会しますか？</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  退会すると、アカウントの情報は削除され、元に戻せません。
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setOpen(false)} color="primary">
+                  キャンセル
+                </Button>
+                <Button onClick={userDelete} color="error">
+                  退会する
+                </Button>
+              </DialogActions>
+            </Dialog>
           </Box>
         </main>
         <FooterLogin />

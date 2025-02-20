@@ -95,7 +95,7 @@ export default function InputAdornments() {
       if (accessToken && client && uid) {
         setAccessToken(accessToken, client, uid);
 
-        showAlert("ログインに成功しました。", "error");
+        showAlert("ログインに成功しました。", "success");
         setEmail("");
         setPassword("");
       }

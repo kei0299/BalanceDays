@@ -1,43 +1,39 @@
-import * as React from "react";
-import Alert from "@mui/material/Alert";
-import Snackbar from "@mui/material/Snackbar";
-import Button from "@mui/material/Button";
+import { useState } from "react";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
-export default function AlertExample() {
-  const [open, setOpen] = React.useState(false);
+const DeleteConfirmation = ({ onConfirm }: { onConfirm: () => void }) => {
+  const [open, setOpen] = useState(false);
 
-  // アラートを表示
-  const handleClick = () => {
-    setOpen(true);
-  };
-
-  // 一定時間後に閉じる
-  const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const handleConfirm = () => {
+    onConfirm();
+    handleClose();
   };
 
   return (
     <>
-      <Button variant="contained" onClick={handleClick}>
-        新規作成
+      <Button variant="contained" color="error" onClick={handleOpen}>
+        退会する
       </Button>
-
-      <Snackbar
-        open={open}
-        autoHideDuration={3000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }} // 画面中央（上部）に配置
-      >
-        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-          新規作成しました！
-        </Alert>
-      </Snackbar>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>本当に退会しますか？</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            退会すると、アカウントの情報は削除され、元に戻せません。
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            キャンセル
+          </Button>
+          <Button onClick={handleConfirm} color="error">
+            退会する
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
-}
+};
+
+export default DeleteConfirmation;
