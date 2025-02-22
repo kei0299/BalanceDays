@@ -181,7 +181,6 @@ export default function Report() {
         }
 
         const data = await response.json();
-        console.log(data);
         setCategoryBudget(data.category_budget);
         setCategoryExpense(data.category_expense);
         setCategoryRatio(data.category_ratio);
@@ -228,7 +227,7 @@ export default function Report() {
       <title>BalanceDays</title>
       <link rel="icon" href="/favicon.ico" />
       <div>
-        <main>
+        <main style={{ minHeight: "130vh" }}>
           <Box
             sx={{
               display: "flex",
@@ -249,80 +248,86 @@ export default function Report() {
               textAlign: "center",
             }}
           >
-            <Stack spacing={2} direction="row">
-              {/* 円グラフ */}
-              <Stack spacing={3} direction="column" alignItems="center">
-                <Typography sx={{}}>カテゴリ別収支レポート（￥）</Typography>
-                <PieChart
-                  series={[{ data: expenses }]}
-                  width={500}
-                  height={200}
+            {/* 円グラフ */}
+            <Stack spacing={3} direction="column" alignItems="center">
+              <Typography sx={{ fontSize: "24px", fontWeight: "bold" }}>
+                カテゴリ別収支レポート（￥）
+              </Typography>
+              <PieChart
+                series={[{ data: expenses }]}
+                width={700}
+                height={400}
+              />
+
+              {/* スイッチ */}
+              <Box display="flex" alignItems="center" gap={1} marginTop={1}>
+                <Typography
+                  sx={{
+                    color: checked ? "gray" : "red", // オフ時は赤、オン時は灰色
+                    fontWeight: !checked ? "bold" : "normal", // オフ時は太字
+                    fontSize: "20px"
+                  }}
+                >
+                  支出
+                </Typography>
+                <Switch
+                  checked={checked}
+                  onChange={checkedChange}
+                  onClick={switchToggle}
+                  sx={{
+                    "& .MuiSwitch-track": {
+                      backgroundColor: checked ? "blue" : "red", // トラックの色
+                    },
+                  }}
                 />
+                <Typography
+                  sx={{
+                    color: checked ? "blue" : "gray", // オン時は緑、オフ時は灰色
+                    fontWeight: checked ? "bold" : "normal", // オン時は太字
+                    fontSize: "20px"
+                  }}
+                >
+                  収入
+                </Typography>
+              </Box>
+            </Stack>
 
-                {/* スイッチ */}
-                <Box display="flex" alignItems="center" gap={1} marginTop={1}>
-                  <Typography
-                    sx={{
-                      color: checked ? "gray" : "red", // オフ時は赤、オン時は灰色
-                      fontWeight: !checked ? "bold" : "normal", // オフ時は太字
-                    }}
-                  >
-                    支出
+            <Stack spacing={3} direction="column" sx={{ mt: "100px" }}>
+              <Typography sx={{ fontSize: "24px", fontWeight: "bold" }}>
+                総予算 / カテゴリ別予算（％）
+              </Typography>
+              <Stack spacing={3} direction="row">
+                <Stack spacing={2} direction="column">
+                  <Gauge width={200} height={200} value={totalRatio} />
+                  <Typography>
+                    ¥{totalExpense.toLocaleString()} / ¥
+                    {totalBudget.toLocaleString()}
                   </Typography>
-                  <Switch
-                    checked={checked}
-                    onChange={checkedChange}
-                    onClick={switchToggle}
-                    sx={{
-                      "& .MuiSwitch-track": {
-                        backgroundColor: checked ? "blue" : "red", // トラックの色
-                      },
-                    }}
-                  />
-                  <Typography
-                    sx={{
-                      color: checked ? "blue" : "gray", // オン時は緑、オフ時は灰色
-                      fontWeight: checked ? "bold" : "normal", // オン時は太字
-                    }}
-                  >
-                    収入
-                  </Typography>
-                </Box>
-              </Stack>
-
-              <Stack spacing={3} direction="column">
-                <Typography>総予算 / カテゴリ別予算（％）</Typography>
-                <Stack spacing={3} direction="row">
-                  <Stack spacing={2} direction="column">
-                    <Gauge width={130} height={130} value={totalRatio} />
-                    <Typography>
-                      {totalExpense} / {totalBudget}
-                    </Typography>
-                  </Stack>
-
-                  <Stack spacing={2} direction="column">
-                    <Gauge width={130} height={130} value={categoryRatio} />
-                    <Typography>
-                      {categoryExpense} / {categoryBudget}
-                    </Typography>
-                  </Stack>
-                  {/* カテゴリ選択 */}
-                  <FormControl sx={{ minWidth: 150, ml: 2 }}>
-                    <InputLabel>カテゴリ</InputLabel>
-                    <Select
-                      value={expenseCategory}
-                      label="カテゴリ"
-                      onChange={selectExpenseCategory}
-                      MenuProps={MenuProps}
-                    >
-                      {expenseCategories.map((category) => (
-                        <MenuItem key={category.id} value={category.id}>
-                          {category.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
                 </Stack>
+
+                <Stack spacing={2} direction="column">
+                  <Gauge width={180} height={180} value={categoryRatio} />
+                  <Typography>
+                  ¥{categoryExpense.toLocaleString()} / ¥
+                  {categoryBudget.toLocaleString()}
+                  </Typography>
+                </Stack>
+                {/* カテゴリ選択 */}
+                <FormControl sx={{ minWidth: 150, ml: 2 }}>
+                  <InputLabel>カテゴリ</InputLabel>
+                  <Select
+                    value={expenseCategory}
+                    label="カテゴリ"
+                    onChange={selectExpenseCategory}
+                    MenuProps={MenuProps}
+                  >
+                    {expenseCategories.map((category) => (
+                      <MenuItem key={category.id} value={category.id}>
+                        {category.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Stack>
             </Stack>
           </Box>

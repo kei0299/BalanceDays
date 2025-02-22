@@ -29,7 +29,7 @@ export default function Home() {
 
     const fetchCharacterData = async () => {
       try {
-        const response = await fetchCharacter(apiFormattedDate); // `fetchCharacter`はAPIコール関数と仮定
+        const response = await fetchCharacter(apiFormattedDate);
         const {
           character_status: characterNum,
           set_life,

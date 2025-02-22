@@ -727,7 +727,7 @@ export default function Calender() {
                         {dayjs(shift.start_time).format("HH:mm")} -{" "}
                         {dayjs(shift.end_time).format("HH:mm")} <br />
                         【労働：{shift.work_time} h 休憩 : {shift.break_time} h
-                        】 日給 :¥{shift.total_salary}({shift.memo})
+                        】 日給 :¥{shift.total_salary.toLocaleString()}({shift.memo})
                         <IconButton
                           sx={{ ml: 1 }}
                           aria-label="edit"

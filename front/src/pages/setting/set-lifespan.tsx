@@ -60,12 +60,12 @@ const BalanceInput = () => {
     setBalance(formatBalance(event.target.value));
   };
 
-  // railsAPI_生存確認設定の登録
+  // railsAPI_生存期間の登録
   const lifeSave = async (event: React.FormEvent) => {
     event.preventDefault();
 
     if (caution <= warning) {
-      alert("注意レベル>警告レベルに設定してください。");
+      showAlert("注意レベル>警告レベルに設定してください。", "warning");
       return;
     }
 
@@ -94,10 +94,10 @@ const BalanceInput = () => {
       );
 
       if (!response.ok) {
-        showAlert("生存確認設定の登録に失敗しました。", "error");
-        throw new Error("生存確認設定に失敗しました");
+        showAlert("生存期間の登録に失敗しました。", "error");
+        throw new Error("生存期間に失敗しました");
       }
-      showAlert("生存確認設定を登録しました。", "success");
+      showAlert("生存期間を登録しました。", "success");
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -254,7 +254,7 @@ const BalanceInput = () => {
               variant="outlined"
               onClick={lifeSave}
             >
-              生存確認設定を登録する
+              生存期間を登録する
             </Button>
           </Box>
         </main>
