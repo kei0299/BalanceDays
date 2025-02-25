@@ -10,6 +10,7 @@ import CustomLineChart from "@/components/CustomLineChart";
 import { Typography } from "@mui/material";
 import ReportHome from "@/components/reportHome";
 import { fetchHomeData } from "@/utils/api/totalMoney";
+import Link from "@mui/material/Link";
 
 export default function Home() {
   const currentMonth: Date = new Date();
@@ -116,7 +117,24 @@ export default function Home() {
               <br />
               今月の支出：¥{(totalExpense ?? 0).toLocaleString()}
             </Typography>
-          </Box>
+      
+              <Link
+                href="calendar"
+                sx={{
+                  color: "gray",
+                  textDecoration: "none",
+                  fontSize: "14px",
+                  ml: 1,
+                  display: "inline-block",
+                  "&:hover": {
+                    textDecoration: "underline",
+                  },
+                }}
+              >
+                詳しく見る →
+              </Link>
+            </Box>
+      
           <Box
             sx={{
               height: "50vh",
@@ -133,9 +151,11 @@ export default function Home() {
             >
               {characterStatus === 3 ? (
                 <>
-                  <Stack spacing={3} direction="row" alignItems="center">
+                  <Stack spacing={2} direction="row" alignItems="center">
                     <Box sx={{ display: "flex", pt: 30 }}>
-                      <CustomLineChart xData={xData} chartData={chartData} />
+                      <Box sx={{ mt: 7 }}>
+                        <CustomLineChart xData={xData} chartData={chartData} />
+                      </Box>
                       <Image
                         src="/image/warning.png"
                         alt="Character 1"
@@ -164,7 +184,9 @@ export default function Home() {
                 <>
                   <Stack spacing={3} direction="row" alignItems="center">
                     <Box sx={{ display: "flex", pt: 30 }}>
-                      <CustomLineChart xData={xData} chartData={chartData} />
+                      <Box sx={{ mt: 7 }}>
+                        <CustomLineChart xData={xData} chartData={chartData} />
+                      </Box>
                       <Image
                         src="/image/caution.png"
                         alt="Character 2"
@@ -193,7 +215,9 @@ export default function Home() {
                 <>
                   <Stack spacing={3} direction="row" alignItems="center">
                     <Box sx={{ display: "flex", pt: 30 }}>
-                      <CustomLineChart xData={xData} chartData={chartData} />
+                      <Box sx={{ mt: 7 }}>
+                        <CustomLineChart xData={xData} chartData={chartData} />
+                      </Box>
                       <Image
                         src="/image/stable.png"
                         alt="Character 3"
@@ -222,7 +246,7 @@ export default function Home() {
                 <p>
                   設定→生存期間設定から情報を登録してください。
                   <br />
-                  予算を設定することで今月の予算から過去12ヶ月分を取得し、生存期間を算出します。
+                  さらに予算を設定することで今月の予算から過去12ヶ月分を取得し、生存期間を算出します。
                 </p>
               )}
             </div>

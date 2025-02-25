@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import { parseCookies } from "nookies";
 import { Gauge } from "@mui/x-charts/Gauge";
 import Stack from "@mui/material/Stack";
+import Link from "@mui/material/Link";
 
 // 円グラフ用の型定義
 interface pieChartData {
@@ -23,7 +24,6 @@ export default function ReportHome() {
   const [totalExpense, setTotalExpense] = useState([]);
 
   const [totalRatio, setTotalRatio] = useState<number>(0);
-
 
   const checkedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
@@ -132,72 +132,100 @@ export default function ReportHome() {
 
   return (
     <>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            {/* 円グラフ */}
-            <Stack spacing={3} direction="column" alignItems="center" sx={{ mt: 6 }}>
-              <Typography sx={{ fontSize: "24px", fontWeight: "bold" }}>
-                カテゴリ別収支レポート（￥）
-              </Typography>
-              <PieChart
-                series={[{ data: expenses }]}
-                width={500}
-                height={200}
-              />
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        {/* 円グラフ */}
+        <Stack
+          spacing={3}
+          direction="column"
+          alignItems="center"
+          sx={{ mt: 6 }}
+        >
+          <Stack spacing={2} direction="row" alignItems="center" sx={{ mt: 6 }}>
+            <Typography sx={{ fontSize: "24px", fontWeight: "bold" }}>
+              カテゴリ別収支レポート（￥）
+            </Typography>
+            <Link
+              href="report"
+              sx={{
+                color: "gray",
+                textDecoration: "none",
+                fontSize: "14px",
+                "&:hover": {
+                  textDecoration: "underline",
+                },
+              }}
+            >
+              詳しく見る→
+            </Link>
+          </Stack>
+          <PieChart series={[{ data: expenses }]} width={500} height={200} />
 
-              {/* スイッチ */}
-              <Box display="flex" alignItems="center" gap={1} marginTop={1}>
-                <Typography
-                  sx={{
-                    color: checked ? "gray" : "red", // オフ時は赤、オン時は灰色
-                    fontWeight: !checked ? "bold" : "normal", // オフ時は太字
-                    fontSize: "15px"
-                  }}
-                >
-                  支出
-                </Typography>
-                <Switch
-                  checked={checked}
-                  onChange={checkedChange}
-                  onClick={switchToggle}
-                  sx={{
-                    "& .MuiSwitch-track": {
-                      backgroundColor: checked ? "blue" : "red", // トラックの色
-                    },
-                  }}
-                />
-                <Typography
-                  sx={{
-                    color: checked ? "blue" : "gray", // オン時は緑、オフ時は灰色
-                    fontWeight: checked ? "bold" : "normal", // オン時は太字
-                    fontSize: "15px"
-                  }}
-                >
-                  収入
-                </Typography>
-              </Box>
-            </Stack>
-
-              <Typography sx={{ fontSize: "24px", fontWeight: "bold", mt: 2 }}>
-                総予算（％）
-              </Typography>
-              <Stack spacing={3} direction="row">
-                <Stack spacing={2} direction="column">
-                  <Gauge width={200} height={200} value={totalRatio} />
-                  <Typography>
-                    ¥{totalExpense.toLocaleString()} / ¥
-                    {totalBudget.toLocaleString()}
-                  </Typography>
-
-              </Stack>
-            </Stack>
+          {/* スイッチ */}
+          <Box display="flex" alignItems="center" gap={1} marginTop={1}>
+            <Typography
+              sx={{
+                color: checked ? "gray" : "red", // オフ時は赤、オン時は灰色
+                fontWeight: !checked ? "bold" : "normal", // オフ時は太字
+                fontSize: "15px",
+              }}
+            >
+              支出
+            </Typography>
+            <Switch
+              checked={checked}
+              onChange={checkedChange}
+              onClick={switchToggle}
+              sx={{
+                "& .MuiSwitch-track": {
+                  backgroundColor: checked ? "blue" : "red", // トラックの色
+                },
+              }}
+            />
+            <Typography
+              sx={{
+                color: checked ? "blue" : "gray", // オン時は緑、オフ時は灰色
+                fontWeight: checked ? "bold" : "normal", // オン時は太字
+                fontSize: "15px",
+              }}
+            >
+              収入
+            </Typography>
           </Box>
+        </Stack>
 
+        <Stack spacing={2} direction="row" alignItems="center">
+            <Typography sx={{ fontSize: "24px", fontWeight: "bold" }}>
+              総予算（％）
+            </Typography>
+            <Link
+              href="report"
+              sx={{
+                color: "gray",
+                textDecoration: "none",
+                fontSize: "14px",
+                "&:hover": {
+                  textDecoration: "underline",
+                },
+              }}
+            >
+              詳しく見る→
+            </Link>
+          </Stack>
+        <Stack spacing={3} direction="row">
+          <Stack spacing={2} direction="column">
+            <Gauge width={200} height={200} value={totalRatio} />
+            <Typography>
+              ¥{totalExpense.toLocaleString()} / ¥{totalBudget.toLocaleString()}
+            </Typography>
+          </Stack>
+        </Stack>
+      </Box>
     </>
   );
 }

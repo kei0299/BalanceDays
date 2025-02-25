@@ -27,7 +27,7 @@ export const fetchHomeData = async () => {
 
     // JSONレスポンスを適切に処理
     const data = await response.json();
-    console.log("APIレスポンス:", data);
+
     return data;
   } catch (error) {
     console.error("エラー:", error);

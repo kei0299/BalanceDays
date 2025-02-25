@@ -13,10 +13,13 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { parseCookies, destroyCookie } from "nookies";
 import { useAlert } from "@/components/AlertContext";
+import { useRouter } from "next/router";
 
 export default function FooterLogin() {
   const { showAlert } = useAlert();
   const [value, setValue] = React.useState(0);
+  const router = useRouter();
+  const currentPath = router.pathname;
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -25,6 +28,25 @@ export default function FooterLogin() {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const getValue = () => {
+    switch (currentPath) {
+      case "/home":
+        return 0;
+      case "/budget":
+        return 1;
+      case "/report":
+        return 2;
+      case "/calendar":
+        return 3;
+      case "/setting/account":
+      case "/setting/set-lifespan":
+      case "/setting/add-work-info":
+        return 4;
+      default:
+        return 0;
+    }
   };
 
   // ログアウトボタン
@@ -85,10 +107,7 @@ export default function FooterLogin() {
       >
         <BottomNavigation
           showLabels
-          value={value}
-          onChange={(event, newValue) => {
-            setValue(newValue);
-          }}
+          value={getValue()} 
           sx={{ width: "100%" }}
         >
           <BottomNavigationAction
