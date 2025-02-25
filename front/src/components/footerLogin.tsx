@@ -17,7 +17,6 @@ import { useRouter } from "next/router";
 
 export default function FooterLogin() {
   const { showAlert } = useAlert();
-  const [value, setValue] = React.useState(0);
   const router = useRouter();
   const currentPath = router.pathname;
 
