@@ -103,6 +103,7 @@ export default function FooterLogin() {
           width: "100%",
           display: "flex",
           justifyContent: "center",
+          zIndex: 1000
         }}
       >
         <BottomNavigation

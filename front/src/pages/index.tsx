@@ -5,6 +5,7 @@ import Head from "next/head";
 import Script from "next/script";
 import * as gtag from "@/lib/gtag";
 import { useAlert } from "@/components/AlertContext";
+import Image from "next/image";
 
 export default function Index() {
   const { showAlert } = useAlert();
@@ -67,13 +68,129 @@ export default function Index() {
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",
               alignItems: "center",
-              minHeight: "100vh",
+              minHeight: "250vh",
               textAlign: "center",
+              mt: 10,
             }}
           >
-            <h1>サービス説明</h1>
+            <h1>あと何ヶ月生活できるかを可視化！</h1>
+            <p>「失業後、現在の貯金でどのくらい生活できるのだろう？」</p>
+            <p>そんなことを考えたことはありませんか？</p>
+            <p>
+              BalanceDaysではあとどのくらい生活できるのかを計算し可視化します！
+            </p>
+            <Stack spacing={2} direction="row" sx={{ mt: 10 }}>
+              <Box>
+                <h2>STEP1</h2>
+                <p>
+                  まずは生存期間設定から現在の貯金額を入力し、予算設定画面から予算を設定しよう！
+                </p>
+                <p>貯金額と予算の設定金額をもとに生存期間が計算されるよ！</p>
+              </Box>
+              <Image
+                src="/image/stable.png"
+                alt="Character 3"
+                width={100}
+                height={100}
+              />
+            </Stack>
+
+            <Stack spacing={3} direction="row">
+              <Image
+                src="/image/index/life.png"
+                alt="life"
+                width={300}
+                height={450}
+              />
+              <Image
+                src="/image/index/budget.png"
+                alt="life"
+                width={450}
+                height={300}
+              />
+              <Image
+                src="/image/index/home.png"
+                alt="life"
+                width={450}
+                height={300}
+              />
+            </Stack>
+
+            <Stack spacing={2} direction="row" sx={{ mt: 10 }}>
+              <Box>
+                <h2>STEP2</h2>
+                <p>
+                  BalanceDaysでは勤務先やシフトの登録もできるよ。
+                </p>
+                <p>研修期間や研修時間の設定も楽々〜</p>
+                <p>カレンダー画面から選択した日にちの情報が一括表示されるよ！</p>
+              </Box>
+            <Image
+              src="/image/caution.png"
+              alt="Character 2"
+              width={100}
+              height={100}
+            />
+            </Stack>
+
+            <Stack spacing={2} direction="row">
+              <Image
+                src="/image/index/work.png"
+                alt="life"
+                width={450}
+                height={300}
+              />
+
+              <Image
+                src="/image/index/calendar.png"
+                alt="life"
+                width={450}
+                height={300}
+              />
+            </Stack>
+
+            <Stack spacing={2} direction="row" sx={{ mt: 10 }}>
+              <Box>
+                <h2>STEP3</h2>
+                <p>
+                  登録した収支ログはレポート画面からグラフで確認できるよ！
+                </p>
+                <p>カテゴリごとの収支はもちろん、予算と実際の支出を比較できるよ！</p>
+              </Box>
+            <Image
+              src="/image/warning.png"
+              alt="Character 2"
+              width={100}
+              height={100}
+            />
+            </Stack>
+
+            <Stack spacing={3} direction="row">
+              <Image
+                src="/image/index/income.png"
+                alt="life"
+                width={300}
+                height={300}
+              />
+
+              <Image
+                src="/image/index/expense.png"
+                alt="life"
+                width={290}
+                height={280}
+              />
+                            <Image
+                src="/image/index/gauge.png"
+                alt="life"
+                width={370}
+                height={250}
+              />
+            </Stack>
+
+
+            <h1>今すぐ家計簿をつけ始めてみよう！</h1>
+
             <Stack spacing={2} direction="row">
               <Button href="/signup" variant="outlined">
                 新規作成
