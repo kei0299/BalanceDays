@@ -19,7 +19,11 @@ Rails.application.routes.draw do
         get :sum_month_budget
       end
     end
-    resources :transactions, only: [:index, :update, :destroy]
+    resources :transactions, only: [:index, :update, :destroy] do
+      collection do
+        get 'total_money', to: 'transactions#total_money'
+      end
+    end
     resources :characters, only: [:index]
     resources :shifts, only: [:index, :create, :update, :destroy]
 

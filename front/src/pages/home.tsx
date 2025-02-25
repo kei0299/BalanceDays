@@ -6,10 +6,16 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { fetchCharacter } from "@/utils/auth/fetchCharacter";
 import * as React from "react";
-import { LineChart } from "@mui/x-charts/LineChart";
+import CustomLineChart from "@/components/CustomLineChart";
+import { Typography } from "@mui/material";
+import ReportHome from "@/components/reportHome";
+import { fetchHomeData } from "@/utils/api/totalMoney";
 
 export default function Home() {
   const currentMonth: Date = new Date();
+  const [today, setToday] = useState("");
+  const [totalIncome, setTotalIncome] = useState<number | null>(null);
+  const [totalExpense, setTotalExpense] = useState<number | null>(null);
   // キャラ切り替えのための状態を管理
   const [characterStatus, setCharacterStatus] = useState<number | null>(null);
   const [life, setLife] = useState<number | null>(null);
@@ -27,6 +33,20 @@ export default function Home() {
     //   }
     // };
 
+    const date = new Date();
+
+    // 年・月・日を取得（ゼロ埋め）
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0"); // 月は0始まりなので+1
+    const dd = String(date.getDate()).padStart(2, "0");
+
+    // 曜日を取得（短縮形）
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const day = days[date.getDay()];
+
+    // フォーマット整形
+    setToday(`${yyyy}/${mm}/${dd}(${day})`);
+
     const fetchCharacterData = async () => {
       try {
         const response = await fetchCharacter(apiFormattedDate);
@@ -42,7 +62,14 @@ export default function Home() {
         console.error("取得失敗", error);
       }
     };
-
+    const getData = async () => {
+      const data = await fetchHomeData();
+      if (data) {
+        setTotalIncome(data.total_income);
+        setTotalExpense(data.total_expense);
+      }
+    };
+    getData();
     fetchCharacterData();
     // fetchSessionData(); // HOMEでのセッション確認用
   }, []);
@@ -57,18 +84,42 @@ export default function Home() {
       <Header />
       <title>BalanceDays</title>
       <link rel="icon" href="/favicon.ico" />
-      <div
-        style={{ height: "100vh", overflow: "hidden", position: "relative" }}
-      >
+      <div>
         <main>
+          <Box sx={{ mt: "60px" }}>
+            {" "}
+            <Typography
+              variant="h3"
+              sx={{
+                fontFamily: "'Poppins', Black 900 Italic",
+                fontWeight: "bold",
+                color: "#5393ff",
+                letterSpacing: "2px",
+                textShadow: "2px 2px 4px rgba(0,0,0,0.2)",
+                padding: "10px",
+              }}
+            >
+              {today}
+            </Typography>
+            <Typography
+              variant="h4"
+              sx={{
+                fontFamily: "'Poppins', Black 900 Italic",
+                fontWeight: "bold",
+                color: "#5393ff",
+                letterSpacing: "2px",
+                textShadow: "2px 2px 4px rgba(0,0,0,0.2)",
+                padding: "10px",
+              }}
+            >
+              今月の収入：¥{(totalIncome ?? 0).toLocaleString()}
+              <br />
+              今月の支出：¥{(totalExpense ?? 0).toLocaleString()}
+            </Typography>
+          </Box>
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-              height: "100vh",
+              height: "50vh",
             }}
           >
             <div
@@ -82,139 +133,90 @@ export default function Home() {
             >
               {characterStatus === 3 ? (
                 <>
-                  <h1 style={{ color: "#ff4500", marginBottom: "20px" }}>
-                    あと{life}ヶ月生活できそうです
-                  </h1>
-                  <Stack spacing={2} direction="row">
-                  <LineChart
-                      xAxis={[
-                        {
-                          data: xData,
-                          label: "月",
-                          min: 1,
-                          tickInterval: xData,
-                        },
-                      ]}
-                      yAxis={[
-                        {
-                          label: "円",
-                          labelFontSize: 14,
-                          labelStyle: {
-                            transform: "translateX(-50px)",
-                          },
-                          min: 0
-                        },
-                      ]}
-                      series={[
-                        {
-                          data: chartData,
-                          label: "貯金残高推移予測",
-                        },
-                      ]}
-                      width={400}
-                      height={300}
-                      margin={{
-                        left: 100,
-                      }}
-                    />
-                    <Image
-                      src="/image/warning.png"
-                      alt="Character 1"
-                      width={300}
-                      height={300}
-                    />
+                  <Stack spacing={3} direction="row" alignItems="center">
+                    <Box sx={{ display: "flex", pt: 30 }}>
+                      <CustomLineChart xData={xData} chartData={chartData} />
+                      <Image
+                        src="/image/warning.png"
+                        alt="Character 1"
+                        width={400}
+                        height={400}
+                      />
+                    </Box>
+                    <ReportHome />
                   </Stack>
+                  <Typography
+                    variant="h3"
+                    sx={{
+                      fontSize: "2.5rem",
+                      fontFamily: "'Poppins', Black 900 Italic",
+                      fontWeight: "bold",
+                      color: "#ff4500",
+                      letterSpacing: "2px",
+                      padding: "10px",
+                      marginBottom: "30px",
+                    }}
+                  >
+                    あと{life}ヶ月生活できそうです
+                  </Typography>
                 </>
               ) : characterStatus === 2 ? (
                 <>
-                  <h1 style={{ color: "#ffd700", marginBottom: "20px" }}>
-                    あと{life}ヶ月生活できそうです
-                  </h1>
-                  <Stack spacing={2} direction="row">
-                  <LineChart
-                      xAxis={[
-                        {
-                          data: xData,
-                          label: "月",
-                          min: 1,
-                          tickInterval: xData,
-                        },
-                      ]}
-                      yAxis={[
-                        {
-                          label: "円",
-                          labelFontSize: 14,
-                          labelStyle: {
-                            transform: "translateX(-50px)",
-                          },
-                          min: 0
-                        },
-                      ]}
-                      series={[
-                        {
-                          data: chartData,
-                          label: "貯金残高推移予測",
-                        },
-                      ]}
-                      width={400}
-                      height={300}
-                      margin={{
-                        left: 100,
-                      }}
-                    />
-                    <Image
-                      src="/image/caution.png"
-                      alt="Character 2"
-                      width={300}
-                      height={300}
-                    />
+                  <Stack spacing={3} direction="row" alignItems="center">
+                    <Box sx={{ display: "flex", pt: 30 }}>
+                      <CustomLineChart xData={xData} chartData={chartData} />
+                      <Image
+                        src="/image/caution.png"
+                        alt="Character 2"
+                        width={400}
+                        height={400}
+                      />
+                    </Box>
+                    <ReportHome />
                   </Stack>
+                  <Typography
+                    variant="h3"
+                    sx={{
+                      fontSize: "2.5rem",
+                      fontFamily: "'Poppins', Black 900 Italic",
+                      fontWeight: "bold",
+                      color: "#ffd700",
+                      letterSpacing: "2px",
+                      padding: "10px",
+                      marginBottom: "30px",
+                    }}
+                  >
+                    あと{life}ヶ月生活できそうです
+                  </Typography>
                 </>
               ) : characterStatus === 1 ? (
                 <>
-                  <h1 style={{ color: "#4169e1", marginBottom: "20px" }}>
-                    あと{life}ヶ月生活できそうです
-                  </h1>
-                  <Stack spacing={2} direction="row">
-                    <LineChart
-                      xAxis={[
-                        {
-                          data: xData,
-                          label: "月",
-                          min: 1,
-                          tickInterval: xData,
-                        },
-                      ]}
-                      yAxis={[
-                        {
-                          label: "円",
-                          labelFontSize: 14,
-                          labelStyle: {
-                            transform: "translateX(-50px)",
-                          },
-                          min: 0,
-                          tickInterval: "auto" // 目盛りの間隔を増やす
-                        },
-                      ]}
-                      series={[
-                        {
-                          data: chartData,
-                          label: "貯金残高推移予測",
-                        },
-                      ]}
-                      width={400}
-                      height={300}
-                      margin={{
-                        left: 100,
-                      }}
-                    />
-                    <Image
-                      src="/image/stable.png"
-                      alt="Character 3"
-                      width={300}
-                      height={300}
-                    />
+                  <Stack spacing={3} direction="row" alignItems="center">
+                    <Box sx={{ display: "flex", pt: 30 }}>
+                      <CustomLineChart xData={xData} chartData={chartData} />
+                      <Image
+                        src="/image/stable.png"
+                        alt="Character 3"
+                        width={400}
+                        height={400}
+                      />
+                    </Box>
+                    <ReportHome />
                   </Stack>
+                  <Typography
+                    variant="h3"
+                    sx={{
+                      fontSize: "2.5rem",
+                      fontFamily: "'Poppins', Black 900 Italic",
+                      fontWeight: "bold",
+                      color: "#4169e1",
+                      letterSpacing: "2px",
+                      padding: "10px",
+                      marginBottom: "30px",
+                    }}
+                  >
+                    あと{life}ヶ月生活できそうです
+                  </Typography>
                 </>
               ) : (
                 <p>

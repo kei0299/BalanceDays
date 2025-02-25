@@ -45,6 +45,22 @@ class V1::TransactionsController < ApplicationController
     render json: transactions, status: :ok
   end
 
+  def total_money
+    current_month = Date.today.beginning_of_month
+    next_month = Date.today.next_month.beginning_of_month
+
+    # # 今月の収支データ（収入 - 支出）
+    total_income = IncomeLog.where(user: current_user)
+                              .where("date >= ? AND date < ?", current_month, next_month)
+                              .sum(:amount)
+
+    total_expense = ExpenseLog.where(user: current_user)
+                               .where("date >= ? AND date < ?", current_month, next_month)
+                               .sum(:amount)
+
+    render json: { total_income: total_income, total_expense: total_expense }
+  end
+
   def destroy
     transaction_id = params[:id]
     transaction_type = params[:type]
