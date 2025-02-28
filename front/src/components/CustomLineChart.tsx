@@ -15,8 +15,8 @@ export default function CustomLineChart({
   chartData,
   xLabel = "月",
   yLabel = "円",
-  width = 400,
-  height = 300,
+  width = 500,
+  height = 400,
   title = "貯金残高推移予測",
 }: Props) {
   return (

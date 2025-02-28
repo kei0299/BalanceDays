@@ -662,7 +662,7 @@ export default function Calender() {
       <title>BalanceDays</title>
       <link rel="icon" href="/favicon.ico" />
       <div>
-        <main style={{ minHeight: "115vh" }}>
+        <main style={{ minHeight: "115vh"}}>
           <div style={{ display: "flex", marginTop: "80px" }}>
             <Box sx={{ mt: 0 }}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>

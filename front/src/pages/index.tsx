@@ -69,9 +69,10 @@ export default function Index() {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              minHeight: "250vh",
+              minHeight: "100vh",
               textAlign: "center",
               mt: 10,
+              mb: 10
             }}
           >
             <h1>あと何ヶ月生活できるかを可視化！</h1>
@@ -100,20 +101,20 @@ export default function Index() {
               <Image
                 src="/image/index/life.png"
                 alt="life"
-                width={300}
-                height={450}
+                width={230}
+                height={350}
               />
               <Image
                 src="/image/index/budget.png"
                 alt="life"
-                width={450}
-                height={300}
+                width={550}
+                height={350}
               />
               <Image
                 src="/image/index/home.png"
                 alt="life"
-                width={450}
-                height={300}
+                width={550}
+                height={350}
               />
             </Stack>
 
@@ -134,19 +135,19 @@ export default function Index() {
             />
             </Stack>
 
-            <Stack spacing={2} direction="row">
+            <Stack spacing={2} direction="row" sx={{ mt: 2 }}>
               <Image
                 src="/image/index/work.png"
                 alt="life"
-                width={450}
-                height={300}
+                width={550}
+                height={350}
               />
 
               <Image
                 src="/image/index/calendar.png"
                 alt="life"
-                width={450}
-                height={300}
+                width={550}
+                height={350}
               />
             </Stack>
 
@@ -202,7 +203,7 @@ export default function Index() {
 
             <Button
               sx={{
-                mt: "10px",
+                m: "10px",
                 maxWidth: "240px",
                 height: "40px",
                 backgroundColor: "#4285F4",

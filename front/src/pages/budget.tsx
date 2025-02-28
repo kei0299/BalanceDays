@@ -159,6 +159,7 @@ export default function Budget() {
               justifyContent: "center",
               textAlign: "center",
               minHeight: "125vh",
+              mb: 10,
             }}
           >
             <TableContainer component={Paper}>
@@ -190,7 +191,13 @@ export default function Budget() {
                       </TableCell>
                       <TableCell align="right">
                         <Input
-                          sx={{ maxWidth: 100, ml: "auto" }}
+                          sx={{
+                            maxWidth: 100,
+                            ml: "auto",
+                            "& input::placeholder": {
+                              color: "rgba(0, 0, 0, 0.3)", 
+                            },
+                          }}
                           placeholder="¥10,000"
                           value={row.budget === "0" ? "" : row.budget}
                           onChange={(event) =>

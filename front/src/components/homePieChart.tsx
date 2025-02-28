@@ -5,7 +5,6 @@ import React from "react";
 import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
 import { parseCookies } from "nookies";
-import { Gauge } from "@mui/x-charts/Gauge";
 import Stack from "@mui/material/Stack";
 import Link from "@mui/material/Link";
 
@@ -16,14 +15,10 @@ interface pieChartData {
   name: string;
 }
 
-export default function ReportHome() {
+export default function HomePieChart() {
   const [currentMonth] = useState<Date>(new Date());
   const [checked, setChecked] = useState(false);
   const [expenses, setExpenses] = useState([]);
-  const [totalBudget, setTotalBudget] = useState([]);
-  const [totalExpense, setTotalExpense] = useState([]);
-
-  const [totalRatio, setTotalRatio] = useState<number>(0);
 
   const checkedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
@@ -84,39 +79,8 @@ export default function ReportHome() {
     }
   };
 
-  // Rails APIから予算ゲージを作成
-  const fetchGauge = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/reports/total_gauge?month=${apiFormattedDate}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "access-token": accessToken,
-            client: client,
-            uid: uid,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`エラー: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      setTotalBudget(data.total_budget);
-      setTotalExpense(data.total_expense);
-      setTotalRatio(data.total_ratio);
-    } catch (error) {
-      console.error("取得失敗", error);
-    }
-  };
-
   useEffect(() => {
     fetchPieChart(checked);
-    fetchGauge();
   }, []);
 
   // API用のフォーマットを "YYYY-MM-DD" 形式で作成
@@ -137,6 +101,7 @@ export default function ReportHome() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          ml: 5
         }}
       >
         {/* 円グラフ */}
@@ -144,9 +109,9 @@ export default function ReportHome() {
           spacing={3}
           direction="column"
           alignItems="center"
-          sx={{ mt: 6 }}
+          sx={{ mt: 6,pr: 5 }}
         >
-          <Stack spacing={2} direction="row" alignItems="center" sx={{ mt: 6 }}>
+          <Stack spacing={2} direction="row" alignItems="center">
             <Typography sx={{ fontSize: "24px", fontWeight: "bold" }}>
               カテゴリ別収支レポート（￥）
             </Typography>
@@ -197,33 +162,6 @@ export default function ReportHome() {
               収入
             </Typography>
           </Box>
-        </Stack>
-
-        <Stack spacing={2} direction="row" alignItems="center">
-            <Typography sx={{ fontSize: "24px", fontWeight: "bold" }}>
-              総予算（％）
-            </Typography>
-            <Link
-              href="report"
-              sx={{
-                color: "gray",
-                textDecoration: "none",
-                fontSize: "14px",
-                "&:hover": {
-                  textDecoration: "underline",
-                },
-              }}
-            >
-              詳しく見る→
-            </Link>
-          </Stack>
-        <Stack spacing={3} direction="row">
-          <Stack spacing={2} direction="column">
-            <Gauge width={200} height={200} value={totalRatio} />
-            <Typography>
-              ¥{totalExpense.toLocaleString()} / ¥{totalBudget.toLocaleString()}
-            </Typography>
-          </Stack>
         </Stack>
       </Box>
     </>

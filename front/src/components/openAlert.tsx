@@ -13,7 +13,7 @@ interface OpenAlertProps {
 // 汎用アラートコンポーネント
 const OpenAlert: React.FC<OpenAlertProps> = ({ open, onClose, message, severity = "success" }) => {
   return (
-    <Snackbar open={open} autoHideDuration={3000} onClose={onClose} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
+    <Snackbar open={open} autoHideDuration={3000} onClose={onClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
       <Alert onClose={onClose} severity={severity} sx={{ width: "100%" }}>
         {message}
       </Alert>

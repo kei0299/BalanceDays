@@ -246,6 +246,7 @@ export default function Report() {
               justifyContent: "center",
               alignItems: "center",
               textAlign: "center",
+              mb: 10
             }}
           >
             {/* 円グラフ */}

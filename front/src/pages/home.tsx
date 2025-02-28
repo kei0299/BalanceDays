@@ -8,7 +8,8 @@ import { fetchCharacter } from "@/utils/auth/fetchCharacter";
 import * as React from "react";
 import CustomLineChart from "@/components/CustomLineChart";
 import { Typography } from "@mui/material";
-import ReportHome from "@/components/reportHome";
+import HomePieChart from "@/components/homePieChart";
+import HomeTotalGauge from "@/components/homeTotalGauge";
 import { fetchHomeData } from "@/utils/api/totalMoney";
 import Link from "@mui/material/Link";
 
@@ -87,7 +88,7 @@ export default function Home() {
       <link rel="icon" href="/favicon.ico" />
       <div>
         <main>
-          <Box sx={{ mt: "60px" }}>
+          <Box sx={{ mt: 10, mb: 10 }}>
             {" "}
             <Typography
               variant="h3"
@@ -117,24 +118,23 @@ export default function Home() {
               <br />
               今月の支出：¥{(totalExpense ?? 0).toLocaleString()}
             </Typography>
-      
-              <Link
-                href="calendar"
-                sx={{
-                  color: "gray",
-                  textDecoration: "none",
-                  fontSize: "14px",
-                  ml: 1,
-                  display: "inline-block",
-                  "&:hover": {
-                    textDecoration: "underline",
-                  },
-                }}
-              >
-                詳しく見る →
-              </Link>
-            </Box>
-      
+            <Link
+              href="calendar"
+              sx={{
+                color: "gray",
+                textDecoration: "none",
+                fontSize: "14px",
+                ml: 1,
+                display: "inline-block",
+                "&:hover": {
+                  textDecoration: "underline",
+                },
+              }}
+            >
+              詳しく見る →
+            </Link>
+          </Box>
+
           <Box
             sx={{
               height: "50vh",
@@ -151,19 +151,25 @@ export default function Home() {
             >
               {characterStatus === 3 ? (
                 <>
-                  <Stack spacing={2} direction="row" alignItems="center">
-                    <Box sx={{ display: "flex", pt: 30 }}>
-                      <Box sx={{ mt: 7 }}>
+<Stack spacing={2} direction="row" alignItems="center">
+                    <Stack spacing={2} direction="row" alignItems="center">
+                      <Box sx={{ display: "flex", pt: 30,pr: 20 }}>
+                        <HomePieChart />
                         <CustomLineChart xData={xData} chartData={chartData} />
                       </Box>
+                    </Stack>
+
+                    <Stack spacing={2} direction="column" alignItems="center">
+                    <Box sx={{ pt: 12, position: "relative", left: "-60px"  }}>
+                      <HomeTotalGauge />
                       <Image
                         src="/image/warning.png"
                         alt="Character 1"
-                        width={400}
-                        height={400}
+                        width={250}
+                        height={250}
                       />
-                    </Box>
-                    <ReportHome />
+                      </Box>
+                    </Stack>
                   </Stack>
                   <Typography
                     variant="h3"
@@ -173,7 +179,6 @@ export default function Home() {
                       fontWeight: "bold",
                       color: "#ff4500",
                       letterSpacing: "2px",
-                      padding: "10px",
                       marginBottom: "30px",
                     }}
                   >
@@ -182,19 +187,25 @@ export default function Home() {
                 </>
               ) : characterStatus === 2 ? (
                 <>
-                  <Stack spacing={3} direction="row" alignItems="center">
-                    <Box sx={{ display: "flex", pt: 30 }}>
-                      <Box sx={{ mt: 7 }}>
+                  <Stack spacing={2} direction="row" alignItems="center">
+                    <Stack spacing={2} direction="row" alignItems="center">
+                      <Box sx={{ display: "flex", pt: 30,pr: 20 }}>
+                        <HomePieChart />
                         <CustomLineChart xData={xData} chartData={chartData} />
                       </Box>
+                    </Stack>
+
+                    <Stack spacing={2} direction="column" alignItems="center">
+                    <Box sx={{ pt: 12, position: "relative", left: "-60px"  }}>
+                      <HomeTotalGauge />
                       <Image
                         src="/image/caution.png"
                         alt="Character 2"
-                        width={400}
-                        height={400}
+                        width={250}
+                        height={250}
                       />
-                    </Box>
-                    <ReportHome />
+                      </Box>
+                    </Stack>
                   </Stack>
                   <Typography
                     variant="h3"
@@ -204,7 +215,6 @@ export default function Home() {
                       fontWeight: "bold",
                       color: "#ffd700",
                       letterSpacing: "2px",
-                      padding: "10px",
                       marginBottom: "30px",
                     }}
                   >
@@ -213,19 +223,25 @@ export default function Home() {
                 </>
               ) : characterStatus === 1 ? (
                 <>
-                  <Stack spacing={3} direction="row" alignItems="center">
-                    <Box sx={{ display: "flex", pt: 30 }}>
-                      <Box sx={{ mt: 7 }}>
+                  <Stack spacing={2} direction="row" alignItems="center">
+                    <Stack spacing={2} direction="row" alignItems="center">
+                      <Box sx={{ display: "flex", pt: 30,pr: 20 }}>
+                        <HomePieChart />
                         <CustomLineChart xData={xData} chartData={chartData} />
                       </Box>
+                    </Stack>
+
+                    <Stack spacing={2} direction="column" alignItems="center">
+                    <Box sx={{ pt: 12, position: "relative", left: "-60px"  }}>
+                      <HomeTotalGauge />
                       <Image
                         src="/image/stable.png"
                         alt="Character 3"
-                        width={400}
-                        height={400}
+                        width={250}
+                        height={250}
                       />
-                    </Box>
-                    <ReportHome />
+                      </Box>
+                    </Stack>
                   </Stack>
                   <Typography
                     variant="h3"
@@ -235,7 +251,6 @@ export default function Home() {
                       fontWeight: "bold",
                       color: "#4169e1",
                       letterSpacing: "2px",
-                      padding: "10px",
                       marginBottom: "30px",
                     }}
                   >
