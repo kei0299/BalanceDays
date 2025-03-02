@@ -37,12 +37,12 @@ export default function Index() {
 
   return (
     <>
-      <Header />
       <Head>
         <title>BalanceDays</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      <Header />
       {/* Google Analytics Script */}
       <Script
         strategy="afterInteractive"
@@ -72,7 +72,7 @@ export default function Index() {
               minHeight: "100vh",
               textAlign: "center",
               mt: 10,
-              mb: 10
+              mb: 10,
             }}
           >
             <h1>あと何ヶ月生活できるかを可視化！</h1>
@@ -121,18 +121,18 @@ export default function Index() {
             <Stack spacing={2} direction="row" sx={{ mt: 10 }}>
               <Box>
                 <h2>STEP2</h2>
-                <p>
-                  BalanceDaysでは勤務先やシフトの登録もできるよ。
-                </p>
+                <p>BalanceDaysでは勤務先やシフトの登録もできるよ。</p>
                 <p>研修期間や研修時間の設定も楽々〜</p>
-                <p>カレンダー画面から選択した日にちの情報が一括表示されるよ！</p>
+                <p>
+                  カレンダー画面から選択した日にちの情報が一括表示されるよ！
+                </p>
               </Box>
-            <Image
-              src="/image/caution.png"
-              alt="Character 2"
-              width={100}
-              height={100}
-            />
+              <Image
+                src="/image/caution.png"
+                alt="Character 2"
+                width={100}
+                height={100}
+              />
             </Stack>
 
             <Stack spacing={2} direction="row" sx={{ mt: 2 }}>
@@ -154,17 +154,17 @@ export default function Index() {
             <Stack spacing={2} direction="row" sx={{ mt: 10 }}>
               <Box>
                 <h2>STEP3</h2>
+                <p>登録した収支ログはレポート画面からグラフで確認できるよ！</p>
                 <p>
-                  登録した収支ログはレポート画面からグラフで確認できるよ！
+                  カテゴリごとの収支はもちろん、予算と実際の支出を比較できるよ！
                 </p>
-                <p>カテゴリごとの収支はもちろん、予算と実際の支出を比較できるよ！</p>
               </Box>
-            <Image
-              src="/image/warning.png"
-              alt="Character 2"
-              width={100}
-              height={100}
-            />
+              <Image
+                src="/image/warning.png"
+                alt="Character 2"
+                width={100}
+                height={100}
+              />
             </Stack>
 
             <Stack spacing={3} direction="row">
@@ -178,17 +178,16 @@ export default function Index() {
               <Image
                 src="/image/index/expense.png"
                 alt="life"
-                width={290}
+                width={350}
                 height={280}
               />
-                            <Image
+              <Image
                 src="/image/index/gauge.png"
                 alt="life"
-                width={370}
+                width={450}
                 height={250}
               />
             </Stack>
-
 
             <h1>今すぐ家計簿をつけ始めてみよう！</h1>
 

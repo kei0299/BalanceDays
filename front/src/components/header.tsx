@@ -18,7 +18,6 @@ export default function MenuAppBar() {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             <Link href="/" passHref>
               <Box
-                component="a"
                 sx={{ textDecoration: "none", color: "inherit" }}
               >
                 BalanceDays
