@@ -9,31 +9,76 @@ import Image from "next/image";
 
 export default function Index() {
   const { showAlert } = useAlert();
+  // const signInWithGoogle = async (): Promise<void> => {
+  //   try {
+  //     //Google認証開始のエンドポイント
+  //     const backendAuthUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/google_oauth2`;
+  //     //認証終了後の遷移先
+  //     const originUrl =
+  //       process.env.NODE_ENV === "development"
+  //         ? `${process.env.NEXT_PUBLIC_FRONT_URL}/auth/google_callback`
+  //         : `${process.env.NEXT_PUBLIC_FRONT_URL}/auth/google_callback`;
+  //     // console.log(`Frontのパス${process.env.NEXT_PUBLIC_FRONT_URL}`);
+  //     // console.log(`APIのパス${process.env.NEXT_PUBLIC_API_URL}`);
+  //     // console.log(`バックエンドオースのパス${backendAuthUrl}`);
+  //     if (!originUrl) {
+  //       console.error("OriginUrlが見つかりません");
+  //       return;
+  //     }
+  //     const redirectUrl = `${backendAuthUrl}?auth_origin_url=${encodeURIComponent(
+  //       `${process.env.NEXT_PUBLIC_FRONT_URL}/callback`
+  //     )}`;
+  //     window.location.href = redirectUrl;
+  //   } catch (error) {
+  //     console.error("Google認証中にエラーが発生しました:", error);
+  //     showAlert("Google認証に失敗しました。再度お試しください。", "warning");
+  //   }
+  // };
+
   const signInWithGoogle = async (): Promise<void> => {
     try {
-      //Google認証開始のエンドポイント
+      // Google認証開始のエンドポイント
       const backendAuthUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/google_oauth2`;
-      //認証終了後の遷移先
+  
+      // 認証終了後の遷移先
       const originUrl =
         process.env.NODE_ENV === "development"
           ? `${process.env.NEXT_PUBLIC_FRONT_URL}/auth/google_callback`
           : `${process.env.NEXT_PUBLIC_FRONT_URL}/auth/google_callback`;
-      // console.log(`Frontのパス${process.env.NEXT_PUBLIC_FRONT_URL}`);
-      // console.log(`APIのパス${process.env.NEXT_PUBLIC_API_URL}`);
-      // console.log(`バックエンドオースのパス${backendAuthUrl}`);
+  
       if (!originUrl) {
         console.error("OriginUrlが見つかりません");
         return;
       }
-      const redirectUrl = `${backendAuthUrl}?auth_origin_url=${encodeURIComponent(
-        `${process.env.NEXT_PUBLIC_FRONT_URL}/callback`
-      )}`;
-      window.location.href = redirectUrl;
+  
+      // 認証用のPOSTリクエストを送信
+      const response = await fetch(backendAuthUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          auth_origin_url: `${process.env.NEXT_PUBLIC_FRONT_URL}/callback`,
+        }),
+      });
+  
+      // レスポンスが正常かをチェック
+      if (response.ok) {
+        // 正常に認証が開始された場合、リダイレクト
+        const data = await response.json();
+        if (data.redirectUrl) {
+          window.location.href = data.redirectUrl;
+        }
+      } else {
+        console.error("認証リクエストが失敗しました");
+        showAlert("Google認証に失敗しました。再度お試しください。", "warning");
+      }
     } catch (error) {
       console.error("Google認証中にエラーが発生しました:", error);
       showAlert("Google認証に失敗しました。再度お試しください。", "warning");
     }
   };
+  
 
   return (
     <>
