@@ -171,7 +171,7 @@ export default function Index() {
               <Image
                 src="/image/index/income.png"
                 alt="life"
-                width={300}
+                width={350}
                 height={300}
               />
 
