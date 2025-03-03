@@ -23,11 +23,11 @@ class V1::Auth::UsersController < ApplicationController
 
   def destroy
     @user = current_user
-    if @user.update(delete_at: Time.current)
-      render json: @user, status: :ok
+    if @user.destroy
+      render json: { message: 'User deleted successfully' }, status: :ok
     else
-      render json: @user.errors, status: :unprocessable_entity
-    end
+      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+    end    
   end
 
   private
