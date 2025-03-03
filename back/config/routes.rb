@@ -45,7 +45,7 @@ Rails.application.routes.draw do
     end
 
     namespace :auth do
-      resources :sessions, only: [:index]
+      resources :sessions, only: [:index, :destroy]
       # resouceだとusers/:idになる
       put 'users', to: 'users#update'
       delete 'delete_user', to: 'users#destroy'

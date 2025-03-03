@@ -4,11 +4,11 @@ import {
   Box,
   Button,
   Stack,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
+  // Dialog,
+  // DialogActions,
+  // DialogContent,
+  // DialogContentText,
+  // DialogTitle,
 } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { checkSession } from "@/utils/auth/checkSession";
@@ -20,7 +20,7 @@ import { useAlert } from "@/components/AlertContext";
 
 export default function Setting() {
   const { showAlert } = useAlert();
-  const [open, setOpen] = useState(false); // 退会確認ダイアログの状態
+  // const [open, setOpen] = useState(false);
   const [email, setEmail] = useState<string>("");
   const router = useRouter();
 
@@ -88,65 +88,46 @@ export default function Setting() {
   };
 
   // 退会ボタン
-  const userDelete = async (event: React.FormEvent) => {
-    event.preventDefault();
+  // const userDelete = async (event: React.FormEvent) => {
+  //   event.preventDefault();
 
-    const cookies = parseCookies();
-    const accessToken = cookies["accessToken"];
-    const client = cookies["client"];
-    const uid = cookies["uid"];
+  //   const cookies = parseCookies();
+  //   const accessToken = cookies["accessToken"];
+  //   const client = cookies["client"];
+  //   const uid = cookies["uid"];
 
-    try {
-      // 退会処理
-      const deleteResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/delete_user`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            "access-token": accessToken,
-            client: client,
-            uid: uid,
-          },
-        }
-      );
+  //   try {
+  //     // 退会処理
+  //     const deleteResponse = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/delete_user`,
+  //       {
+  //         method: "DELETE",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           "access-token": accessToken,
+  //           client: client,
+  //           uid: uid,
+  //         },
+  //       }
+  //     );
 
-      if (!deleteResponse.ok) {
-        showAlert("退会処理に失敗しました。", "error");
-        throw new Error("退会処理に失敗しました");
-      }
+  //     if (!deleteResponse.ok) {
+  //       showAlert("退会処理に失敗しました。", "error");
+  //       throw new Error("退会処理に失敗しました");
+  //     }
 
-      // サインアウト処理
-      const signOutResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/sign_out`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            "access-token": accessToken,
-            client: client,
-            uid: uid,
-          },
-        }
-      );
+  //     // クッキー削除
+  //     destroyCookie(null, "accessToken");
+  //     destroyCookie(null, "client");
+  //     destroyCookie(null, "uid");
 
-      if (!signOutResponse.ok) {
-        showAlert("退会処理に失敗しました。", "error");
-        throw new Error("退会処理に失敗しました");
-      }
-
-      // クッキー削除
-      destroyCookie(null, "accessToken");
-      destroyCookie(null, "client");
-      destroyCookie(null, "uid");
-
-      showAlert("退会処理が完了しました。", "success");
-      router.push("/");
-    } catch (error) {
-      console.error(error);
-      showAlert("エラーが発生しました。再試行してください。", "error");
-    }
-  };
+  //     showAlert("退会処理が完了しました。", "success");
+  //     router.push("/");
+  //   } catch (error) {
+  //     console.error(error);
+  //     showAlert("エラーが発生しました。再試行してください。", "error");
+  //   }
+  // };
 
   return (
     <>
@@ -192,7 +173,7 @@ export default function Setting() {
                 更新
               </Button>
             </Stack>
-            <Button
+            {/* <Button
               sx={{ mt: 5 }}
               type="submit"
               color="error"
@@ -200,10 +181,10 @@ export default function Setting() {
               onClick={() => setOpen(true)}
             >
               退会する
-            </Button>
+            </Button> */}
 
             {/* 退会確認ダイアログ */}
-            <Dialog open={open} onClose={() => setOpen(false)}>
+            {/* <Dialog open={open} onClose={() => setOpen(false)}>
               <DialogTitle>本当に退会しますか？</DialogTitle>
               <DialogContent>
                 <DialogContentText>
@@ -218,7 +199,7 @@ export default function Setting() {
                   退会する
                 </Button>
               </DialogActions>
-            </Dialog>
+            </Dialog> */}
           </Box>
         </main>
         <FooterLogin />
