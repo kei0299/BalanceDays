@@ -14,15 +14,16 @@ import TextField from "@mui/material/TextField";
 import { checkSession } from "@/utils/auth/checkSession";
 import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
 import React, { useState, useEffect } from "react";
-import { setCookie, parseCookies, destroyCookie } from "nookies";
-import { useRouter } from "next/navigation";
+import { setCookie, parseCookies } from "nookies";
+// import { setCookie, parseCookies, destroyCookie } from "nookies";
+// import { useRouter } from "next/navigation";
 import { useAlert } from "@/components/AlertContext";
 
 export default function Setting() {
   const { showAlert } = useAlert();
   // const [open, setOpen] = useState(false);
   const [email, setEmail] = useState<string>("");
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     const fetchSessionData = async () => {
