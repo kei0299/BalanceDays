@@ -256,8 +256,8 @@ export default function Report() {
               </Typography>
               <PieChart
                 series={[{ data: expenses }]}
-                width={700}
-                height={400}
+                width={650}
+                height={350}
               />
 
               {/* スイッチ */}
@@ -293,7 +293,7 @@ export default function Report() {
               </Box>
             </Stack>
 
-            <Stack spacing={3} direction="column" sx={{ mt: "100px" }}>
+            <Stack spacing={3} direction="column" sx={{ mt: "50px" }}>
               <Typography sx={{ fontSize: "24px", fontWeight: "bold" }}>
                 総予算 / カテゴリ別予算（％）
               </Typography>
