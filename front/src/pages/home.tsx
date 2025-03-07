@@ -125,6 +125,8 @@ export default function Home() {
                 textDecoration: "none",
                 fontSize: "14px",
                 ml: 1,
+                position: "relative",
+                zIndex: 10,
                 display: "inline-block",
                 "&:hover": {
                   textDecoration: "underline",
