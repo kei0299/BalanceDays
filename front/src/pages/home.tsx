@@ -125,6 +125,8 @@ export default function Home() {
                 textDecoration: "none",
                 fontSize: "14px",
                 ml: 1,
+                position: "relative",
+                zIndex: 10,
                 display: "inline-block",
                 "&:hover": {
                   textDecoration: "underline",
@@ -151,23 +153,23 @@ export default function Home() {
             >
               {characterStatus === 3 ? (
                 <>
-<Stack spacing={2} direction="row" alignItems="center">
+                  <Stack spacing={2} direction="row" alignItems="center">
                     <Stack spacing={2} direction="row" alignItems="center">
-                      <Box sx={{ display: "flex", pt: 30,pr: 20 }}>
+                      <Box sx={{ display: "flex", pt: 30, pr: 20 }}>
                         <HomePieChart />
                         <CustomLineChart xData={xData} chartData={chartData} />
                       </Box>
                     </Stack>
 
                     <Stack spacing={2} direction="column" alignItems="center">
-                    <Box sx={{ pt: 12, position: "relative", left: "-60px"  }}>
-                      <HomeTotalGauge />
-                      <Image
-                        src="/image/warning.png"
-                        alt="Character 1"
-                        width={250}
-                        height={250}
-                      />
+                      <Box sx={{ pt: 12, position: "relative", left: "-60px" }}>
+                        <HomeTotalGauge />
+                        <Image
+                          src="/image/warning.png"
+                          alt="Character 1"
+                          width={250}
+                          height={250}
+                        />
                       </Box>
                     </Stack>
                   </Stack>
@@ -189,21 +191,21 @@ export default function Home() {
                 <>
                   <Stack spacing={2} direction="row" alignItems="center">
                     <Stack spacing={2} direction="row" alignItems="center">
-                      <Box sx={{ display: "flex", pt: 30,pr: 20 }}>
+                      <Box sx={{ display: "flex", pt: 30, pr: 20 }}>
                         <HomePieChart />
                         <CustomLineChart xData={xData} chartData={chartData} />
                       </Box>
                     </Stack>
 
                     <Stack spacing={2} direction="column" alignItems="center">
-                    <Box sx={{ pt: 12, position: "relative", left: "-60px"  }}>
-                      <HomeTotalGauge />
-                      <Image
-                        src="/image/caution.png"
-                        alt="Character 2"
-                        width={250}
-                        height={250}
-                      />
+                      <Box sx={{ pt: 12, position: "relative", left: "-60px" }}>
+                        <HomeTotalGauge />
+                        <Image
+                          src="/image/caution.png"
+                          alt="Character 2"
+                          width={250}
+                          height={250}
+                        />
                       </Box>
                     </Stack>
                   </Stack>
@@ -225,21 +227,21 @@ export default function Home() {
                 <>
                   <Stack spacing={2} direction="row" alignItems="center">
                     <Stack spacing={2} direction="row" alignItems="center">
-                      <Box sx={{ display: "flex", pt: 30,pr: 20 }}>
+                      <Box sx={{ display: "flex", pt: 30, pr: 20 }}>
                         <HomePieChart />
                         <CustomLineChart xData={xData} chartData={chartData} />
                       </Box>
                     </Stack>
 
                     <Stack spacing={2} direction="column" alignItems="center">
-                    <Box sx={{ pt: 12, position: "relative", left: "-60px"  }}>
-                      <HomeTotalGauge />
-                      <Image
-                        src="/image/stable.png"
-                        alt="Character 3"
-                        width={250}
-                        height={250}
-                      />
+                      <Box sx={{ pt: 12, position: "relative", left: "-60px" }}>
+                        <HomeTotalGauge />
+                        <Image
+                          src="/image/stable.png"
+                          alt="Character 3"
+                          width={250}
+                          height={250}
+                        />
                       </Box>
                     </Stack>
                   </Stack>

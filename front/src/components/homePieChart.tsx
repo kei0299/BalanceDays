@@ -109,7 +109,7 @@ export default function HomePieChart() {
           spacing={3}
           direction="column"
           alignItems="center"
-          sx={{ mt: 6,pr: 5 }}
+          sx={{ mt: 1,pr: 5 }}
         >
           <Stack spacing={2} direction="row" alignItems="center">
             <Typography sx={{ fontSize: "24px", fontWeight: "bold" }}>
