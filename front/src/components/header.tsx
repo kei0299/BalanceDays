@@ -100,7 +100,7 @@ export default function MenuAppBar() {
                 alt="Google Logo"
                 style={{
                   width: "30px", // ロゴのサイズを調整
-                  height: "30px", // 高さを小さくして余白を減らす
+                  height: "30px",
                   borderRadius: "4px",
                   marginRight: "6px",
                 }}
