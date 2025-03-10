@@ -108,7 +108,7 @@ LINEチャットbotへの相談機能
 | フロントエンド   |  React,Next.js |
 | ライブラリ  | MUI |
 | データベース  | PostgreSQL |
-| インフラ  | Render.com |
+| インフラ  | Render.com,Vercel |
 
 ## 画面遷移図
 https://www.figma.com/design/fUmQooXllg8ZSFDwMfiOwe/myapp?node-id=0-1&t=okIjQUZCgKaHWG1l-1
