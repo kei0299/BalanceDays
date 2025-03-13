@@ -105,7 +105,7 @@ LINEチャットbotへの相談機能
 | ------------- | ------------- |
 | バックエンド   | Ruby on Rails（APIモード） |
 | フロントエンド   |  React,Next.js |
-| ライブラリ  | MUI |
+| フレームワーク  | MUI |
 | データベース  | PostgreSQL |
 | インフラ  | Render.com,Vercel |
 
