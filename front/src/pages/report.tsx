@@ -42,7 +42,7 @@ export default function Report() {
   const [expenseCategory, setExpenseCategory] = useState<number>(1);
   const [expenseCategories, setExpenseCategories] = useState<
     expenseCategoryData[]
-  >([]);
+>([]);
 
   const selectExpenseCategory = (event: SelectChangeEvent<number>) => {
     setExpenseCategory(Number(event.target.value));
