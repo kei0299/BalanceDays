@@ -17,19 +17,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { fetchExpenseCategory } from "@/utils/auth/fetchExpenseCategory";
 
-// expense_categoryの型定義
-interface expenseCategoryData {
-  id: number;
-  name: string;
-}
-
-// 円グラフ用の型定義
-interface pieChartData {
-  id: number;
-  current_month_amount: number;
-  name: string;
-}
-
 // menuitemの設定
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
