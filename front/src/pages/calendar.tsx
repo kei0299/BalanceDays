@@ -28,52 +28,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { useAlert } from "@/components/AlertContext";
 
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-// income_categoryの型定義
-interface incomeCategoryData {
-  id: number;
-  name: string;
-}
-
-// expense_categoryの型定義
-interface expenseCategoryData {
-  id: number;
-  name: string;
-}
-
-// カレンダー日付取得の型定義
-interface TransactionData {
-  id: number;
-  type: "income" | "expense";
-  amount: number;
-  categoryId: number;
-  category: string;
-  memo: string;
-}
-
-// シフト取得の型定義
-interface shiftData {
-  id: number;
-  job_id: number;
-  name: string;
-  start_time: string;
-  end_time: string;
-  break_time: number;
-  memo: string;
-  total_salary: string;
-  work_time: number;
-}
-
-// 勤務先データの型定義
-interface companyData {
-  id: number;
-  name: string;
-}
+import {
+  TabPanelProps,
+  incomeCategoryData,
+  expenseCategoryData,
+  TransactionData,
+  shiftData,
+  companyData,
+} from "@/types/calendar";
 
 const cookies = parseCookies();
 const accessToken = cookies["accessToken"];
@@ -662,7 +624,7 @@ export default function Calender() {
       <title>BalanceDays</title>
       <link rel="icon" href="/favicon.ico" />
       <div>
-        <main style={{ minHeight: "115vh"}}>
+        <main style={{ minHeight: "115vh" }}>
           <div style={{ display: "flex", marginTop: "80px" }}>
             <Box sx={{ mt: 0 }}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -727,7 +689,8 @@ export default function Calender() {
                         {dayjs(shift.start_time).format("HH:mm")} -{" "}
                         {dayjs(shift.end_time).format("HH:mm")} <br />
                         【労働：{shift.work_time} h 休憩 : {shift.break_time} h
-                        】 日給 :¥{shift.total_salary.toLocaleString()}({shift.memo})
+                        】 日給 :¥{shift.total_salary.toLocaleString()}(
+                        {shift.memo})
                         <IconButton
                           sx={{ ml: 1 }}
                           aria-label="edit"

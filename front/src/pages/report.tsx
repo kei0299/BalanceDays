@@ -16,19 +16,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { fetchExpenseCategory } from "@/utils/auth/fetchExpenseCategory";
-
-// expense_categoryの型定義
-interface expenseCategoryData {
-  id: number;
-  name: string;
-}
-
-// 円グラフ用の型定義
-interface pieChartData {
-  id: number;
-  current_month_amount: number;
-  name: string;
-}
+import { pieChartData,expenseCategoryData } from "@/types/report"
 
 // menuitemの設定
 const ITEM_HEIGHT = 48;
@@ -55,7 +43,7 @@ export default function Report() {
   const [expenseCategory, setExpenseCategory] = useState<number>(1);
   const [expenseCategories, setExpenseCategories] = useState<
     expenseCategoryData[]
-  >([]);
+>([]);
 
   const selectExpenseCategory = (event: SelectChangeEvent<number>) => {
     setExpenseCategory(Number(event.target.value));
