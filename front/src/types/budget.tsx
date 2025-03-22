@@ -1,5 +1,5 @@
 // API用の型定義
-interface expenseData {
+export interface expenseData {
   id: number;
   name: string;
   budget: number;
@@ -8,7 +8,7 @@ interface expenseData {
 }
 
 // テーブルの行データ用の型定義
-interface BudgetRowData {
+export interface BudgetRowData {
   id: number;
   budget: string; // 値を文字列で管理（フォーマット用）
   category: string;

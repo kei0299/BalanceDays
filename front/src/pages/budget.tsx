@@ -18,6 +18,7 @@ import { fetchBudgetSum } from "@/utils/auth/fetchBudgetSum";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { useAlert } from "@/components/AlertContext";
+import { BudgetRowData,expenseData } from "@/types/budget"
 
 const cookies = parseCookies();
 const accessToken = cookies["accessToken"];

@@ -1,23 +1,23 @@
-interface TabPanelProps {
+export interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
 }
 
 // income_categoryの型定義
-interface incomeCategoryData {
+export interface incomeCategoryData {
   id: number;
   name: string;
 }
 
 // expense_categoryの型定義
-interface expenseCategoryData {
+export interface expenseCategoryData {
   id: number;
   name: string;
 }
 
 // カレンダー日付取得の型定義
-interface TransactionData {
+export interface TransactionData {
   id: number;
   type: "income" | "expense";
   amount: number;
@@ -27,7 +27,7 @@ interface TransactionData {
 }
 
 // シフト取得の型定義
-interface shiftData {
+export interface shiftData {
   id: number;
   job_id: number;
   name: string;
@@ -40,7 +40,7 @@ interface shiftData {
 }
 
 // 勤務先データの型定義
-interface companyData {
+export interface companyData {
   id: number;
   name: string;
 }
