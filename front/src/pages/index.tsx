@@ -6,6 +6,17 @@ import Script from "next/script";
 import * as gtag from "@/lib/gtag";
 import { useAlert } from "@/components/AlertContext";
 import Image from "next/image";
+import { createTheme } from "@mui/material/styles";
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#42a5f5",
+      light: "#64b5f6",
+      dark: "#1565c0",
+    },
+  },
+});
 
 export default function Index() {
   const { showAlert } = useAlert();

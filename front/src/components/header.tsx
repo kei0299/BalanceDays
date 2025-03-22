@@ -1,6 +1,6 @@
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
+import { Box, Stack } from "@mui/material";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
@@ -42,72 +42,102 @@ export default function MenuAppBar() {
         elevation={0}
         sx={{ color: "#ffffff", backgroundColor: "#9bc0ff" }}
       >
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          {/* BalanceDays のロゴ */}
+          <Typography
+            variant="h6"
+            sx={{
+              flexGrow: 1,
+              fontSize: "24px",
+              "@media (max-width: 599px)": {
+                fontSize: "18px",
+              },
+            }}
+          >
             <Link href="/" passHref>
-              <Box
-                sx={{ textDecoration: "none", color: "inherit" }}
-              >
+              <Box sx={{ textDecoration: "none", color: "inherit" }}>
                 BalanceDays
               </Box>
             </Link>
           </Typography>
 
-          <Box>
-            <Link href="/signup" passHref>
-              <Button
-                variant="contained"
-                sx={{
-                  height: "40px",
-                  marginRight: 1,
-                  backgroundColor: "#4169e1",
-                }}
-              >
-                新規作成
-              </Button>
-            </Link>
-            <Link href="/signin" passHref>
-              <Button
-                variant="contained"
-                sx={{
-                  height: "40px",
-                  marginRight: 1,
-                  backgroundColor: "#4169e1",
-                }}
-              >
-                ログイン
-              </Button>
-            </Link>
+          {/* ボタンエリア（右寄せ） */}
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Link href="/signup" passHref>
+                <Button
+                  variant="contained"
+                  sx={{
+                    height: "40px",
+                    backgroundColor: "#4169e1",
+                    "@media (max-width: 599px)": {
+                      height: "30px",
+                      fontSize: "10px",
+                      padding: "4px 8px",
+                    },
+                  }}
+                >
+                  新規作成
+                </Button>
+              </Link>
 
-            <Button
-              sx={{
-                maxWidth: "240px",
-                height: "40px",
-                backgroundColor: "#4285F4",
-                color: "white",
-                textTransform: "none",
-                boxShadow: "0 3px 4px 0 rgba(0, 0, 0, 0.25)",
-                paddingLeft: "5px",
-                paddingRight: "12px",
-                "&:hover": {
-                  backgroundColor: "#357ae8",
-                },
-              }}
-              onClick={signInWithGoogle}
-            >
-              <img
-                src="/image/google_logo.png"
-                alt="Google Logo"
-                style={{
-                  width: "30px", // ロゴのサイズを調整
-                  height: "30px",
-                  borderRadius: "4px",
-                  marginRight: "6px",
-                }}
-              />
-              <span>Googleでログイン</span>
-            </Button>
+              <Link href="/signin" passHref>
+                <Button
+                  variant="contained"
+                  sx={{
+                    height: "40px",
+                    backgroundColor: "#4169e1",
+                    "@media (max-width: 599px)": {
+                      height: "30px",
+                      fontSize: "10px",
+                      padding: "4px 8px",
+                    },
+                  }}
+                >
+                  ログイン
+                </Button>
+              </Link>
 
+              <Button
+                sx={{
+                  maxWidth: "240px",
+                  height: "40px",
+                  backgroundColor: "#4285F4",
+                  color: "white",
+                  textTransform: "none",
+                  boxShadow: "0 3px 4px 0 rgba(0, 0, 0, 0.25)",
+                  paddingLeft: "5px",
+                  paddingRight: "12px",
+                  "&:hover": {
+                    backgroundColor: "#357ae8",
+                  },
+                  "@media (max-width: 599px)": {
+                    height: "30px",
+                    fontSize: "10px",
+                    padding: "4px 8px",
+                  },
+                }}
+                onClick={signInWithGoogle}
+              >
+                <Box
+                  component="img"
+                  src="/image/google_logo.png"
+                  alt="Google Logo"
+                  sx={{
+                    width: "30px",
+                    height: "30px",
+                    borderRadius: "4px",
+                    marginRight: "6px",
+                    "@media (max-width: 599px)": {
+                      width: "24px",
+                      height: "24px",
+                      marginRight: "4px",
+                    },
+                  }}
+                />
+                <span>Googleでログイン</span>
+              </Button>
+            </Stack>
           </Box>
         </Toolbar>
       </AppBar>
