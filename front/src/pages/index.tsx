@@ -5,18 +5,7 @@ import Head from "next/head";
 import Script from "next/script";
 import * as gtag from "@/lib/gtag";
 import { useAlert } from "@/components/AlertContext";
-import Image from "next/image";
-import { createTheme } from "@mui/material/styles";
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#42a5f5",
-      light: "#64b5f6",
-      dark: "#1565c0",
-    },
-  },
-});
+import Typography from "@mui/material/Typography";
 
 export default function Index() {
   const { showAlert } = useAlert();
@@ -77,130 +66,284 @@ export default function Index() {
         <main>
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              minHeight: "100vh",
-              textAlign: "center",
+              // display: "flex",
+              // flexDirection: "column",
+              // alignItems: "center",
+              // minHeight: "100vh",
+              // textAlign: "center",
               mt: 10,
               mb: 10,
             }}
           >
-            <h1>あと何ヶ月生活できるかを可視化！</h1>
-            <p>「失業後、現在の貯金でどのくらい生活できるのだろう？」</p>
-            <p>そんなことを考えたことはありませんか？</p>
-            <p>
-              BalanceDaysではあとどのくらい生活できるのかを計算し可視化します！
-            </p>
-            <Stack spacing={2} direction="row" sx={{ mt: 10 }}>
+            <Box sx={{ padding: 2 }}>
+              <Typography
+                variant="h4"
+                component="h1"
+                gutterBottom
+                sx={{ fontWeight: "bold" }}
+              >
+                あと何ヶ月生活できるかを可視化!
+              </Typography>
+              <Typography variant="body1">
+                「失業後、現在の貯金でどのくらい生活できるのだろう？」
+              </Typography>
+              <Typography variant="body1">
+                そんなことを考えたことはありませんか？
+              </Typography>
+              <Typography variant="body1">
+                BalanceDaysではあとどのくらい生活できるのかを計算し可視化します!
+              </Typography>
+            </Box>
+            <Stack spacing={2} direction="row" sx={{ mt: 5 }}>
               <Box>
-                <h2>STEP1</h2>
-                <p>
+                <Stack
+                  spacing={2}
+                  direction="row"
+                  sx={{ justifyContent: "center", alignItems: "center" }}
+                >
+                  <Typography
+                    variant="h5"
+                    component="h2"
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    STEP1
+                  </Typography>
+                  <Box
+                    component="img"
+                    src="/image/stable.png"
+                    alt="Character 3"
+                    sx={{
+                      width: "50px",
+                      height: "50px",
+                      transform: "translateX(-15px)",
+                    }}
+                  />
+                </Stack>
+                <Typography variant="body1">
                   まずは生存期間設定から現在の貯金額を入力し、予算設定画面から予算を設定しよう！
-                </p>
-                <p>貯金額と予算の設定金額をもとに生存期間が計算されるよ！</p>
+                </Typography>
+                <Typography variant="body1">
+                  貯金額と予算の設定金額をもとに生存期間が計算されるよ！
+                </Typography>
               </Box>
-              <Image
-                src="/image/stable.png"
-                alt="Character 3"
-                width={100}
-                height={100}
-              />
             </Stack>
 
-            <Stack spacing={3} direction="row">
-              <Image
+            <Stack
+              spacing={3}
+              sx={{
+                flexWrap: "wrap",
+                gap: 1,
+                "@media (max-width: 599px)": {
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+              }}
+              direction="row"
+            >
+              <Box
+                component="img"
                 src="/image/index/life.png"
                 alt="life"
-                width={230}
-                height={350}
+                sx={{
+                  width: "230px",
+                  height: "350px",
+                }}
               />
-              <Image
+              <Box
+                component="img"
                 src="/image/index/budget.png"
-                alt="life"
-                width={550}
-                height={350}
+                alt="budget"
+                sx={{
+                  width: "540px",
+                  height: "350px",
+                  "@media (max-width: 599px)": {
+                    width: "350px",
+                    height: "200px",
+                  },
+                }}
               />
-              <Image
+              <Box
+                component="img"
                 src="/image/index/home.png"
-                alt="life"
-                width={550}
-                height={350}
+                alt="home"
+                sx={{
+                  width: "540px",
+                  height: "350px",
+                  "@media (max-width: 599px)": {
+                    width: "350px",
+                    height: "200px",
+                  },
+                }}
               />
             </Stack>
 
-            <Stack spacing={2} direction="row" sx={{ mt: 10 }}>
+            <Stack
+              spacing={3}
+              sx={{
+                mt: 5,
+                flexWrap: "wrap",
+                gap: 1,
+                "@media (max-width: 599px)": {
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+              }}
+              direction="row"
+            >
               <Box>
-                <h2>STEP2</h2>
-                <p>BalanceDaysでは勤務先やシフトの登録もできるよ。</p>
-                <p>研修期間や研修時間の設定も楽々〜</p>
-                <p>
+                <Stack
+                  spacing={2}
+                  direction="row"
+                  sx={{ justifyContent: "center", alignItems: "center" }}
+                >
+                  <Typography
+                    variant="h5"
+                    component="h2"
+                    gutterBottom
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    STEP2
+                  </Typography>
+                  <Box
+                    component="img"
+                    src="/image/caution.png"
+                    alt="Character 2"
+                    sx={{
+                      width: "50px",
+                      height: "50px",
+                      transform: "translateX(-15px)",
+                    }}
+                  />
+                </Stack>
+                <Typography variant="body1">
+                  BalanceDaysでは勤務先やシフトの登録もできるよ。
+                </Typography>
+                <Typography variant="body1">
+                  研修期間や研修時間の設定も楽々〜
+                </Typography>
+                <Typography variant="body1">
                   カレンダー画面から選択した日にちの情報が一括表示されるよ！
-                </p>
+                </Typography>
               </Box>
-              <Image
-                src="/image/caution.png"
-                alt="Character 2"
-                width={100}
-                height={100}
-              />
             </Stack>
 
-            <Stack spacing={2} direction="row" sx={{ mt: 2 }}>
-              <Image
+            <Stack
+              spacing={2}
+              sx={{
+                flexWrap: "wrap",
+                gap: 1,
+                "@media (max-width: 599px)": {
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+              }}
+              direction="row"
+            >
+              <Box
+                component="img"
                 src="/image/index/work.png"
-                alt="life"
-                width={550}
-                height={350}
+                alt="work"
+                sx={{
+                  width: "540px",
+                  height: "350px",
+                  "@media (max-width: 599px)": {
+                    width: "350px",
+                    height: "200px",
+                  },
+                }}
               />
-
-              <Image
+              <Box
+                component="img"
                 src="/image/index/calendar.png"
-                alt="life"
-                width={550}
-                height={350}
+                alt="calendar"
+                sx={{
+                  width: "540px",
+                  height: "350px",
+                  "@media (max-width: 599px)": {
+                    width: "350px",
+                    height: "200px",
+                  },
+                }}
               />
             </Stack>
 
-            <Stack spacing={2} direction="row" sx={{ mt: 10 }}>
-              <Box>
-                <h2>STEP3</h2>
-                <p>登録した収支ログはレポート画面からグラフで確認できるよ！</p>
-                <p>
-                  カテゴリごとの収支はもちろん、予算と実際の支出を比較できるよ！
-                </p>
-              </Box>
-              <Image
+            <Stack
+              spacing={2}
+              direction="row"
+              sx={{ justifyContent: "center", alignItems: "center" }}
+            >
+              <Typography
+                variant="h5"
+                component="h2"
+                gutterBottom
+                sx={{ fontWeight: "bold" }}
+              >
+                STEP3
+              </Typography>
+              <Box
+                component="img"
                 src="/image/warning.png"
-                alt="Character 2"
-                width={100}
-                height={100}
+                alt="Character 1"
+                sx={{
+                  width: "50px",
+                  height: "50px",
+                  transform: "translateX(-15px)",
+                }}
               />
             </Stack>
+            <Typography variant="body1">
+              登録した収支ログはレポート画面からグラフで確認できるよ！
+            </Typography>
+            <Typography variant="body1">
+              カテゴリごとの収支はもちろん、予算と実際の支出を比較できるよ！
+            </Typography>
 
-            <Stack spacing={3} direction="row">
-              <Image
+            <Stack
+              spacing={2}
+              sx={{
+                flexWrap: "wrap",
+                gap: 1,
+                "@media (max-width: 599px)": {
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+              }}
+              direction="row"
+            >
+              <Box
+                component="img"
                 src="/image/index/income.png"
-                alt="life"
-                width={350}
-                height={300}
+                alt="income"
+                sx={{
+                  width: "350px",
+                  height: "300px",
+                }}
               />
-
-              <Image
+              <Box
+                component="img"
                 src="/image/index/expense.png"
-                alt="life"
-                width={350}
-                height={280}
+                alt="expense"
+                sx={{
+                  width: "350px",
+                  height: "300px",
+                }}
               />
-              <Image
+                            <Box
+                component="img"
                 src="/image/index/gauge.png"
-                alt="life"
-                width={450}
-                height={250}
+                alt="gauge"
+                sx={{
+                  width: "450px",
+                  height: "250px",
+                  "@media (max-width: 599px)": {
+                    width: "350px",
+                    height: "200px",
+                  },
+                }}
               />
             </Stack>
 
-            <h1>今すぐ家計簿をつけ始めてみよう！</h1>
+            <h1>今すぐ家計簿をつけ始めよう！</h1>
 
             <Stack spacing={2} direction="row">
               <Button href="/signup" variant="outlined">
