@@ -66,11 +66,11 @@ export default function Index() {
         <main>
           <Box
             sx={{
-              // display: "flex",
-              // flexDirection: "column",
-              // alignItems: "center",
-              // minHeight: "100vh",
-              // textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              minHeight: "100vh",
+              textAlign: "center",
               mt: 10,
               mb: 10,
             }}
@@ -80,11 +80,23 @@ export default function Index() {
                 variant="h4"
                 component="h1"
                 gutterBottom
-                sx={{ fontWeight: "bold" }}
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: {
+                    xs: "1.3rem",
+                    md: "2.5rem"
+                  },
+                }}
               >
                 あと何ヶ月生活できるかを可視化!
               </Typography>
-              <Typography variant="body1">
+              <Typography
+                sx={{
+                  fontSize: {
+                    xs: "0.8rem",
+                  },
+                }}
+              >
                 「失業後、現在の貯金でどのくらい生活できるのだろう？」
               </Typography>
               <Typography variant="body1">
@@ -328,7 +340,7 @@ export default function Index() {
                   height: "300px",
                 }}
               />
-                            <Box
+              <Box
                 component="img"
                 src="/image/index/gauge.png"
                 alt="gauge"
