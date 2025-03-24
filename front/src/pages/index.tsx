@@ -166,7 +166,7 @@ export default function Index() {
                 src="/image/index/budget.png"
                 alt="budget"
                 sx={{
-                  width: "540px",
+                  width: "550px",
                   height: "350px",
                   "@media (max-width: 599px)": {
                     width: "350px",
@@ -179,7 +179,7 @@ export default function Index() {
                 src="/image/index/home.png"
                 alt="home"
                 sx={{
-                  width: "540px",
+                  width: "550px",
                   height: "350px",
                   "@media (max-width: 599px)": {
                     width: "350px",
@@ -256,7 +256,7 @@ export default function Index() {
                 src="/image/index/work.png"
                 alt="work"
                 sx={{
-                  width: "540px",
+                  width: "550px",
                   height: "350px",
                   "@media (max-width: 599px)": {
                     width: "350px",
@@ -269,7 +269,7 @@ export default function Index() {
                 src="/image/index/calendar.png"
                 alt="calendar"
                 sx={{
-                  width: "540px",
+                  width: "550px",
                   height: "350px",
                   "@media (max-width: 599px)": {
                     width: "350px",
