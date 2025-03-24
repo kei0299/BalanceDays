@@ -50,7 +50,7 @@ export default function MenuAppBar() {
               flexGrow: 1,
               fontSize: "24px",
               "@media (max-width: 599px)": {
-                fontSize: "18px",
+                fontSize: "15px",
               },
             }}
           >
