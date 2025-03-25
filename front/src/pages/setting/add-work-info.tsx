@@ -110,6 +110,7 @@ export default function Setting() {
     setTrainingTime(value === "" ? "" : Number(value));
   };
 
+  // フォーム編集できるようにするためにコピーする
   const changeCompanyFieldSelect = (e: SelectChangeEvent, index: number) => {
     const { name, value } = e.target;
     const updatedCompanies = [...companies];
@@ -123,6 +124,7 @@ export default function Setting() {
     setCompanies(updatedCompanies);
   };
 
+    // フォーム編集できるようにするためにコピーする
   const changeCompanyFieldInput = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement

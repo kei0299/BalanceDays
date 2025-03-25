@@ -41,6 +41,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       return true;
     };
 
+    // ブラウザバックした時にも認証チェックを行う
     router.beforePopState(handlePopState);
 
     return () => {
