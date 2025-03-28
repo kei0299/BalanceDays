@@ -80,7 +80,7 @@ export default function Report() {
 
       const data = await response.json();
 
-      // カテゴリごとに色を指定（ここでは例として色を手動で設定）
+      // カテゴリごとに色を指定
       const colors = [
         "#4682b4",
         "#FFCE56",
