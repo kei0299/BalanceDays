@@ -22,11 +22,15 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         "/terms/privacyPolicy",
         "/terms/terms",
       ];
-      if (!publicPages.includes(router.pathname)) {
-        const result = await checkSession();
-        if (!result) {
-          router.push("/signin");
-        }
+      const result = await checkSession();
+
+      if (router.pathname === "/" && result) {
+        router.push("/home");
+        return;
+      }
+
+      if (!publicPages.includes(router.pathname) && !result) {
+        router.push("/signin");
       }
     };
 
