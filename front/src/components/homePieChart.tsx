@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { PieChart } from "@mui/x-charts/PieChart";
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import React from "react";
 import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
@@ -29,64 +29,69 @@ export default function HomePieChart() {
   const client = cookies["client"];
   const uid = cookies["uid"];
 
+    // API用のフォーマットを "YYYY-MM-DD" 形式で作成
+    const apiFormattedDate = `${currentMonth.getFullYear()}-${String(
+      currentMonth.getMonth() + 1
+    ).padStart(2, "0")}-01`; // 1日を固定で追加
+  
+
   // Rails APIから円チャートを作成
-  const fetchPieChart = async (isChecked: boolean) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/reports/pie_chart?month=${apiFormattedDate}&checked=${isChecked}`, // クエリパラメータとして送信
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "access-token": accessToken,
-            client: client,
-            uid: uid,
-          },
+  const fetchPieChart = useCallback(
+    async (isChecked: boolean) => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/v1/reports/pie_chart?month=${apiFormattedDate}&checked=${isChecked}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "access-token": accessToken,
+              client: client,
+              uid: uid,
+            },
+          }
+        );
+  
+        if (!response.ok) {
+          throw new Error(`エラー: ${response.status}`);
         }
-      );
-
-      if (!response.ok) {
-        throw new Error(`エラー: ${response.status}`);
+  
+        const data = await response.json();
+  
+        // カテゴリごとに色を指定
+        const colors = [
+          "#4682b4",
+          "#FFCE56",
+          "#4BC0C0",
+          "#FF9F40",
+          "#9966FF",
+          "#FFB6C1",
+          "#2e8b57",
+          "#FF6384",
+          "#8A2BE2",
+          "#FFD700",
+          "#8B0000",
+        ];
+  
+        // APIレスポンスを PieChart に渡す形式に変換
+        const pieChartData = data.map((item: pieChartData, index: number) => ({
+          id: item.id,
+          value: item.current_month_amount,
+          label: item.name,
+          color: colors[index % colors.length],
+        }));
+  
+        setExpenses(pieChartData);
+      } catch (error) {
+        console.error("取得失敗", error);
       }
-
-      const data = await response.json();
-
-      // カテゴリごとに色を指定（ここでは例として色を手動で設定）
-      const colors = [
-        "#4682b4",
-        "#FFCE56",
-        "#4BC0C0",
-        "#FF9F40",
-        "#9966FF",
-        "#FFB6C1",
-        "#2e8b57",
-        "#FF6384",
-        "#8A2BE2",
-        "#FFD700",
-        "#8B0000",
-      ];
-
-      // APIレスポンスを PieChart に渡す形式に変換
-      const pieChartData = data.map((item: pieChartData, index: number) => ({
-        id: item.id,
-        value: item.current_month_amount,
-        label: item.name,
-        color: colors[index % colors.length],
-      }));
-      setExpenses(pieChartData);
-    } catch (error) {
-      console.error("取得失敗", error);
-    }
-  };
+    },
+    [apiFormattedDate, accessToken, client, uid, setExpenses] // 依存配列を適切に設定
+  );
 
   useEffect(() => {
     fetchPieChart(checked);
-  }, []);
-
-  // API用のフォーマットを "YYYY-MM-DD" 形式で作成
-  const apiFormattedDate = `${currentMonth.getFullYear()}-${String(
-    currentMonth.getMonth() + 1
-  ).padStart(2, "0")}-01`; // 1日を固定で追加
+  }, [checked, fetchPieChart]);
 
   const switchToggle = () => {
     const newChecked = !checked; // スイッチの新しい状態

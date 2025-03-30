@@ -1,12 +1,11 @@
 import { Box } from "@mui/material";
-import { useState, useEffect } from "react";
 import React from "react";
 import Typography from "@mui/material/Typography";
 import { parseCookies } from "nookies";
 import { Gauge } from "@mui/x-charts/Gauge";
 import Stack from "@mui/material/Stack";
 import Link from "@mui/material/Link";
-
+import { useCallback, useEffect, useState } from "react";
 
 export default function HomeTotalGauge() {
   const [currentMonth] = useState<Date>(new Date());
@@ -19,8 +18,14 @@ export default function HomeTotalGauge() {
   const client = cookies["client"];
   const uid = cookies["uid"];
 
+  // API用のフォーマットを "YYYY-MM-DD" 形式で作成
+  const apiFormattedDate = `${currentMonth.getFullYear()}-${String(
+    currentMonth.getMonth() + 1
+  ).padStart(2, "0")}-01`; // 1日を固定で追加
+
+
   // Rails APIから予算ゲージを作成
-  const fetchGauge = async () => {
+    const fetchGauge = useCallback(async () => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/v1/reports/total_gauge?month=${apiFormattedDate}`,
@@ -34,30 +39,25 @@ export default function HomeTotalGauge() {
           },
         }
       );
-
+  
       if (!response.ok) {
         throw new Error(`エラー: ${response.status}`);
       }
-
+  
       const data = await response.json();
-
+  
       setTotalBudget(data.total_budget);
       setTotalExpense(data.total_expense);
       setTotalRatio(data.total_ratio);
     } catch (error) {
       console.error("取得失敗", error);
     }
-  };
-
+  }, [apiFormattedDate, accessToken, client, uid]); // ✅ 依存関係を明示
+  
   useEffect(() => {
     fetchGauge();
-  }, []);
-
-  // API用のフォーマットを "YYYY-MM-DD" 形式で作成
-  const apiFormattedDate = `${currentMonth.getFullYear()}-${String(
-    currentMonth.getMonth() + 1
-  ).padStart(2, "0")}-01`; // 1日を固定で追加
-
+  }, [fetchGauge]); // ✅ 変更があったら再実行
+  
   return (
     <>
       <Box
