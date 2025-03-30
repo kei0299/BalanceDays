@@ -337,7 +337,7 @@ export default function Index() {
             <Stack
               spacing={2}
               direction="row"
-              sx={{ justifyContent: "center", alignItems: "center" }}
+              sx={{ justifyContent: "center", alignItems: "center",mt:5 }}
             >
               <Typography
                 sx={{
