@@ -72,19 +72,16 @@ export default function Index() {
               minHeight: "100vh",
               textAlign: "center",
               mt: 10,
-              mb: 10,
+              mb: 15,
             }}
           >
             <Box sx={{ padding: 2 }}>
               <Typography
-                variant="h4"
-                component="h1"
-                gutterBottom
                 sx={{
                   fontWeight: "bold",
                   fontSize: {
                     xs: "1.3rem",
-                    md: "2.5rem"
+                    md: "2.5rem",
                   },
                 }}
               >
@@ -94,15 +91,32 @@ export default function Index() {
                 sx={{
                   fontSize: {
                     xs: "0.8rem",
+                    md: "1.3rem",
                   },
                 }}
               >
                 「失業後、現在の貯金でどのくらい生活できるのだろう？」
               </Typography>
-              <Typography variant="body1">
+
+              <Typography
+                sx={{
+                  fontSize: {
+                    xs: "0.8rem",
+                    md: "1.3rem",
+                  },
+                }}
+              >
                 そんなことを考えたことはありませんか？
               </Typography>
-              <Typography variant="body1">
+
+              <Typography
+                sx={{
+                  fontSize: {
+                    xs: "0.8rem",
+                    md: "1.3rem",
+                  },
+                }}
+              >
                 BalanceDaysではあとどのくらい生活できるのかを計算し可視化します!
               </Typography>
             </Box>
@@ -114,9 +128,13 @@ export default function Index() {
                   sx={{ justifyContent: "center", alignItems: "center" }}
                 >
                   <Typography
-                    variant="h5"
-                    component="h2"
-                    sx={{ fontWeight: "bold" }}
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: {
+                        xs: "1rem",
+                        md: "1.5rem",
+                      },
+                    }}
                   >
                     STEP1
                   </Typography>
@@ -131,15 +149,29 @@ export default function Index() {
                     }}
                   />
                 </Stack>
-                <Typography variant="body1">
+                <Typography
+                  sx={{
+                    fontSize: {
+                      xs: "0.8rem",
+                      md: "1.3rem",
+                    },
+                  }}
+                >
                   まずは生存期間設定から現在の貯金額を入力し、予算設定画面から予算を設定しよう！
                 </Typography>
-                <Typography variant="body1">
+
+                <Typography
+                  sx={{
+                    fontSize: {
+                      xs: "0.8rem",
+                      md: "1.3rem",
+                    },
+                  }}
+                >
                   貯金額と予算の設定金額をもとに生存期間が計算されるよ！
                 </Typography>
               </Box>
             </Stack>
-
             <Stack
               spacing={3}
               sx={{
@@ -188,7 +220,6 @@ export default function Index() {
                 }}
               />
             </Stack>
-
             <Stack
               spacing={3}
               sx={{
@@ -209,10 +240,13 @@ export default function Index() {
                   sx={{ justifyContent: "center", alignItems: "center" }}
                 >
                   <Typography
-                    variant="h5"
-                    component="h2"
-                    gutterBottom
-                    sx={{ fontWeight: "bold" }}
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: {
+                        xs: "1rem",
+                        md: "1.5rem",
+                      },
+                    }}
                   >
                     STEP2
                   </Typography>
@@ -227,18 +261,40 @@ export default function Index() {
                     }}
                   />
                 </Stack>
-                <Typography variant="body1">
+                <Typography
+                  sx={{
+                    fontSize: {
+                      xs: "0.8rem",
+                      md: "1.3rem",
+                    },
+                  }}
+                >
                   BalanceDaysでは勤務先やシフトの登録もできるよ。
                 </Typography>
-                <Typography variant="body1">
+
+                <Typography
+                  sx={{
+                    fontSize: {
+                      xs: "0.8rem",
+                      md: "1.3rem",
+                    },
+                  }}
+                >
                   研修期間や研修時間の設定も楽々〜
                 </Typography>
-                <Typography variant="body1">
+
+                <Typography
+                  sx={{
+                    fontSize: {
+                      xs: "0.8rem",
+                      md: "1.3rem",
+                    },
+                  }}
+                >
                   カレンダー画面から選択した日にちの情報が一括表示されるよ！
                 </Typography>
               </Box>
             </Stack>
-
             <Stack
               spacing={2}
               sx={{
@@ -278,17 +334,19 @@ export default function Index() {
                 }}
               />
             </Stack>
-
             <Stack
               spacing={2}
               direction="row"
               sx={{ justifyContent: "center", alignItems: "center" }}
             >
               <Typography
-                variant="h5"
-                component="h2"
-                gutterBottom
-                sx={{ fontWeight: "bold" }}
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: {
+                    xs: "1rem",
+                    md: "1.5rem",
+                  },
+                }}
               >
                 STEP3
               </Typography>
@@ -303,13 +361,26 @@ export default function Index() {
                 }}
               />
             </Stack>
-            <Typography variant="body1">
+            <Typography
+              sx={{
+                fontSize: {
+                  xs: "0.8rem",
+                  md: "1.3rem",
+                },
+              }}
+            >
               登録した収支ログはレポート画面からグラフで確認できるよ！
             </Typography>
-            <Typography variant="body1">
+            <Typography
+              sx={{
+                fontSize: {
+                  xs: "0.8rem",
+                  md: "1.3rem",
+                },
+              }}
+            >
               カテゴリごとの収支はもちろん、予算と実際の支出を比較できるよ！
             </Typography>
-
             <Stack
               spacing={2}
               sx={{
@@ -354,9 +425,20 @@ export default function Index() {
                 }}
               />
             </Stack>
-
-            <h1>今すぐ家計簿をつけ始めよう！</h1>
-
+            <Typography
+              variant="h4"
+              component="h1"
+              gutterBottom
+              sx={{
+                fontWeight: "bold",
+                fontSize: {
+                  xs: "1.3rem",
+                  md: "2.5rem",
+                },
+              }}
+            >
+              今すぐ家計簿をつけ始めよう！
+            </Typography>
             <Stack spacing={2} direction="row">
               <Button href="/signup" variant="outlined">
                 新規作成
@@ -365,7 +447,6 @@ export default function Index() {
                 ログイン
               </Button>
             </Stack>
-
             <Button
               sx={{
                 m: "10px",
