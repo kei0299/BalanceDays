@@ -14,10 +14,10 @@ export default function Index() {
       //Google認証開始のエンドポイント
       const backendAuthUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/google_oauth2`;
       //認証終了後の遷移先
-      const originUrl =
-        process.env.NODE_ENV === "development"
-          ? `${process.env.NEXT_PUBLIC_FRONT_URL}/auth/google_callback`
-          : `${process.env.NEXT_PUBLIC_FRONT_URL}/auth/google_callback`;
+      const originUrl = `${process.env.NEXT_PUBLIC_FRONT_URL}/auth/google_callback`
+        // process.env.NODE_ENV === "development"
+        //   ? `${process.env.NEXT_PUBLIC_FRONT_URL}/auth/google_callback`
+        //   : `${process.env.NEXT_PUBLIC_FRONT_URL}/auth/google_callback`;
       // console.log(`Frontのパス${process.env.NEXT_PUBLIC_FRONT_URL}`);
       // console.log(`APIのパス${process.env.NEXT_PUBLIC_API_URL}`);
       // console.log(`バックエンドオースのパス${backendAuthUrl}`);
