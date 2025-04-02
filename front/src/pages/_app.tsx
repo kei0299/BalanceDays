@@ -13,6 +13,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
   useEffect(() => {
     const AuthCheck = async () => {
+      // 下記ページの場合は認証を行わない。
       const publicPages = [
         "/",
         "/_error",
