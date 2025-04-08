@@ -26,12 +26,12 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       const result = await checkSession();
 
       if (router.pathname === "/" && result) {
-        router.push("/home");
+        router.push("/home"); // ログイン済みなら /home へリダイレクト
         return;
       }
 
       if (!publicPages.includes(router.pathname) && !result) {
-        router.push("/signin");
+        router.push("/signin"); // 未ログインなら /signin へリダイレクト
       }
     };
 
@@ -65,9 +65,11 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 };
 
 MyApp.getInitialProps = async (appContext: AppContext) => {
+  // 未ログイン時にアクセスできるpath
   const publicPages = ["/", "/_error", "/signin", "/signup", "/callback"];
-  const cookies = parseCookies(appContext.ctx);
+  const cookies = parseCookies(appContext.ctx); // クッキーから accessToken を取得
 
+  // 現在のページが publicPages に含まれているかをチェック。
   if (!publicPages.includes(appContext.ctx.pathname ?? "")) {
     if (!cookies.accessToken) {
       if (appContext.ctx.res) {
