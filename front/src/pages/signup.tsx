@@ -112,10 +112,11 @@ export default function InputAdornments() {
           client: string,
           uid: string
         ) => {
+          // 30日間の有効期限
           setCookie(null, "accessToken", accessToken, {
             maxAge: 30 * 24 * 60 * 60,
             path: "/",
-          }); // 30日間の有効期限
+          });
           setCookie(null, "client", client, {
             maxAge: 30 * 24 * 60 * 60,
             path: "/",
