@@ -483,3 +483,10 @@ export default function Index() {
     </>
   );
 }
+
+// SSG対応
+export async function getStaticProps() {
+  return {
+    props: {}, 
+  };
+}
